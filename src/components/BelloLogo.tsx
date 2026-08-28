@@ -9,7 +9,7 @@ export const BelloLogo: React.FC<BelloLogoProps> = ({ className = 'h-10 w-auto',
   return (
     <div className={`flex items-center ${className}`} style={{ height: height || undefined }}>
       <img
-        src="/bello-logo.svg"
+        src="/Logo_Bello.png"
         alt="Bello Alimentos"
         className="h-full w-auto object-contain select-none"
       />

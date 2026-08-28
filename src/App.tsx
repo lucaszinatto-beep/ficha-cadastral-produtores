@@ -3,17 +3,26 @@ import { Header } from './components/Header';
 import { CascadeFilterBar } from './components/CascadeFilterBar';
 import { FichaSetupCard } from './components/FichaSetupCard';
 import { ImportModal } from './components/ImportModal';
+import { UserManagementModal } from './components/UserManagementModal';
 import { ImportHistoryView } from './components/ImportHistoryView';
 import { ProdutoresView } from './components/ProdutoresView';
 import { TecnicosView } from './components/TecnicosView';
 import { fetchProdutores, fetchAviarios, fetchTecnicos } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
+import { fetchMyProfile, UserProfile, ACCESS_LEVELS } from './services/profileService';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from './services/supabase';
+import { LoginView } from './components/LoginView';
 import { Produtor, Aviario, Tecnico, ImportacaoLog } from './types/database';
 import { RefreshCw, ShieldCheck, Home, AlertCircle } from 'lucide-react';
 
 export const App: React.FC = () => {
+  const [session, setSession] = useState<Session | null>(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState<'fichas' | 'produtores' | 'tecnicos' | 'historico'>('fichas');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,9 +81,47 @@ export const App: React.FC = () => {
     }
   };
 
+  const loadUserProfile = async () => {
+    const profile = await fetchMyProfile();
+    setUserProfile(profile);
+  };
+
   useEffect(() => {
-    loadData();
+    // 1. Obter sessão atual salva
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsAuthChecking(false);
+      if (session) {
+        loadData();
+        loadUserProfile();
+      }
+    });
+
+    // 2. Escutar mudanças na autenticação (login, logout, refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setIsAuthChecking(false);
+      if (session) {
+        loadData();
+        loadUserProfile();
+      } else {
+        setUserProfile(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  // Nível de acesso do usuário (fallback para viewer se profile não carregou)
+  const userLevel = userProfile?.level ?? ACCESS_LEVELS.VIEWER;
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+    setUserProfile(null);
+  };
 
   // Aviários filtrados do produtor selecionado
   const aviariosOfSelectedProdutor = useMemo(() => {
@@ -118,10 +165,25 @@ export const App: React.FC = () => {
     return produtores.filter(p => p.nome.toLowerCase().includes(q));
   }, [produtores, searchQuery]);
 
+  // 1. Tela de Carregamento da Autenticação
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center space-y-4">
+        <RefreshCw className="w-8 h-8 text-sky-400 animate-spin" />
+        <p className="text-xs font-semibold text-slate-400">Verificando sessão segura...</p>
+      </div>
+    );
+  }
+
+  // 2. Tela de Login se não estiver autenticado
+  if (!session) {
+    return <LoginView onLoginSuccess={() => loadData()} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
       
-      {/* Top Header com Logo Oficial e Único Botão de Importação */}
+      {/* Top Header com Logo Oficial, Busca e Perfil */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -130,6 +192,11 @@ export const App: React.FC = () => {
         setSearchQuery={setSearchQuery}
         totalProdutores={produtores.length}
         totalAviarios={aviarios.length}
+        userEmail={session.user.email}
+        onLogout={handleLogout}
+        onOpenUserManagement={() => setIsUserManagementOpen(true)}
+        userLevel={userLevel}
+        userRole={userProfile?.role}
       />
 
       {/* Main Content Area */}
@@ -175,7 +242,7 @@ export const App: React.FC = () => {
             {/* VIEW 1: FICHAS DE SETUP */}
             {activeTab === 'fichas' && (
               <div className="space-y-6">
-                {/* Filtro em Cascata: Produtor -> Aviários -> Setup */}
+                {/* Filtro em Cascata: Produtor -> Extensionista -> Aviários -> Setup */}
                 <CascadeFilterBar
                   produtores={filteredProdutores}
                   selectedProdutorId={selectedProdutorId}
@@ -192,7 +259,9 @@ export const App: React.FC = () => {
                   <FichaSetupCard
                     aviario={currentAviario}
                     allTecnicos={tecnicos}
+                    allAviariosOfProdutor={aviariosOfSelectedProdutor}
                     onSetupUpdated={loadData}
+                    userLevel={userLevel}
                   />
                 ) : (
                   <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center text-slate-400 space-y-3">
@@ -209,7 +278,10 @@ export const App: React.FC = () => {
               <ProdutoresView
                 produtores={produtores}
                 aviarios={aviarios}
+                tecnicos={tecnicos}
                 onSelectProdutorAndAviario={handleSelectProdutorAndAviario}
+                onRefresh={loadData}
+                userLevel={userLevel}
               />
             )}
 
@@ -220,6 +292,8 @@ export const App: React.FC = () => {
                 aviarios={aviarios}
                 produtores={produtores}
                 onSelectProdutorAndAviario={handleSelectProdutorAndAviario}
+                onRefresh={loadData}
+                userLevel={userLevel}
               />
             )}
 
@@ -258,6 +332,13 @@ export const App: React.FC = () => {
           loadData();
           setActiveTab('historico');
         }}
+      />
+
+      {/* Modal de Gestão de Usuários */}
+      <UserManagementModal
+        isOpen={isUserManagementOpen}
+        onClose={() => setIsUserManagementOpen(false)}
+        currentUserLevel={userLevel}
       />
 
     </div>

@@ -1,6 +1,13 @@
 import React from 'react';
-import { UploadCloud, Layers, Users, UserCheck, History, Search } from 'lucide-react';
+import { UploadCloud, Layers, Users, UserCheck, History, Search, LogOut, User, Settings } from 'lucide-react';
 import { BelloLogo } from './BelloLogo';
+
+const ROLE_LABELS: Record<string, { label: string; color: string }> = {
+  super_admin: { label: 'Super Admin', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+  admin: { label: 'Admin', color: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+  extensionista: { label: 'Extensionista', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+  viewer: { label: 'Visualizador', color: 'bg-slate-700/50 text-slate-300 border-slate-600' }
+};
 
 interface HeaderProps {
   activeTab: 'fichas' | 'produtores' | 'tecnicos' | 'historico';
@@ -10,6 +17,11 @@ interface HeaderProps {
   setSearchQuery: (query: string) => void;
   totalProdutores: number;
   totalAviarios: number;
+  userEmail?: string;
+  onLogout?: () => void;
+  onOpenUserManagement?: () => void;
+  userLevel?: number;
+  userRole?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,8 +31,14 @@ export const Header: React.FC<HeaderProps> = ({
   searchQuery,
   setSearchQuery,
   totalProdutores,
-  totalAviarios
+  totalAviarios,
+  userEmail,
+  onLogout,
+  onOpenUserManagement,
+  userLevel = 10,
+  userRole = 'viewer'
 }) => {
+  const roleInfo = ROLE_LABELS[userRole] || ROLE_LABELS.viewer;
   return (
     <header className="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,8 +47,8 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logo & Marca Oficial Bello Alimentos */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-auto bg-gradient-to-r from-blue-700 to-sky-600 rounded-xl px-3 py-1.5 flex items-center justify-center shadow-lg shadow-blue-900/40 border border-sky-400/30">
-                <BelloLogo className="h-9" />
+              <div className="h-12 w-auto bg-white rounded-xl px-2.5 py-1 flex items-center justify-center shadow-lg shadow-black/20 border border-white/20">
+                <BelloLogo className="h-10" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -79,15 +97,50 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* ÚNICO BOTÃO DE IMPORTAÇÃO (Conforme especificado pelo usuário) */}
-            <button
-              id="btn-importar-base-unico"
-              onClick={onOpenImportModal}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-sky-600 to-blue-700 hover:from-blue-500 hover:to-sky-500 border border-sky-400/40 shadow-lg shadow-sky-600/30 hover:shadow-sky-600/50 transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
-            >
-              <UploadCloud className="w-4 h-4" />
-              <span>⬆ IMPORTAR BASE DE DADOS</span>
-            </button>
+            {/* BOTÃO DE IMPORTAÇÃO - Apenas para Admin (level >= 80) */}
+            {userLevel >= 80 && (
+              <button
+                id="btn-importar-base-unico"
+                onClick={onOpenImportModal}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-sky-600 to-blue-700 hover:from-blue-500 hover:to-sky-500 border border-sky-400/40 shadow-lg shadow-sky-600/30 hover:shadow-sky-600/50 transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+              >
+                <UploadCloud className="w-4 h-4" />
+                <span className="hidden sm:inline">⬆ IMPORTAR BASE DE DADOS</span>
+                <span className="sm:hidden">IMPORTAR</span>
+              </button>
+            )}
+
+            {/* Perfil do Usuário Autenticado & Sair */}
+            {onLogout && (
+              <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+                {userEmail && (
+                  <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 text-xs font-medium max-w-[220px]" title={userEmail}>
+                    <User className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                    <span className="truncate">{userEmail.split('@')[0]}</span>
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold border shrink-0 ${roleInfo.color}`}>
+                      {roleInfo.label}
+                    </span>
+                  </div>
+                )}
+                {userLevel >= 80 && onOpenUserManagement && (
+                  <button
+                    onClick={onOpenUserManagement}
+                    className="flex items-center gap-1.5 px-2 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-700 border border-slate-700/50 transition-all"
+                    title="Gestão de Usuários"
+                  >
+                    <Settings className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={onLogout}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all"
+                  title="Sair da Conta"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Sair</span>
+                </button>
+              </div>
+            )}
 
           </div>
         </div>

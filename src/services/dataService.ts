@@ -154,15 +154,97 @@ export async function updateAviarioTecnico(aviarioId: string, tecnicoId: string 
   if (error) throw error;
 }
 
-export async function createProdutor(nome: string, municipio?: string): Promise<Produtor> {
+export async function createProdutor(payload: {
+  nome: string;
+  municipio?: string | null;
+  codigo_avicultor?: string | null;
+  telefone?: string | null;
+  email?: string | null;
+  aviariosIniciais?: Array<{ numero: string; tecnico_id?: string | null }>;
+}): Promise<Produtor> {
+  const { data: produtor, error: prodError } = await supabase
+    .from('produtores')
+    .insert([{
+      nome: payload.nome.trim(),
+      municipio: payload.municipio?.trim() || null,
+      codigo_avicultor: payload.codigo_avicultor?.trim() || null,
+      telefone: payload.telefone?.trim() || null,
+      email: payload.email?.trim() || null,
+      status: 'Ativo'
+    }])
+    .select('*')
+    .single();
+
+  if (prodError) throw prodError;
+
+  // Se houver aviários iniciais para cadastrar junto com o produtor
+  if (payload.aviariosIniciais && payload.aviariosIniciais.length > 0) {
+    const aviariosRows = payload.aviariosIniciais.map(a => ({
+      produtor_id: produtor.id,
+      numero_instalacao: a.numero.trim(),
+      tecnico_id: a.tecnico_id || null,
+      status: 'Ativo'
+    }));
+
+    const { error: avError } = await supabase
+      .from('cadastro_aviarios')
+      .insert(aviariosRows);
+
+    if (avError) console.error('Erro ao cadastrar aviários iniciais:', avError);
+  }
+
+  return produtor as Produtor;
+}
+
+export async function updateProdutor(
+  id: string,
+  payload: {
+    nome?: string;
+    municipio?: string | null;
+    codigo_avicultor?: string | null;
+    telefone?: string | null;
+    email?: string | null;
+    status?: string;
+  }
+): Promise<Produtor> {
+  const cleanPayload: Record<string, any> = {
+    updated_at: new Date().toISOString()
+  };
+
+  if (payload.nome !== undefined) cleanPayload.nome = payload.nome.trim();
+  if (payload.municipio !== undefined) cleanPayload.municipio = payload.municipio?.trim() || null;
+  if (payload.codigo_avicultor !== undefined) cleanPayload.codigo_avicultor = payload.codigo_avicultor?.trim() || null;
+  if (payload.telefone !== undefined) cleanPayload.telefone = payload.telefone?.trim() || null;
+  if (payload.email !== undefined) cleanPayload.email = payload.email?.trim() || null;
+  if (payload.status !== undefined) cleanPayload.status = payload.status;
+
   const { data, error } = await supabase
     .from('produtores')
-    .insert([{ nome: nome.trim(), municipio: municipio?.trim() || null }])
+    .update(cleanPayload)
+    .eq('id', id)
     .select('*')
     .single();
 
   if (error) throw error;
-  return data;
+  return data as Produtor;
+}
+
+export async function deleteProdutor(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('produtores')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
+export async function deleteAviario(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('cadastro_aviarios')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
 }
 
 export async function createAviario(produtorId: string, numeroInstalacao: string, tecnicoId?: string | null): Promise<Aviario> {
@@ -183,4 +265,72 @@ export async function createAviario(produtorId: string, numeroInstalacao: string
 
   if (error) throw error;
   return data as Aviario;
+}
+
+export async function createTecnico(payload: {
+  nome: string;
+  unidade?: string | null;
+  telefone?: string | null;
+  email?: string | null;
+}): Promise<Tecnico> {
+  const { data, error } = await supabase
+    .from('tecnicos')
+    .insert([{
+      nome: payload.nome.trim(),
+      unidade: payload.unidade?.trim() || 'Bello Alimentos',
+      telefone: payload.telefone?.trim() || null,
+      email: payload.email?.trim() || null,
+      status: 'Ativo'
+    }])
+    .select('*')
+    .single();
+
+  if (error) throw error;
+  return data as Tecnico;
+}
+
+export async function updateTecnico(
+  id: string,
+  payload: {
+    nome?: string;
+    unidade?: string | null;
+    telefone?: string | null;
+    email?: string | null;
+    status?: string;
+  }
+): Promise<Tecnico> {
+  const cleanPayload: Record<string, any> = {
+    updated_at: new Date().toISOString()
+  };
+
+  if (payload.nome !== undefined) cleanPayload.nome = payload.nome.trim();
+  if (payload.unidade !== undefined) cleanPayload.unidade = payload.unidade?.trim() || null;
+  if (payload.telefone !== undefined) cleanPayload.telefone = payload.telefone?.trim() || null;
+  if (payload.email !== undefined) cleanPayload.email = payload.email?.trim() || null;
+  if (payload.status !== undefined) cleanPayload.status = payload.status;
+
+  const { data, error } = await supabase
+    .from('tecnicos')
+    .update(cleanPayload)
+    .eq('id', id)
+    .select('*')
+    .single();
+
+  if (error) throw error;
+  return data as Tecnico;
+}
+
+export async function deleteTecnico(id: string): Promise<void> {
+  // Desvincula os aviários vinculados a este técnico antes de excluir
+  await supabase
+    .from('cadastro_aviarios')
+    .update({ tecnico_id: null, updated_at: new Date().toISOString() })
+    .eq('tecnico_id', id);
+
+  const { error } = await supabase
+    .from('tecnicos')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
 }

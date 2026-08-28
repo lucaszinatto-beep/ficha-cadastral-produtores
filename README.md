@@ -39,8 +39,13 @@ Sistema web completo para gestão cadastral de produtores de aves, aviários/ins
 ### 3. 🔍 Filtro em Cascata & Visões
 - **Cascata Dinâmica**: `1. Produtor` ➔ `2. Aviários (chips interativos)` ➔ `3. Ficha de Setup`.
 - **Visão Produtores**: Listagem consolidada com total de aviários e atalhos diretos.
-- **Visão Extensionistas**: Listagem de técnicos com produtores e aviários atendidos.
-- **Visão Histórico**: Auditoria de importações passadas e download de erros.
+- **Visão Extensionistas**: Gestão completa (CRUD) com cadastro de novos técnicos, edição de informações de contato, desvinculação e exclusão segura.
+- **Visão Histórico**: Auditoria de importações passadas e download de relatórios de erros.
+
+---
+
+## 📖 Documentação Completa
+Para detalhes aprofundados sobre arquitetura, modelagem de banco de dados e diagramas ER, consulte o arquivo [DOCUMENTACAO.md](DOCUMENTACAO.md).
 
 ---
 
