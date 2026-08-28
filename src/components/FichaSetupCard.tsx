@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Aviario, SetupAviario, Tecnico } from '../types/database';
 import { saveSetupData, updateAviarioTecnico } from '../services/dataService';
+import { BelloLogo } from './BelloLogo';
 
 interface FichaSetupCardProps {
   aviario: Aviario;
@@ -234,11 +235,11 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
 
           {/* Logo Bello Alimentos */}
           <div className="md:col-span-4 flex justify-start md:justify-end items-center">
-            <div className="text-right">
-              <div className="text-xl font-black text-white tracking-tight flex items-center justify-end gap-1">
-                BELLO <span className="text-sky-400">ALIMENTOS</span>
+            <div className="flex flex-col items-end">
+              <div className="h-10 bg-blue-700/80 rounded-xl px-2.5 py-1 flex items-center shadow-md border border-sky-400/30">
+                <BelloLogo className="h-7" />
               </div>
-              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">
+              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest mt-1">
                 Gestão de Frangos de Corte
               </div>
             </div>

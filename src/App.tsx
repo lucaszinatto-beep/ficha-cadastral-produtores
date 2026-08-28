@@ -9,12 +9,13 @@ import { TecnicosView } from './components/TecnicosView';
 import { fetchProdutores, fetchAviarios, fetchTecnicos } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
 import { Produtor, Aviario, Tecnico, ImportacaoLog } from './types/database';
-import { UploadCloud, RefreshCw, ShieldCheck, Home } from 'lucide-react';
+import { RefreshCw, ShieldCheck, Home, AlertCircle } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'fichas' | 'produtores' | 'tecnicos' | 'historico'>('fichas');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Data States
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
 
   const loadData = async () => {
     setIsLoading(true);
+    setLoadError(null);
     try {
       const [prodData, avData, tecData, logsData] = await Promise.all([
         fetchProdutores(),
@@ -42,16 +44,29 @@ export const App: React.FC = () => {
       setTecnicos(tecData);
       setImportLogs(logsData);
 
-      // Auto-select first producer if not set
-      if (prodData.length > 0 && !selectedProdutorId) {
-        setSelectedProdutorId(prodData[0].id);
-        const avs = avData.filter(a => a.produtor_id === prodData[0].id);
-        if (avs.length > 0) {
-          setSelectedAviarioId(avs[0].id);
-        }
+      // Auto-seleciona o primeiro produtor e aviário caso nada esteja selecionado
+      if (prodData.length > 0) {
+        setSelectedProdutorId(prev => {
+          const exists = prodData.some(p => p.id === prev);
+          const activeProdId = exists && prev ? prev : prodData[0].id;
+          
+          // Ajusta aviário vinculado
+          const relatedAviarios = avData.filter(a => a.produtor_id === activeProdId);
+          if (relatedAviarios.length > 0) {
+            setSelectedAviarioId(prevAv => {
+              const avExists = relatedAviarios.some(a => a.id === prevAv);
+              return avExists && prevAv ? prevAv : relatedAviarios[0].id;
+            });
+          } else {
+            setSelectedAviarioId('');
+          }
+
+          return activeProdId;
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao carregar dados do Supabase:', err);
+      setLoadError(err?.message || 'Falha ao conectar com o banco de dados Supabase.');
     } finally {
       setIsLoading(false);
     }
@@ -61,13 +76,13 @@ export const App: React.FC = () => {
     loadData();
   }, []);
 
-  // Filtered Aviaries of Selected Producer
+  // Aviários filtrados do produtor selecionado
   const aviariosOfSelectedProdutor = useMemo(() => {
     if (!selectedProdutorId) return [];
     return aviarios.filter(a => a.produtor_id === selectedProdutorId);
   }, [aviarios, selectedProdutorId]);
 
-  // Handle Producer Selection
+  // Manipulador de Seleção de Produtor
   const handleSelectProdutor = (produtorId: string) => {
     setSelectedProdutorId(produtorId);
     const avs = aviarios.filter(a => a.produtor_id === produtorId);
@@ -78,7 +93,7 @@ export const App: React.FC = () => {
     }
   };
 
-  // Jump from other views to Setup
+  // Navegar de outras visões para o Setup do Aviário
   const handleSelectProdutorAndAviario = (produtorId: string, aviarioId?: string) => {
     setSelectedProdutorId(produtorId);
     if (aviarioId) {
@@ -90,13 +105,13 @@ export const App: React.FC = () => {
     setActiveTab('fichas');
   };
 
-  // Find Active Selected Aviary Object
+  // Aviário ativo para a Ficha
   const currentAviario = useMemo(() => {
     if (!selectedAviarioId) return null;
     return aviarios.find(a => a.id === selectedAviarioId) || null;
   }, [aviarios, selectedAviarioId]);
 
-  // Filtered Producers based on Search
+  // Produtores filtrados por busca global
   const filteredProdutores = useMemo(() => {
     if (!searchQuery.trim()) return produtores;
     const q = searchQuery.toLowerCase();
@@ -106,7 +121,7 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
       
-      {/* Top Header Navigation */}
+      {/* Top Header com Logo Oficial e Único Botão de Importação */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -120,43 +135,47 @@ export const App: React.FC = () => {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
+        {/* Banner de Erro de Conexão se houver */}
+        {loadError && (
+          <div className="mb-6 p-4 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs flex items-center justify-between gap-3 shadow-lg">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+              <div>
+                <p className="font-bold text-rose-200">Erro na Conexão com Supabase</p>
+                <p>{loadError}</p>
+              </div>
+            </div>
+            <button
+              onClick={loadData}
+              className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all"
+            >
+              <RefreshCw className="w-3.5 h-3.5" /> Tentar Novamente
+            </button>
+          </div>
+        )}
+
         {isLoading ? (
           <div className="py-24 text-center space-y-4">
             <RefreshCw className="w-10 h-10 text-sky-400 animate-spin mx-auto" />
             <p className="text-sm font-semibold text-slate-300">Carregando dados da Bello Alimentos...</p>
           </div>
         ) : produtores.length === 0 ? (
-          /* Empty Database State - Call to Import */
-          <div className="py-16 text-center space-y-6 max-w-2xl mx-auto bg-slate-900/80 border border-slate-800 rounded-3xl p-10 shadow-2xl">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-blue-600 via-sky-500 to-amber-400 flex items-center justify-center text-white mx-auto shadow-xl shadow-sky-500/20">
-              <UploadCloud className="w-10 h-10 animate-bounce" />
-            </div>
-            
-            <div className="space-y-2">
-              <h2 className="text-2xl font-black text-white tracking-tight">
-                Nenhum produtor cadastrado no sistema
-              </h2>
-              <p className="text-xs text-slate-400 max-w-md mx-auto">
-                Faça a carga inicial importando a planilha <strong>Base set up.xlsx</strong> com a aba <strong>Tbl_txt</strong> para cadastrar automaticamente produtores, aviários, técnicos e setups.
-              </p>
-            </div>
-
-            <button
-              onClick={() => setIsImportModalOpen(true)}
-              className="px-8 py-3.5 rounded-2xl text-xs font-black text-white bg-gradient-to-r from-blue-600 via-sky-600 to-blue-700 hover:from-blue-500 hover:to-sky-500 shadow-xl shadow-sky-600/40 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-3 mx-auto"
-            >
-              <UploadCloud className="w-5 h-5" />
-              <span>[ ⬆ IMPORTAR BASE DE DADOS AGORA ]</span>
-            </button>
+          /* Estado Vazio Limpo (Sem botões redundantes, usando apenas o do topo) */
+          <div className="py-16 text-center space-y-3 max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
+            <Home className="w-12 h-12 text-slate-600 mx-auto" />
+            <h2 className="text-lg font-bold text-white">Nenhum produtor encontrado no banco de dados</h2>
+            <p className="text-xs text-slate-400">
+              Utilize o botão <strong className="text-sky-400">IMPORTAR BASE DE DADOS</strong> no topo da página para carregar os registros.
+            </p>
           </div>
         ) : (
-          /* Main Views */
+          /* Visões Principais do Sistema */
           <div>
             
             {/* VIEW 1: FICHAS DE SETUP */}
             {activeTab === 'fichas' && (
               <div className="space-y-6">
-                {/* Cascade Filter Bar: Produtor -> Aviário -> Setup */}
+                {/* Filtro em Cascata: Produtor -> Aviários -> Setup */}
                 <CascadeFilterBar
                   produtores={filteredProdutores}
                   selectedProdutorId={selectedProdutorId}
@@ -168,7 +187,7 @@ export const App: React.FC = () => {
                   setSearchFilter={setSearchQuery}
                 />
 
-                {/* Setup Sheet Component */}
+                {/* Ficha Técnica de Setup baseada no PDF oficial */}
                 {currentAviario ? (
                   <FichaSetupCard
                     aviario={currentAviario}
@@ -194,7 +213,7 @@ export const App: React.FC = () => {
               />
             )}
 
-            {/* VIEW 3: TÉCNICOS */}
+            {/* VIEW 3: TÉCNICOS / EXTENSIONISTAS */}
             {activeTab === 'tecnicos' && (
               <TecnicosView
                 tecnicos={tecnicos}
@@ -219,18 +238,18 @@ export const App: React.FC = () => {
 
       </main>
 
-      {/* Footer */}
-      <footer className="no-print bg-slate-900/60 border-t border-slate-800/80 py-4 text-center text-xs text-slate-500">
+      {/* Rodapé com Indicador de Conexão */}
+      <footer className="no-print bg-slate-900/80 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
-          <span>Bello Alimentos © 2026 • Sistema de Ficha Cadastral e Setup de Granjas</span>
-          <div className="flex items-center gap-1 text-[11px] text-emerald-400">
+          <span>Bello Alimentos © 2026 • Ficha Cadastral e Setup de Granjas</span>
+          <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Supabase Cloud Conectado (Upsert Seguro Ativo)</span>
+            <span>Supabase Conectado ({produtores.length} produtores / {aviarios.length} aviários sincronizados)</span>
           </div>
         </div>
       </footer>
 
-      {/* Import Modal */}
+      {/* Modal de Importação */}
       <ImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
@@ -244,4 +263,5 @@ export const App: React.FC = () => {
     </div>
   );
 };
+
 export default App;
