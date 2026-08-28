@@ -1,12 +1,12 @@
 {
   "name": "ficha-cadastral-produtores",
+  "version": "0.1.0",
   "private": true,
-  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun x --bun vite",
-    "build": "bun x tsc && bun x --bun vite build",
-    "preview": "bun x --bun vite preview"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
@@ -29,6 +29,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "fdir": "^6.5.0",
     "typescript": "^5.7.3",
-    "vite": "8.1.5"
-  }
+    "vite": "^8.1.5"
+  },
+  "packageManager": "npm@10.0.0"
 }
