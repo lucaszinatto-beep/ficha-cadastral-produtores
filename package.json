@@ -1,0 +1,34 @@
+{
+  "name": "ficha-cadastral-produtores",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun x --bun vite",
+    "build": "bun x tsc && bun x --bun vite build",
+    "preview": "bun x --bun vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "@tailwindcss/vite": "^4.0.9",
+    "canvas-confetti": "^1.9.4",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.0.1",
+    "tailwindcss": "^4.0.9",
+    "tslib": "^2.8.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "fdir": "^6.5.0",
+    "typescript": "^5.7.3",
+    "vite": "8.1.5"
+  }
+}
