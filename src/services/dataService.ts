@@ -1,6 +1,49 @@
 import { supabase } from './supabase';
 import { Produtor, Tecnico, Aviario, SetupAviario } from '../types/database';
 
+export async function validateSupabaseConnection(): Promise<{
+  isValid: boolean;
+  error?: string;
+  counts?: { produtores: number; aviarios: number; tecnicos: number };
+}> {
+  try {
+    const { count: prodCount, error: prodErr } = await supabase
+      .from('produtores')
+      .select('*', { count: 'exact', head: true });
+
+    if (prodErr) {
+      return { isValid: false, error: `Erro ao acessar tabela 'produtores': ${prodErr.message}` };
+    }
+
+    const { count: avCount, error: avErr } = await supabase
+      .from('cadastro_aviarios')
+      .select('*', { count: 'exact', head: true });
+
+    if (avErr) {
+      return { isValid: false, error: `Erro ao acessar tabela 'cadastro_aviarios': ${avErr.message}` };
+    }
+
+    const { count: tecCount, error: tecErr } = await supabase
+      .from('tecnicos')
+      .select('*', { count: 'exact', head: true });
+
+    if (tecErr) {
+      return { isValid: false, error: `Erro ao acessar tabela 'tecnicos': ${tecErr.message}` };
+    }
+
+    return {
+      isValid: true,
+      counts: {
+        produtores: prodCount || 0,
+        aviarios: avCount || 0,
+        tecnicos: tecCount || 0
+      }
+    };
+  } catch (err: any) {
+    return { isValid: false, error: err?.message || 'Falha ao conectar no Supabase' };
+  }
+}
+
 export async function fetchProdutores(): Promise<Produtor[]> {
   const { data, error } = await supabase
     .from('produtores')
