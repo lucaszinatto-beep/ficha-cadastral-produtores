@@ -57,7 +57,7 @@ export const Header: React.FC<HeaderProps> = ({
                   </span>
                 </div>
                 <h1 className="text-sm font-bold text-white tracking-tight">
-                  Ficha Cadastral de Produtores & Aviários
+                  SETUP GRANJAS
                 </h1>
               </div>
             </div>
