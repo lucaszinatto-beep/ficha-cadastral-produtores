@@ -19,6 +19,7 @@ import { RefreshCw, ShieldCheck, Home, AlertCircle } from 'lucide-react';
 export const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState<'fichas' | 'produtores' | 'tecnicos' | 'historico'>('fichas');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -98,10 +99,14 @@ export const App: React.FC = () => {
     });
 
     // 2. Escutar mudanças na autenticação (login, logout, refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      setSession(currentSession);
       setIsAuthChecking(false);
-      if (session) {
+      if (currentSession) {
+        if (event === 'SIGNED_IN') {
+          setShowSplash(true);
+          setTimeout(() => setShowSplash(false), 1500);
+        }
         loadData();
         loadUserProfile();
       } else {
@@ -178,6 +183,25 @@ export const App: React.FC = () => {
   // 2. Tela de Login se não estiver autenticado
   if (!session) {
     return <LoginView onLoginSuccess={() => loadData()} />;
+  }
+
+  // 2.5 Splash de Transição (Pós-login)
+  if (showSplash) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden z-[100]">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"></div>
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl"></div>
+        
+        <div className="bg-white rounded-3xl p-6 shadow-[0_0_80px_rgba(56,189,248,0.8)] border border-sky-400 z-10 animate-logo-transition">
+          <img
+            src="/Logo_Bello.png"
+            alt="Bello Alimentos"
+            className="h-20 w-auto object-contain"
+          />
+        </div>
+      </div>
+    );
   }
 
   return (

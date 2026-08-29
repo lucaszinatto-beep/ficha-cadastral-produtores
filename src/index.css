@@ -117,3 +117,14 @@
     break-after: page !important;
   }
 }
+
+@layer utilities {
+  @keyframes logo-transition {
+    0% { transform: scale(1); opacity: 1; }
+    30% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(5); opacity: 0; }
+  }
+  .animate-logo-transition {
+    animation: logo-transition 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+}

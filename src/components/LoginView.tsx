@@ -62,7 +62,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
         
         {/* Cabeçalho com Logo Oficial Bello */}
         <div className="flex flex-col items-center text-center space-y-3">
-          <div className="bg-white rounded-2xl p-3 shadow-lg shadow-black/20 border border-white/20 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-3 shadow-[0_0_30px_rgba(56,189,248,0.5)] border border-sky-400/50 flex items-center justify-center animate-pulse relative z-10 transition-all duration-700">
             <img
               src="/Logo_Bello.png"
               alt="Bello Alimentos"
@@ -73,12 +73,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[11px] font-bold uppercase tracking-wider mb-1">
               <Sparkles className="w-3 h-3 text-sky-400" />
-              <span>Set Up Granja</span>
+              <span>Acesso Restrito</span>
             </div>
-            <h1 className="text-xl font-bold text-white tracking-tight">
-              Ficha Cadastral & Setup
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase leading-none mt-2">
+              Setup <span className="text-sky-400">Granja</span>
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-400 mt-2">
               Acesso exclusivo para colaboradores e extensionistas
             </p>
           </div>
