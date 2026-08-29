@@ -84,13 +84,15 @@ export const CascadeFilterBar: React.FC<CascadeFilterBarProps> = ({
     <div className="bg-slate-900 border border-slate-700/80 rounded-3xl p-5 shadow-xl space-y-4">
       
       {/* Banner de Rastreamento da Cascata */}
-      <div className="flex flex-wrap items-center justify-between gap-2 text-xs border-b border-slate-800 pb-3">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-sky-400"></span>
-          <span className="font-bold text-slate-200 uppercase tracking-wider text-[11px]">
-            Filtro em Cascata:
-          </span>
-          <div className="flex flex-wrap items-center gap-1 text-[11px] font-semibold">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 text-xs border-b border-slate-800 pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-sky-400 shrink-0"></span>
+            <span className="font-bold text-slate-200 uppercase tracking-wider text-[11px] shrink-0">
+              Filtro em Cascata:
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold pl-4 sm:pl-0">
             <span className={selectedProdutor ? 'text-sky-400 font-bold' : 'text-slate-500'}>
               1. Produtor
             </span>
@@ -110,9 +112,9 @@ export const CascadeFilterBar: React.FC<CascadeFilterBarProps> = ({
         </div>
 
         {/* Informações de Extensionistas */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 pl-4 xl:pl-0">
           {tecnicosOfProdutor.length > 1 && (
-            <div className="flex items-center gap-1.5 text-xs text-sky-300 bg-sky-500/10 border border-sky-500/30 px-2.5 py-0.5 rounded-lg font-semibold">
+            <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-sky-300 bg-sky-500/10 border border-sky-500/30 px-2.5 py-0.5 rounded-lg font-semibold">
               <Users className="w-3.5 h-3.5 text-sky-400" />
               <span>{tecnicosOfProdutor.length} Extensionistas Atendendo</span>
             </div>
