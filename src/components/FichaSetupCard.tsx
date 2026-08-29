@@ -456,7 +456,7 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
             <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
               <span className="block font-bold text-sky-300 text-[11px] uppercase">Altura do Galpão</span>
               <div className="grid grid-cols-3 gap-2 text-center">
-                {['Frente', 'Meio', 'Fundo'].map((local, idx) => {
+                {['Frente', 'Meio', 'Fundo'].map((local) => {
                   const field = `altura_${local.toLowerCase()}` as keyof SetupAviario;
                   return (
                     <div key={local} className="p-2 rounded-lg bg-slate-950/50 border border-slate-800/50">
