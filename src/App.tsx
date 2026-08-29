@@ -261,7 +261,7 @@ export const App: React.FC = () => {
                     allTecnicos={tecnicos}
                     allAviariosOfProdutor={aviariosOfSelectedProdutor}
                     onSetupUpdated={loadData}
-                    userLevel={userLevel}
+                    userProfile={userProfile}
                   />
                 ) : (
                   <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center text-slate-400 space-y-3">

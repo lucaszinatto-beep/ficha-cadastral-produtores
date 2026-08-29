@@ -94,8 +94,8 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* BOTÃO DE IMPORTAÇÃO - Apenas para Admin (level >= 80) */}
-            {userLevel >= 80 && (
+            {/* BOTÃO DE IMPORTAÇÃO - Apenas para Super Admin */}
+            {userRole === 'super_admin' && (
               <button
                 id="btn-importar-base-unico"
                 onClick={onOpenImportModal}

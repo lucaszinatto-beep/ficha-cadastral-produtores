@@ -8,12 +8,14 @@ import { saveSetupData, updateAviarioTecnico } from '../services/dataService';
 import { BelloLogo } from './BelloLogo';  
 import { PrintSetupModal } from './PrintSetupModal';
 
+import { UserProfile } from '../services/profileService';
+
 interface FichaSetupCardProps {
   aviario: Aviario;
   allTecnicos: Tecnico[];
   allAviariosOfProdutor?: Aviario[];
   onSetupUpdated: () => void;
-  userLevel?: number;
+  userProfile?: UserProfile | null;
 }
 
 export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
@@ -21,7 +23,7 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   allTecnicos,
   allAviariosOfProdutor = [],
   onSetupUpdated,
-  userLevel = 10
+  userProfile = null
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -123,6 +125,11 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
     return <span className="text-slate-600 text-xs">-</span>;
   };
 
+  const isSuperOrAdmin = userProfile?.role === 'super_admin' || userProfile?.role === 'admin';
+  const isOwnerExtensionist = userProfile?.role === 'extensionista' && 
+                              aviario.tecnico?.nome?.trim().toLowerCase() === userProfile.full_name?.trim().toLowerCase();
+  const canEdit = isSuperOrAdmin || isOwnerExtensionist;
+
   return (
     <div className="w-full max-w-7xl mx-auto bg-slate-900 border border-slate-700/80 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-2xl space-y-6 relative overflow-hidden">
       
@@ -166,7 +173,7 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
             </>
           ) : (
             <>
-              {userLevel >= 50 && (
+              {canEdit && (
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
