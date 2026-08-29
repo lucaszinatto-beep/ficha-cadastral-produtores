@@ -56,9 +56,6 @@ export const Header: React.FC<HeaderProps> = ({
                     Set Up Granja
                   </span>
                 </div>
-                <h1 className="text-sm font-bold text-white tracking-tight">
-                  SETUP GRANJAS
-                </h1>
               </div>
             </div>
 
