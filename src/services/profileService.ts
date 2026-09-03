@@ -118,7 +118,8 @@ export const createUserSilently = async (email: string, password: string, fullNa
     password,
     options: {
       data: {
-        full_name: fullName
+        full_name: fullName,
+        force_password_change: true
       }
     }
   });

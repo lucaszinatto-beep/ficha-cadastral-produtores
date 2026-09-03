@@ -194,6 +194,23 @@ erDiagram
 
 ---
 
+### 4.8. 🛡️ Auditoria, Histórico de Versões e Restauração da Ficha Técnica
+- **Cadastro Inicial (1ª Gravação)**: Salva data, hora, usuário responsável e o conjunto completo de parâmetros informados (Versão 1).
+- **Ajustes Subsequentes**: Ao alterar qualquer parâmetro de um produtor/aviário, o sistema calcula a diferença exata campo a campo (`valor anterior → valor novo`), salvando uma nova versão com data, hora, usuário e resumo legível do que foi ajustado.
+- **Linha do Tempo de Auditoria (Modal)**:
+  - Botão **"Auditoria"** com contador de versões na barra de ações da Ficha Técnica.
+  - Indicadores no cabeçalho do laudo informando autor e data/hora do **1º Cadastro** e do **Último Ajuste**.
+  - Visualização cronológica de todas as versões (com identificação da versão atual e da versão inicial).
+  - Tabela expansível exibindo todos os campos modificados por revisão.
+- **Restauração de Versões Anteriores**:
+  - Permite voltar e restaurar com um clique qualquer versão anterior (inclusive o primeiro dado cadastrado).
+  - Gera um novo registro de auditoria registrando a restauração, mantendo a rastreabilidade total.
+- **Migração SQL & Resiliência**:
+  - Script SQL de migração: `supabase_migration_audit_history.sql` (tabela `setups_aviarios_historico` com RLS).
+  - Fallback automático para `localStorage`, garantindo disponibilidade mesmo caso a migração do banco ainda não tenha sido executada.
+
+---
+
 ## 5. 🛠️ Como Executar e Configurar
 
 ### 5.1. Variáveis de Ambiente (`.env`)

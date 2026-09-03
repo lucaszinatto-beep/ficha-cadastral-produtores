@@ -20,6 +20,7 @@ export const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
   const [showSplash, setShowSplash] = useState(false);
+  const [isRecoveringPassword, setIsRecoveringPassword] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState<'fichas' | 'produtores' | 'tecnicos' | 'historico'>('fichas');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -103,7 +104,10 @@ export const App: React.FC = () => {
       setSession(currentSession);
       setIsAuthChecking(false);
       if (currentSession) {
-        if (event === 'SIGNED_IN') {
+        if (event === 'PASSWORD_RECOVERY') {
+          setIsRecoveringPassword(true);
+        }
+        if (event === 'SIGNED_IN' && !currentSession.user?.user_metadata?.force_password_change) {
           setShowSplash(true);
           setTimeout(() => setShowSplash(false), 1500);
         }
@@ -180,9 +184,20 @@ export const App: React.FC = () => {
     );
   }
 
-  // 2. Tela de Login se não estiver autenticado
-  if (!session) {
-    return <LoginView onLoginSuccess={() => loadData()} />;
+  // 2. Tela de Login se não estiver autenticado, ou se precisar forçar troca de senha/recuperação
+  const forcePasswordChange = session?.user?.user_metadata?.force_password_change === true;
+  
+  if (!session || forcePasswordChange || isRecoveringPassword) {
+    return (
+      <LoginView 
+        onLoginSuccess={() => {
+          setIsRecoveringPassword(false);
+          loadData();
+        }} 
+        initialSession={session} 
+        isRecovering={isRecoveringPassword}
+      />
+    );
   }
 
   // 2.5 Splash de Transição (Pós-login)

@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
-import { Produtor, Tecnico, Aviario, SetupAviario } from '../types/database';
+import { Produtor, Tecnico, Aviario, SetupAviario, SetupHistorico, SetupCampoAlterado } from '../types/database';
+import { UserProfile } from './profileService';
 
 export async function validateSupabaseConnection(): Promise<{
   isValid: boolean;
@@ -107,39 +108,355 @@ export async function fetchAviariosByProdutor(produtorId: string): Promise<Aviar
   return (data || []) as Aviario[];
 }
 
-export async function saveSetupData(aviarioId: string, payload: Partial<SetupAviario>): Promise<SetupAviario> {
+export const SETUP_FIELD_LABELS: Record<string, string> = {
+  pressao_vedacao_exaustor: 'Pressão Vedação - Nº Exaustor',
+  pressao_vedacao_manometro: 'Pressão Vedação - Manômetro',
+  pressao_vedacao_painel: 'Pressão Vedação - Painel',
+  pressao_vedacao_media: 'Pressão Vedação - Média',
+  pressao_trabalho_exaustor: 'Pressão Trabalho - Nº Exaustor',
+  pressao_trabalho_manometro: 'Pressão Trabalho - Manômetro',
+  pressao_trabalho_painel: 'Pressão Trabalho - Painel',
+  pressao_trabalho_media: 'Pressão Trabalho - Média',
+  ventilacao_dir: 'Ventilação Total - Lateral Dir.',
+  ventilacao_meio: 'Ventilação Total - Meio',
+  ventilacao_esq: 'Ventilação Total - Lateral Esq.',
+  ventilacao_media: 'Ventilação Total - Média',
+  qtd_exaustores: 'Qtd. Exaustores',
+  vent_ar_l1_p1: 'Entrada Ar L1 (Fornos) - P1 Frente',
+  vent_ar_l1_p2: 'Entrada Ar L1 (Fornos) - P2 Centro',
+  vent_ar_l1_p3: 'Entrada Ar L1 (Fornos) - P3 Fundo',
+  vent_ar_l2_p1: 'Entrada Ar L2 - P1 Frente',
+  vent_ar_l2_p2: 'Entrada Ar L2 - P2 Centro',
+  vent_ar_l2_p3: 'Entrada Ar L2 - P3 Fundo',
+  vent_ar_media: 'Média Entrada de Ar',
+  entrada_ar_direito: 'Entrada Ar Direito',
+  entrada_ar_esquerdo: 'Entrada Ar Esquerdo',
+  iluminacao_sob_lampada: 'Iluminação - Sob Lâmpada',
+  iluminacao_lateral: 'Iluminação - Lateral',
+  iluminacao_triangulo: 'Iluminação - Triângulo',
+  lux_100: 'Iluminação - LUX 100%',
+  tamanho_placa: 'Placa Evaporativa - Tamanho',
+  tempo_molhar_placa: 'Placa Evaporativa - Tempo Molhar',
+  altura_frente: 'Dimensões - Altura Frente',
+  altura_meio: 'Dimensões - Altura Meio',
+  altura_fundo: 'Dimensões - Altura Fundo',
+  altura_media: 'Dimensões - Altura Média',
+  comprimento_galpao: 'Dimensões - Comprimento',
+  largura_galpao: 'Dimensões - Largura',
+  vazao_poco_1: 'Recursos Hídricos - Poço 1',
+  vazao_poco_2: 'Recursos Hídricos - Poço 2',
+  entrada_agua_galpao: 'Recursos Hídricos - Entrada Galpão',
+  armazenamento_agua: 'Recursos Hídricos - Armazenamento',
+  alarme_casa: 'Alarme Casa (Possui)',
+  alarme_casa_func: 'Alarme Casa (Funcionando)',
+  alarme_aviario: 'Alarme Aviário (Possui)',
+  alarme_aviario_func: 'Alarme Aviário (Funcionando)',
+  alarme_caixas: 'Alarme Caixas Central (Possui)',
+  alarme_caixas_func: 'Alarme Caixas Central (Funcionando)',
+  observacoes: 'Observações'
+};
+
+function formatAuditVal(val: any): string {
+  if (val === null || val === undefined || val === '') return 'Vazio';
+  if (val === true) return 'SIM';
+  if (val === false) return 'NÃO';
+  return String(val);
+}
+
+const LOCAL_STORAGE_HIST_PREFIX = 'bello_audit_historico_';
+
+function getLocalHistorico(aviarioId: string): SetupHistorico[] {
+  try {
+    const raw = localStorage.getItem(`${LOCAL_STORAGE_HIST_PREFIX}${aviarioId}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalHistorico(aviarioId: string, historico: SetupHistorico[]): void {
+  try {
+    localStorage.setItem(`${LOCAL_STORAGE_HIST_PREFIX}${aviarioId}`, JSON.stringify(historico));
+  } catch (e) {
+    console.warn('Erro ao salvar histórico no localStorage:', e);
+  }
+}
+
+export async function fetchSetupHistorico(aviarioId: string): Promise<SetupHistorico[]> {
+  const localList = getLocalHistorico(aviarioId);
+
+  try {
+    const { data, error } = await supabase
+      .from('setups_aviarios_historico')
+      .select('*')
+      .eq('aviario_id', aviarioId)
+      .order('versao', { ascending: false });
+
+    if (error) {
+      // Se a tabela ainda não existir no Supabase, usa o fallback local
+      console.warn('Histórico Supabase indisponível (usando local):', error.message);
+      return localList.sort((a, b) => b.versao - a.versao);
+    }
+
+    if (data && data.length > 0) {
+      // Sincroniza com local para acesso offline rápido
+      saveLocalHistorico(aviarioId, data as SetupHistorico[]);
+      return data as SetupHistorico[];
+    }
+  } catch (err) {
+    console.warn('Falha na consulta ao histórico do Supabase:', err);
+  }
+
+  return localList.sort((a, b) => b.versao - a.versao);
+}
+
+export async function saveSetupData(
+  aviarioId: string, 
+  payload: Partial<SetupAviario>,
+  userProfile?: UserProfile | null,
+  tipoAcaoOverride?: 'CRIACAO' | 'EDICAO' | 'RESTAURACAO',
+  resumoCustomizado?: string
+): Promise<SetupAviario> {
+  // 1. Obter registro atual completo antes de alterar
   const { data: existing } = await supabase
     .from('setups_aviarios')
-    .select('id')
+    .select('*')
     .eq('aviario_id', aviarioId)
     .maybeSingle();
 
-  const cleanPayload = {
+  // 2. Identificar usuário atual
+  let currentUserId = userProfile?.id || null;
+  let currentUserName = userProfile?.full_name || '';
+  let currentUserEmail: string | null = null;
+
+  if (!currentUserName) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        currentUserId = user.id;
+        currentUserEmail = user.email || null;
+        currentUserName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuário';
+      }
+    } catch {
+      // continua com fallback
+    }
+  }
+
+  if (!currentUserName) currentUserName = 'Usuário do Sistema';
+
+  // 3. Verificar se é primeiro cadastro do aviário
+  const hasExistingData = existing && Object.keys(SETUP_FIELD_LABELS).some(k => (existing as any)[k] !== null && (existing as any)[k] !== undefined);
+  const isInitial = !hasExistingData;
+
+  const tipoAcao = tipoAcaoOverride || (isInitial ? 'CRIACAO' : 'EDICAO');
+
+  // 4. Calcular diferenças (o que gravou / o que ajustou)
+  const alteracoes: SetupCampoAlterado[] = [];
+  
+  if (tipoAcao === 'CRIACAO') {
+    Object.keys(SETUP_FIELD_LABELS).forEach(field => {
+      const val = (payload as any)[field];
+      if (val !== undefined && val !== null && val !== '') {
+        alteracoes.push({
+          campo: field,
+          label: SETUP_FIELD_LABELS[field] || field,
+          valor_anterior: null,
+          valor_novo: val
+        });
+      }
+    });
+  } else {
+    // É ajuste ou restauração: comparar campo a campo
+    Object.keys(SETUP_FIELD_LABELS).forEach(field => {
+      const oldVal = (existing as any)?.[field] ?? null;
+      const newVal = (payload as any)[field] ?? null;
+
+      // Normaliza comparação (trata null e undefined de forma idêntica)
+      const oldNorm = (oldVal === '' || oldVal === undefined) ? null : oldVal;
+      const newNorm = (newVal === '' || newVal === undefined) ? null : newVal;
+
+      if (oldNorm !== newNorm) {
+        alteracoes.push({
+          campo: field,
+          label: SETUP_FIELD_LABELS[field] || field,
+          valor_anterior: oldNorm,
+          valor_novo: newNorm
+        });
+      }
+    });
+  }
+
+  // 5. Construir resumo legível das alterações
+  let resumo = resumoCustomizado || '';
+  if (!resumo) {
+    if (tipoAcao === 'CRIACAO') {
+      resumo = `Cadastro inicial da Ficha Técnica (${alteracoes.length} parâmetros informados)`;
+    } else if (tipoAcao === 'RESTAURACAO') {
+      resumo = `Restauração de versão anterior (${alteracoes.length} parâmetros ajustados)`;
+    } else {
+      if (alteracoes.length === 0) {
+        resumo = 'Ficha salva sem alterações nos parâmetros técnicos.';
+      } else {
+        const amostra = alteracoes.slice(0, 3).map(a => 
+          `${a.label}: ${formatAuditVal(a.valor_anterior)} → ${formatAuditVal(a.valor_novo)}`
+        ).join(' | ');
+        const extra = alteracoes.length > 3 ? ` (+${alteracoes.length - 3} outros campos)` : '';
+        resumo = `Ajustou ${alteracoes.length} campo(s): ${amostra}${extra}`;
+      }
+    }
+  }
+
+  // 6. Preparar payload de atualização para setups_aviarios
+  const nowIso = new Date().toISOString();
+  const cleanPayload: any = {
     ...payload,
     aviario_id: aviarioId,
-    updated_at: new Date().toISOString()
+    updated_at: nowIso,
+    updated_by_id: currentUserId,
+    updated_by_name: currentUserName
   };
 
+  if (isInitial || !existing?.created_by_name) {
+    cleanPayload.created_by_id = currentUserId;
+    cleanPayload.created_by_name = currentUserName;
+  }
+
+  // Remove campos que não pertencem à tabela setups_aviarios
+  delete cleanPayload.produtor;
+  delete cleanPayload.tecnico;
+  delete cleanPayload.setup;
+
+  let savedData: SetupAviario;
+
+  // 7. Persistir em setups_aviarios (com fallback transparente caso colunas de autoria ainda não existam no banco)
   if (existing) {
-    const { data, error } = await supabase
+    let updateRes = await supabase
       .from('setups_aviarios')
       .update(cleanPayload)
       .eq('id', existing.id)
       .select('*')
       .single();
 
-    if (error) throw error;
-    return data;
+    if (updateRes.error && updateRes.error.message?.includes('column')) {
+      // Se colunas de autoria ainda não existem na tabela, remove-as e tenta novamente
+      const fallbackPayload = { ...cleanPayload };
+      delete fallbackPayload.created_by_id;
+      delete fallbackPayload.created_by_name;
+      delete fallbackPayload.updated_by_id;
+      delete fallbackPayload.updated_by_name;
+
+      updateRes = await supabase
+        .from('setups_aviarios')
+        .update(fallbackPayload)
+        .eq('id', existing.id)
+        .select('*')
+        .single();
+    }
+
+    if (updateRes.error) throw updateRes.error;
+    savedData = updateRes.data;
   } else {
-    const { data, error } = await supabase
+    let insertRes = await supabase
       .from('setups_aviarios')
       .insert([cleanPayload])
       .select('*')
       .single();
 
-    if (error) throw error;
-    return data;
+    if (insertRes.error && insertRes.error.message?.includes('column')) {
+      const fallbackPayload = { ...cleanPayload };
+      delete fallbackPayload.created_by_id;
+      delete fallbackPayload.created_by_name;
+      delete fallbackPayload.updated_by_id;
+      delete fallbackPayload.updated_by_name;
+
+      insertRes = await supabase
+        .from('setups_aviarios')
+        .insert([fallbackPayload])
+        .select('*')
+        .single();
+    }
+
+    if (insertRes.error) throw insertRes.error;
+    savedData = insertRes.data;
   }
+
+  // 8. Calcular número da nova versão de histórico
+  const historicoAnterior = await fetchSetupHistorico(aviarioId);
+  const maiorVersao = historicoAnterior.reduce((max, h) => Math.max(max, h.versao || 0), 0);
+  const novaVersao = maiorVersao + 1;
+
+  // 9. Criar objeto de auditoria e salvar no histórico
+  const novoRegistroHistorico: SetupHistorico = {
+    id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `hist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    aviario_id: aviarioId,
+    setup_id: savedData.id,
+    versao: novaVersao,
+    tipo_acao: tipoAcao,
+    usuario_id: currentUserId,
+    usuario_nome: currentUserName,
+    usuario_email: currentUserEmail,
+    dados_snapshot: { ...savedData },
+    alteracoes,
+    resumo_alteracoes: resumo,
+    created_at: nowIso
+  };
+
+  // Salva no Supabase (se a tabela de histórico existir)
+  try {
+    const { error: histError } = await supabase
+      .from('setups_aviarios_historico')
+      .insert([{
+        id: novoRegistroHistorico.id,
+        aviario_id: novoRegistroHistorico.aviario_id,
+        setup_id: novoRegistroHistorico.setup_id,
+        versao: novoRegistroHistorico.versao,
+        tipo_acao: novoRegistroHistorico.tipo_acao,
+        usuario_id: novoRegistroHistorico.usuario_id,
+        usuario_nome: novoRegistroHistorico.usuario_nome,
+        usuario_email: novoRegistroHistorico.usuario_email,
+        dados_snapshot: novoRegistroHistorico.dados_snapshot,
+        alteracoes: novoRegistroHistorico.alteracoes,
+        resumo_alteracoes: novoRegistroHistorico.resumo_alteracoes,
+        created_at: novoRegistroHistorico.created_at
+      }]);
+
+    if (histError) {
+      console.warn('Histórico Supabase não gravado (usando localStorage):', histError.message);
+    }
+  } catch (err) {
+    console.warn('Erro ao inserir histórico no Supabase:', err);
+  }
+
+  // Sempre sincroniza com localStorage para redundância e disponibilidade imediata
+  const historicoAtualizado = [novoRegistroHistorico, ...historicoAnterior.filter(h => h.id !== novoRegistroHistorico.id)];
+  saveLocalHistorico(aviarioId, historicoAtualizado);
+
+  return savedData;
+}
+
+export async function restoreSetupVersion(
+  aviarioId: string, 
+  historicoItem: SetupHistorico, 
+  userProfile?: UserProfile | null
+): Promise<SetupAviario> {
+  const snapshot = { ...historicoItem.dados_snapshot };
+  
+  // Limpar chaves internas que não devem ser sobrescritas diretamente
+  delete snapshot.id;
+  delete snapshot.aviario_id;
+  delete snapshot.created_at;
+  delete snapshot.updated_at;
+
+  const dataFormatada = new Date(historicoItem.created_at).toLocaleString('pt-BR');
+  const motivo = `Restauração para a Versão ${historicoItem.versao} (gravada por ${historicoItem.usuario_nome} em ${dataFormatada})`;
+
+  return await saveSetupData(
+    aviarioId, 
+    snapshot, 
+    userProfile, 
+    'RESTAURACAO', 
+    motivo
+  );
 }
 
 export async function updateAviarioTecnico(aviarioId: string, tecnicoId: string | null): Promise<void> {

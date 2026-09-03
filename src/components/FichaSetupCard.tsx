@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Printer, Edit3, Save, RotateCcw, Check, Sparkles, 
-  Wind, Gauge, Droplets, Bell, Ruler, Sun, Fan, Smartphone
+  Wind, Gauge, Droplets, Bell, Ruler, Sun, Fan, Smartphone, History
 } from 'lucide-react';
-import { Aviario, SetupAviario, Tecnico } from '../types/database';
-import { saveSetupData, updateAviarioTecnico } from '../services/dataService';
+import { Aviario, SetupAviario, Tecnico, SetupHistorico } from '../types/database';
+import { saveSetupData, updateAviarioTecnico, fetchSetupHistorico, restoreSetupVersion } from '../services/dataService';
 import { BelloLogo } from './BelloLogo';  
 import { PrintSetupModal } from './PrintSetupModal';
+import { FichaHistoryModal } from './FichaHistoryModal';
 
 import { UserProfile } from '../services/profileService';
 
@@ -28,14 +29,31 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [historicoList, setHistoricoList] = useState<SetupHistorico[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [selectedTecnicoId, setSelectedTecnicoId] = useState<string>(aviario.tecnico_id || '');
   const [formData, setFormData] = useState<Partial<SetupAviario>>({});
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const loadHistoricoData = async () => {
+    if (!aviario.id) return;
+    setIsLoadingHistory(true);
+    try {
+      const list = await fetchSetupHistorico(aviario.id);
+      setHistoricoList(list);
+    } catch (err) {
+      console.warn('Erro ao carregar histórico:', err);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
 
   useEffect(() => {
     setFormData(aviario.setup || {});
     setSelectedTecnicoId(aviario.tecnico_id || '');
     setIsEditing(false);
+    loadHistoricoData();
   }, [aviario]);
 
   const handleFieldChange = (field: keyof SetupAviario, value: any) => {
@@ -51,17 +69,27 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
       if (selectedTecnicoId !== aviario.tecnico_id) {
         await updateAviarioTecnico(aviario.id, selectedTecnicoId || null);
       }
-      await saveSetupData(aviario.id, formData);
+      await saveSetupData(aviario.id, formData, userProfile);
       
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
       setIsEditing(false);
+      await loadHistoricoData();
       onSetupUpdated();
     } catch (err: any) {
       alert(`Erro ao salvar dados: ${err?.message || 'Falha na conexão'}`);
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleRestoreVersion = async (versionItem: SetupHistorico) => {
+    await restoreSetupVersion(aviario.id, versionItem, userProfile);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
+    setIsEditing(false);
+    await loadHistoricoData();
+    onSetupUpdated();
   };
 
   const setup = isEditing ? formData : (aviario.setup || {});
@@ -130,6 +158,25 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
                               aviario.tecnico?.nome?.trim().toLowerCase() === userProfile.full_name?.trim().toLowerCase();
   const canEdit = isSuperOrAdmin || isOwnerExtensionist;
 
+  const formatHeaderDate = (isoString?: string | null) => {
+    if (!isoString) return '';
+    try {
+      const d = new Date(isoString);
+      return d.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return '';
+    }
+  };
+
+  const primeiroRegistro = historicoList.find(h => h.versao === 1) || (historicoList.length > 0 ? historicoList[historicoList.length - 1] : null);
+  const ultimoRegistro = historicoList.length > 0 ? historicoList[0] : null;
+
   return (
     <div className="w-full max-w-7xl mx-auto bg-slate-900 border border-slate-700/80 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-2xl space-y-6 relative overflow-hidden">
       
@@ -182,6 +229,20 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
                   <Edit3 className="w-4 h-4" /> Editar
                 </button>
               )}
+              <button
+                type="button"
+                onClick={() => setIsHistoryModalOpen(true)}
+                className="min-h-[44px] px-4 rounded-xl text-sm font-semibold text-sky-200 bg-slate-800 hover:bg-sky-600 hover:text-white border border-slate-700 hover:border-sky-500/50 shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                title="Histórico de Auditoria & Versões Anteriores"
+              >
+                <History className="w-4 h-4 text-sky-400" />
+                <span>Auditoria</span>
+                {historicoList.length > 0 && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-bold font-mono border border-sky-500/30">
+                    {historicoList.length}
+                  </span>
+                )}
+              </button>
               <button
                 type="button"
                 onClick={() => setIsPrintModalOpen(true)}
@@ -237,6 +298,45 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
                 )}
               </div>
             </div>
+
+            {/* Informações de Auditoria: Criador e Última Alteração */}
+            {(primeiroRegistro || setup.created_by_name || setup.created_at) && (
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-3 border-t border-slate-800/80 text-[11px]">
+                <div className="flex items-center gap-1.5 text-slate-400">
+                  <span className="text-slate-500 font-bold text-[10px] uppercase">1º Cadastro:</span>
+                  <span className="text-emerald-400 font-semibold">
+                    {primeiroRegistro?.usuario_nome || setup.created_by_name || 'Bello Alimentos'}
+                  </span>
+                  {(primeiroRegistro?.created_at || setup.created_at) && (
+                    <span className="text-slate-500 font-mono text-[10px]">
+                      em {formatHeaderDate(primeiroRegistro?.created_at || setup.created_at)}
+                    </span>
+                  )}
+                </div>
+
+                {((ultimoRegistro && ultimoRegistro.versao > 1) || (setup.updated_by_name && setup.updated_by_name !== (primeiroRegistro?.usuario_nome || setup.created_by_name))) && (
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <span className="text-slate-500 font-bold text-[10px] uppercase">• Último Ajuste:</span>
+                    <span className="text-sky-300 font-semibold">
+                      {ultimoRegistro ? `${ultimoRegistro.usuario_nome} (v${ultimoRegistro.versao})` : setup.updated_by_name}
+                    </span>
+                    {(ultimoRegistro?.created_at || setup.updated_at) && (
+                      <span className="text-slate-500 font-mono text-[10px]">
+                        em {formatHeaderDate(ultimoRegistro?.created_at || setup.updated_at)}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setIsHistoryModalOpen(true)}
+                  className="text-sky-400 hover:text-sky-300 underline font-semibold flex items-center gap-1 ml-auto text-[11px]"
+                >
+                  <History className="w-3 h-3" /> Ver histórico ({historicoList.length})
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="md:col-span-4 flex justify-start md:justify-end items-center w-full mt-2 md:mt-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-800">
@@ -527,6 +627,17 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
         onClose={() => setIsPrintModalOpen(false)}
         currentAviario={aviario}
         allAviariosOfProdutor={allAviariosOfProdutor.length > 0 ? allAviariosOfProdutor : [aviario]}
+      />
+
+      {/* MODAL DE HISTÓRICO & AUDITORIA */}
+      <FichaHistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
+        aviario={aviario}
+        historico={historicoList}
+        isLoading={isLoadingHistory}
+        onRestoreVersion={handleRestoreVersion}
+        canEdit={canEdit}
       />
 
     </div>

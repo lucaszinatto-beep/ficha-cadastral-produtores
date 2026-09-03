@@ -110,6 +110,34 @@ export interface SetupAviario {
   observacoes?: string | null;
   created_at: string;
   updated_at: string;
+
+  // Auditoria e Rastreamento
+  created_by_id?: string | null;
+  created_by_name?: string | null;
+  updated_by_id?: string | null;
+  updated_by_name?: string | null;
+}
+
+export interface SetupCampoAlterado {
+  campo: string;
+  label: string;
+  valor_anterior: any;
+  valor_novo: any;
+}
+
+export interface SetupHistorico {
+  id: string;
+  aviario_id: string;
+  setup_id?: string | null;
+  versao: number;
+  tipo_acao: 'CRIACAO' | 'EDICAO' | 'RESTAURACAO';
+  usuario_id?: string | null;
+  usuario_nome: string;
+  usuario_email?: string | null;
+  dados_snapshot: Partial<SetupAviario>;
+  alteracoes: SetupCampoAlterado[];
+  resumo_alteracoes?: string | null;
+  created_at: string;
 }
 
 export interface ImportacaoLog {
