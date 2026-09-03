@@ -459,6 +459,128 @@ export async function restoreSetupVersion(
   );
 }
 
+export async function deleteSetupHistoricoItem(historyId: string, aviarioId: string): Promise<boolean> {
+  // 1. Tentar deletar no Supabase
+  try {
+    const { error } = await supabase
+      .from('setups_aviarios_historico')
+      .delete()
+      .eq('id', historyId);
+
+    if (error) {
+      console.warn('Erro ao deletar histórico no Supabase:', error.message);
+    }
+  } catch (err) {
+    console.warn('Falha na exclusão do histórico no Supabase:', err);
+  }
+
+  // 2. Deletar no localStorage
+  const localList = getLocalHistorico(aviarioId);
+  const updatedList = localList.filter(h => h.id !== historyId);
+  saveLocalHistorico(aviarioId, updatedList);
+
+  return true;
+}
+
+export async function clearAllSetupHistorico(aviarioId: string): Promise<boolean> {
+  // 1. Tentar limpar no Supabase
+  try {
+    const { error } = await supabase
+      .from('setups_aviarios_historico')
+      .delete()
+      .eq('aviario_id', aviarioId);
+
+    if (error) {
+      console.warn('Erro ao limpar histórico no Supabase:', error.message);
+    }
+  } catch (err) {
+    console.warn('Falha ao limpar histórico no Supabase:', err);
+  }
+
+  // 2. Limpar no localStorage
+  saveLocalHistorico(aviarioId, []);
+  return true;
+}
+
+export const DEFAULT_SETUP_VALUES: Partial<SetupAviario> = {
+  // Pressão de Vedação
+  pressao_vedacao_exaustor: 15,
+  pressao_vedacao_manometro: 15,
+  pressao_vedacao_painel: 15,
+  pressao_vedacao_media: 15,
+
+  // Pressão de Trabalho
+  pressao_trabalho_exaustor: 25,
+  pressao_trabalho_manometro: 25,
+  pressao_trabalho_painel: 25,
+  pressao_trabalho_media: 25,
+
+  // Ventilação Total
+  ventilacao_dir: 2.5,
+  ventilacao_meio: 2.5,
+  ventilacao_esq: 2.5,
+  ventilacao_media: 2.5,
+  qtd_exaustores: 6,
+
+  // Entrada de Ar
+  vent_ar_l1_p1: 4.0,
+  vent_ar_l1_p2: 4.0,
+  vent_ar_l1_p3: 4.0,
+  vent_ar_l2_p1: 4.0,
+  vent_ar_l2_p2: 4.0,
+  vent_ar_l2_p3: 4.0,
+  vent_ar_media: 4.0,
+  entrada_ar_direito: 'Inlet 100%',
+  entrada_ar_esquerdo: 'Inlet 100%',
+
+  // Iluminação / Lux
+  iluminacao_sob_lampada: 25,
+  iluminacao_lateral: 18,
+  iluminacao_triangulo: 20,
+  lux_100: 25,
+
+  // Placa Evaporativa
+  tamanho_placa: 1.8,
+  tempo_molhar_placa: 1.5,
+
+  // Dimensões do Galpão
+  altura_frente: 2.8,
+  altura_meio: 2.8,
+  altura_fundo: 2.8,
+  altura_media: 2.8,
+  comprimento_galpao: 150,
+  largura_galpao: 14,
+
+  // Recursos Hídricos
+  vazao_poco_1: 5000,
+  vazao_poco_2: 5000,
+  entrada_agua_galpao: 4000,
+  armazenamento_agua: 30000,
+
+  // Alarmes
+  alarme_casa: true,
+  alarme_casa_func: true,
+  alarme_aviario: true,
+  alarme_aviario_func: true,
+  alarme_caixas: true,
+  alarme_caixas_func: true,
+
+  observacoes: 'Padrão Técnico Bello Alimentos aplicado.'
+};
+
+export async function applyDefaultSetupValues(
+  aviarioId: string,
+  userProfile?: UserProfile | null
+): Promise<SetupAviario> {
+  return await saveSetupData(
+    aviarioId,
+    DEFAULT_SETUP_VALUES,
+    userProfile,
+    'EDICAO',
+    'Atribuição dos parâmetros técnicos padrão da Bello Alimentos'
+  );
+}
+
 export async function updateAviarioTecnico(aviarioId: string, tecnicoId: string | null): Promise<void> {
   const { error } = await supabase
     .from('cadastro_aviarios')

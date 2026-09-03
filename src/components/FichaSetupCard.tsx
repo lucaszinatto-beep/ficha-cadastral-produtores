@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Printer, Edit3, Save, RotateCcw, Check, Sparkles, 
-  Wind, Gauge, Droplets, Bell, Ruler, Sun, Fan, Smartphone, History
+  Wind, Gauge, Droplets, Bell, Ruler, Sun, Fan, Smartphone, History,
+  Sliders
 } from 'lucide-react';
 import { Aviario, SetupAviario, Tecnico, SetupHistorico } from '../types/database';
-import { saveSetupData, updateAviarioTecnico, fetchSetupHistorico, restoreSetupVersion } from '../services/dataService';
+import { 
+  saveSetupData, updateAviarioTecnico, fetchSetupHistorico, restoreSetupVersion,
+  deleteSetupHistoricoItem, clearAllSetupHistorico, applyDefaultSetupValues 
+} from '../services/dataService';
 import { BelloLogo } from './BelloLogo';  
 import { PrintSetupModal } from './PrintSetupModal';
 import { FichaHistoryModal } from './FichaHistoryModal';
@@ -30,6 +34,8 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isConfirmingDefault, setIsConfirmingDefault] = useState(false);
+  const [isApplyingDefault, setIsApplyingDefault] = useState(false);
   const [historicoList, setHistoricoList] = useState<SetupHistorico[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [selectedTecnicoId, setSelectedTecnicoId] = useState<string>(aviario.tecnico_id || '');
@@ -90,6 +96,34 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
     setIsEditing(false);
     await loadHistoricoData();
     onSetupUpdated();
+  };
+
+  const handleDeleteHistoryItem = async (historyId: string) => {
+    await deleteSetupHistoricoItem(historyId, aviario.id);
+    await loadHistoricoData();
+  };
+
+  const handleClearAllHistory = async () => {
+    await clearAllSetupHistorico(aviario.id);
+    await loadHistoricoData();
+  };
+
+  const handleApplyDefaultValues = async () => {
+    setIsApplyingDefault(true);
+    try {
+      const updated = await applyDefaultSetupValues(aviario.id, userProfile);
+      setFormData(updated);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+      setIsConfirmingDefault(false);
+      setIsEditing(false);
+      await loadHistoricoData();
+      onSetupUpdated();
+    } catch (err: any) {
+      alert(`Erro ao atribuir valores padrão: ${err?.message || 'Falha ao salvar'}`);
+    } finally {
+      setIsApplyingDefault(false);
+    }
   };
 
   const setup = isEditing ? formData : (aviario.setup || {});
@@ -227,6 +261,17 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
                   className="min-h-[44px] px-4 rounded-xl text-sm font-semibold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 transition-all flex items-center justify-center gap-2"
                 >
                   <Edit3 className="w-4 h-4" /> Editar
+                </button>
+              )}
+              {isSuperOrAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmingDefault(true)}
+                  className="min-h-[44px] px-3.5 rounded-xl text-sm font-semibold text-emerald-300 hover:text-white bg-emerald-500/10 hover:bg-emerald-600/80 border border-emerald-500/30 hover:border-emerald-400 transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-sm"
+                  title="Atribuir Parâmetros Técnicos Padrão Bello Alimentos"
+                >
+                  <Sliders className="w-4 h-4 text-emerald-400" />
+                  <span>Atribuir Padrão</span>
                 </button>
               )}
               <button
@@ -637,8 +682,63 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
         historico={historicoList}
         isLoading={isLoadingHistory}
         onRestoreVersion={handleRestoreVersion}
-        canEdit={canEdit}
+        onDeleteVersion={handleDeleteHistoryItem}
+        onClearAllHistory={handleClearAllHistory}
+        isSuperOrAdmin={isSuperOrAdmin}
       />
+
+      {/* MODAL DE CONFIRMAÇÃO DE ATRIBUIÇÃO DE PADRÃO */}
+      {isConfirmingDefault && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-lg bg-slate-900 border-2 border-emerald-500/50 rounded-2xl p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center gap-3 text-emerald-400">
+              <Sliders className="w-6 h-6 shrink-0" />
+              <h3 className="text-base font-black text-white">Atribuir Parâmetros Padrão</h3>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Você está prestes a aplicar os <strong>Parâmetros Padrão Recomendados da Bello Alimentos</strong> para o aviário <strong className="text-sky-300 font-mono">{aviario.numero_instalacao}</strong> do produtor <strong className="text-white uppercase">{aviario.produtor?.nome}</strong>.
+            </p>
+
+            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1.5 text-slate-300 font-mono">
+              <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider font-sans mb-1">
+                Valores Técnicos de Referência que serão aplicados:
+              </div>
+              <div>• Vedação: 15 Pa | Trabalho: 25 Pa</div>
+              <div>• Ventilação: 6 exaustores | 2.5 m/s</div>
+              <div>• Entrada de Ar: 4.0 m/s (P1, P2, P3)</div>
+              <div>• Iluminação: Lux 100% (25 lux)</div>
+              <div>• Placa: 1.80m | Tempo: 1.5 min</div>
+              <div>• Galpão: 150m x 14m x 2.80m</div>
+              <div>• Alarmes: Todos ativos e funcionando</div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
+              Esta ação substituirá os parâmetros atuais da ficha e salvará um novo registro de auditoria. (Permitido apenas para Super Admin e Administrador).
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsConfirmingDefault(false)}
+                disabled={isApplyingDefault}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-all"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleApplyDefaultValues}
+                disabled={isApplyingDefault}
+                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-2 active:scale-95"
+              >
+                <Check className="w-4 h-4" />
+                {isApplyingDefault ? 'Aplicando Padrão...' : 'Confirmar e Atribuir'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

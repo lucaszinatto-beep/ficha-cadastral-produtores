@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   X, History, RotateCcw, Clock, User, 
-  ChevronDown, ChevronUp, AlertTriangle, Sparkles, ShieldCheck
+  ChevronDown, ChevronUp, AlertTriangle, Sparkles, ShieldCheck,
+  Trash2, ShieldAlert
 } from 'lucide-react';
 import { SetupHistorico, Aviario } from '../types/database';
 import { SETUP_FIELD_LABELS } from '../services/dataService';
@@ -13,7 +14,9 @@ interface FichaHistoryModalProps {
   historico: SetupHistorico[];
   isLoading: boolean;
   onRestoreVersion: (versao: SetupHistorico) => Promise<void>;
-  canEdit: boolean;
+  onDeleteVersion?: (historyId: string) => Promise<void>;
+  onClearAllHistory?: () => Promise<void>;
+  isSuperOrAdmin: boolean;
 }
 
 export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
@@ -23,11 +26,15 @@ export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
   historico,
   isLoading,
   onRestoreVersion,
-  canEdit
+  onDeleteVersion,
+  onClearAllHistory,
+  isSuperOrAdmin
 }) => {
   const [expandedVersionId, setExpandedVersionId] = useState<string | null>(null);
   const [versionToRestore, setVersionToRestore] = useState<SetupHistorico | null>(null);
-  const [isRestoring, setIsRestoring] = useState(false);
+  const [versionToDelete, setVersionToDelete] = useState<SetupHistorico | null>(null);
+  const [isConfirmingClearAll, setIsConfirmingClearAll] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   if (!isOpen) return null;
 
@@ -56,7 +63,7 @@ export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
 
   const handleConfirmRestore = async () => {
     if (!versionToRestore) return;
-    setIsRestoring(true);
+    setIsProcessing(true);
     try {
       await onRestoreVersion(versionToRestore);
       setVersionToRestore(null);
@@ -64,7 +71,33 @@ export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
     } catch (err: any) {
       alert(`Falha ao restaurar versão: ${err?.message || 'Erro desconhecido'}`);
     } finally {
-      setIsRestoring(false);
+      setIsProcessing(false);
+    }
+  };
+
+  const handleConfirmDeleteVersion = async () => {
+    if (!versionToDelete || !onDeleteVersion) return;
+    setIsProcessing(true);
+    try {
+      await onDeleteVersion(versionToDelete.id);
+      setVersionToDelete(null);
+    } catch (err: any) {
+      alert(`Falha ao excluir registro do histórico: ${err?.message || 'Erro desconhecido'}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleConfirmClearAll = async () => {
+    if (!onClearAllHistory) return;
+    setIsProcessing(true);
+    try {
+      await onClearAllHistory();
+      setIsConfirmingClearAll(false);
+    } catch (err: any) {
+      alert(`Falha ao limpar histórico: ${err?.message || 'Erro desconhecido'}`);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -73,7 +106,7 @@ export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
       <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         
         {/* Header do Modal */}
-        <div className="p-5 sm:p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/60 shrink-0">
+        <div className="p-5 sm:p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/60 shrink-0 gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
               <History className="w-5 h-5" />
@@ -91,25 +124,52 @@ export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-800/80 hover:bg-slate-700 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Botão de Excluir Todo o Histórico (Somente Super Admin / Admin) */}
+            {isSuperOrAdmin && historico.length > 0 && onClearAllHistory && (
+              <button
+                type="button"
+                onClick={() => setIsConfirmingClearAll(true)}
+                className="px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-600 border border-rose-500/30 transition-all flex items-center gap-1.5 active:scale-95"
+                title="Excluir todo o histórico deste produtor/aviário"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Limpar Histórico</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-800/80 hover:bg-slate-700 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Corpo com Linha do Tempo de Versões */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           
-          {/* Informação explicativa */}
-          <div className="bg-sky-950/30 border border-sky-500/20 rounded-2xl p-3.5 flex items-start gap-3 text-xs text-sky-200">
-            <ShieldCheck className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
+          {/* Informação explicativa com aviso de permissão */}
+          <div className={`border rounded-2xl p-3.5 flex items-start gap-3 text-xs ${
+            isSuperOrAdmin 
+              ? 'bg-sky-950/30 border-sky-500/20 text-sky-200' 
+              : 'bg-amber-950/30 border-amber-500/20 text-amber-200'
+          }`}>
+            {isSuperOrAdmin ? (
+              <ShieldCheck className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
+            ) : (
+              <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            )}
             <div>
-              <p className="font-bold text-sky-100">Registro de Auditoria Permanente</p>
-              <p className="text-sky-300/80 text-[11px] mt-0.5">
-                Cada cadastro ou alteração de dados registra automaticamente a data, hora, usuário responsável e o detalhamento das modificações. Você pode navegar pelo histórico e restaurar qualquer versão anterior.
+              <p className="font-bold text-white flex items-center gap-2">
+                {isSuperOrAdmin ? 'Controle Total de Auditoria (Super Admin / Admin)' : 'Modo de Consulta de Auditoria'}
+              </p>
+              <p className="text-[11px] mt-0.5 opacity-90">
+                {isSuperOrAdmin
+                  ? 'Como Administrador, você pode restaurar qualquer versão anterior da Ficha Técnica e excluir registros de histórico individualmente ou em lote.'
+                  : 'Você pode visualizar todas as alterações e detalhes do histórico. Apenas Super Admin e Administrador têm permissão para restaurar setups ou excluir o histórico.'}
               </p>
             </div>
           </div>
@@ -194,16 +254,30 @@ export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
                           )}
                         </div>
 
-                        {/* Botão de Restaurar */}
-                        {canEdit && !isLatest && (
-                          <button
-                            type="button"
-                            onClick={() => setVersionToRestore(item)}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 border border-amber-500/30 transition-all flex items-center gap-1.5 self-start sm:self-center active:scale-95"
-                          >
-                            <RotateCcw className="w-3.5 h-3.5" /> Restaurar esta Versão
-                          </button>
-                        )}
+                        {/* Botões de Ação (Apenas Super Admin e Admin) */}
+                        <div className="flex items-center gap-2 self-start sm:self-center">
+                          {isSuperOrAdmin && !isLatest && (
+                            <button
+                              type="button"
+                              onClick={() => setVersionToRestore(item)}
+                              className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 border border-amber-500/30 transition-all flex items-center gap-1.5 active:scale-95"
+                              title="Restaurar valores desta versão para a Ficha Técnica"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" /> Restaurar esta Versão
+                            </button>
+                          )}
+
+                          {isSuperOrAdmin && onDeleteVersion && (
+                            <button
+                              type="button"
+                              onClick={() => setVersionToDelete(item)}
+                              className="text-xs font-semibold p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/30 transition-all flex items-center gap-1 active:scale-95"
+                              title="Excluir este registro de histórico"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       {/* Metadados de Autoria (Quem e Quando) */}
@@ -330,7 +404,7 @@ export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
               <button
                 type="button"
                 onClick={() => setVersionToRestore(null)}
-                disabled={isRestoring}
+                disabled={isProcessing}
                 className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-all"
               >
                 Cancelar
@@ -338,11 +412,91 @@ export const FichaHistoryModal: React.FC<FichaHistoryModalProps> = ({
               <button
                 type="button"
                 onClick={handleConfirmRestore}
-                disabled={isRestoring}
+                disabled={isProcessing}
                 className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 transition-all shadow-lg shadow-amber-600/20 flex items-center gap-2 active:scale-95"
               >
                 <RotateCcw className="w-4 h-4" />
-                {isRestoring ? 'Restaurando...' : 'Sim, Restaurar Dados'}
+                {isProcessing ? 'Restaurando...' : 'Sim, Restaurar Dados'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE VERSÃO INDIVIDUAL */}
+      {versionToDelete && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-slate-900 border-2 border-rose-500/50 rounded-2xl p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center gap-3 text-rose-400">
+              <AlertTriangle className="w-6 h-6 shrink-0" />
+              <h3 className="text-base font-black text-white">Excluir Registro de Histórico</h3>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Deseja realmente excluir permanentemente a <strong className="text-rose-300">Versão {versionToDelete.versao}</strong> gravada por <strong className="text-white">{versionToDelete.usuario_nome}</strong> em <strong className="text-white font-mono">{formatDate(versionToDelete.created_at)}</strong>?
+            </p>
+
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300">
+              Esta ação removerá este ponto da linha do tempo e não poderá ser desfeita. (Permitido apenas para Super Admin e Administrador).
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setVersionToDelete(null)}
+                disabled={isProcessing}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-all"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteVersion}
+                disabled={isProcessing}
+                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 transition-all shadow-lg shadow-rose-600/20 flex items-center gap-2 active:scale-95"
+              >
+                <Trash2 className="w-4 h-4" />
+                {isProcessing ? 'Excluindo...' : 'Sim, Excluir Registro'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CONFIRMAÇÃO DE LIMPEZA TOTAL DE HISTÓRICO */}
+      {isConfirmingClearAll && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-slate-900 border-2 border-rose-600 rounded-2xl p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center gap-3 text-rose-500">
+              <ShieldAlert className="w-7 h-7 shrink-0" />
+              <h3 className="text-base font-black text-white">Limpar Todo o Histórico?</h3>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Você está prestes a apagar <strong>todas as {historico.length} versões</strong> do histórico de auditoria do aviário <strong className="text-sky-300 font-mono">{aviario.numero_instalacao}</strong> do produtor <strong className="text-white uppercase">{aviario.produtor?.nome}</strong>.
+            </p>
+
+            <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-500/40 text-xs text-rose-200">
+              ⚠️ <strong>Atenção:</strong> Todo o registro histórico deste aviário será permanentemente apagado. Esta ação é estritamente restrita a Administradores.
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsConfirmingClearAll(false)}
+                disabled={isProcessing}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-all"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmClearAll}
+                disabled={isProcessing}
+                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 transition-all shadow-lg shadow-rose-600/30 flex items-center gap-2 active:scale-95"
+              >
+                <Trash2 className="w-4 h-4" />
+                {isProcessing ? 'Limpando...' : 'Sim, Apagar Todo Histórico'}
               </button>
             </div>
           </div>
