@@ -7,6 +7,7 @@ import { UserManagementModal } from './components/UserManagementModal';
 import { ImportHistoryView } from './components/ImportHistoryView';
 import { ProdutoresView } from './components/ProdutoresView';
 import { TecnicosView } from './components/TecnicosView';
+import { TutorialModal } from './components/TutorialModal';
 import { fetchProdutores, fetchAviarios, fetchTecnicos } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
 import { fetchMyProfile, UserProfile, ACCESS_LEVELS } from './services/profileService';
@@ -14,7 +15,7 @@ import { Session } from '@supabase/supabase-js';
 import { supabase } from './services/supabase';
 import { LoginView } from './components/LoginView';
 import { Produtor, Aviario, Tecnico, ImportacaoLog } from './types/database';
-import { RefreshCw, ShieldCheck, Home, AlertCircle } from 'lucide-react';
+import { RefreshCw, ShieldCheck, Home, AlertCircle, BookOpen } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -25,6 +26,7 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'fichas' | 'produtores' | 'tecnicos' | 'historico'>('fichas');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -227,6 +229,7 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenImportModal={() => setIsImportModalOpen(true)}
+        onOpenTutorial={() => setIsTutorialOpen(true)}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         totalProdutores={produtores.length}
@@ -273,6 +276,15 @@ export const App: React.FC = () => {
             <p className="text-xs text-slate-400">
               Utilize o botão <strong className="text-sky-400">IMPORTAR BASE DE DADOS</strong> no topo da página para carregar os registros.
             </p>
+            <div className="pt-2">
+              <button
+                onClick={() => setIsTutorialOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 border border-slate-700 text-xs font-semibold transition-all shadow-sm"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Ver Tutorial da Plataforma</span>
+              </button>
+            </div>
           </div>
         ) : (
           /* Visões Principais do Sistema */
@@ -378,6 +390,16 @@ export const App: React.FC = () => {
         isOpen={isUserManagementOpen}
         onClose={() => setIsUserManagementOpen(false)}
         currentUserLevel={userLevel}
+      />
+
+      {/* Modal de Tutorial Interativo & Guia da Plataforma */}
+      <TutorialModal
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        onNavigateTab={(tab) => {
+          setActiveTab(tab);
+          setIsTutorialOpen(false);
+        }}
       />
 
     </div>

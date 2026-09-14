@@ -1,5 +1,5 @@
 import React from 'react';
-import { UploadCloud, Layers, Users, UserCheck, History, Search, LogOut, User, Settings } from 'lucide-react';
+import { UploadCloud, Layers, Users, UserCheck, History, Search, LogOut, User, Settings, BookOpen, HelpCircle } from 'lucide-react';
 import { BelloLogo } from './BelloLogo';
 
 const ROLE_LABELS: Record<string, { label: string; color: string }> = {
@@ -13,6 +13,7 @@ interface HeaderProps {
   activeTab: 'fichas' | 'produtores' | 'tecnicos' | 'historico';
   setActiveTab: (tab: 'fichas' | 'produtores' | 'tecnicos' | 'historico') => void;
   onOpenImportModal: () => void;
+  onOpenTutorial?: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   totalProdutores: number;
@@ -28,6 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   onOpenImportModal,
+  onOpenTutorial,
   searchQuery,
   setSearchQuery,
   totalProdutores,
@@ -93,6 +95,22 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               )}
             </div>
+
+            {/* BOTÃO DE TUTORIAL / COMO USAR */}
+            {onOpenTutorial && (
+              <button
+                id="btn-abrir-tutorial"
+                onClick={onOpenTutorial}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 hover:border-sky-400/60 shadow-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+                title="Como usar a plataforma (Tutorial Interativo e Guia Rápido)"
+              >
+                <BookOpen className="w-4 h-4 text-sky-400 shrink-0" />
+                <span className="hidden sm:inline">Como Usar</span>
+                <span className="text-[9px] bg-sky-400/20 text-sky-300 px-1.5 py-0.5 rounded-full font-bold hidden md:inline">
+                  Tutorial
+                </span>
+              </button>
+            )}
 
             {/* BOTÃO DE IMPORTAÇÃO - Apenas para Super Admin */}
             {userRole === 'super_admin' && (
@@ -191,6 +209,17 @@ export const Header: React.FC<HeaderProps> = ({
             <History className="w-3.5 h-3.5" />
             <span>Histórico de Importações</span>
           </button>
+
+          {onOpenTutorial && (
+            <button
+              onClick={onOpenTutorial}
+              className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-sky-300 hover:bg-slate-800/80 border border-transparent hover:border-slate-700 transition-all whitespace-nowrap"
+              title="Ajuda e Tutorial da Plataforma"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-sky-400" />
+              <span>Guia & Tutorial</span>
+            </button>
+          )}
         </div>
 
       </div>
