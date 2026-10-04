@@ -1,5 +1,5 @@
-import React from 'react';
-import { CompanyThemeConfig, INITIAL_COMPANIES_LIST } from '../config/companies';
+import React, { useState } from 'react';
+import { CompanyThemeConfig, INITIAL_COMPANIES_LIST, DEFAULT_COMPANY } from '../config/companies';
 import { CompanyLogo } from './CompanyLogo';
 import { ArrowRight, Lock, LogOut, ShieldCheck, User, Sparkles } from 'lucide-react';
 
@@ -23,6 +23,15 @@ export const CompanySelectorView: React.FC<CompanySelectorViewProps> = ({
   isPreLogin = false
 }) => {
   const authorizedIds = new Set(userCompanies.map(c => c.id));
+  
+  // Empresa selecionada inicialmente (prioriza localStorage ou primeira disponível)
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string>(() => {
+    const saved = localStorage.getItem('active_company_id');
+    if (saved && allCompanies.some(c => c.id === saved)) return saved;
+    return allCompanies[0]?.id || DEFAULT_COMPANY.id;
+  });
+
+  const activeSelectedCompany = allCompanies.find(c => c.id === selectedCompanyId) || allCompanies[0] || DEFAULT_COMPANY;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between relative overflow-hidden font-sans selection:bg-sky-500 selection:text-white">
@@ -96,19 +105,30 @@ export const CompanySelectorView: React.FC<CompanySelectorViewProps> = ({
         {/* 4 Company Cards Grid (2x2 on desktop, 1 column on mobile) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-3xl">
           {allCompanies.map((company) => {
-            // No modo pré-login, todos os 4 cards estão disponíveis para o usuário clicar e ir para o login da empresa
             const isAuthorized = isPreLogin || isSuperAdmin || authorizedIds.has(company.id);
+            const isSelected = isPreLogin && selectedCompanyId === company.id;
 
             return (
               <button
                 key={company.id}
                 type="button"
                 onClick={() => {
-                  if (isAuthorized) onSelectCompany(company);
+                  if (!isAuthorized) return;
+                  if (isPreLogin) {
+                    if (selectedCompanyId === company.id) {
+                      onSelectCompany(company);
+                    } else {
+                      setSelectedCompanyId(company.id);
+                    }
+                  } else {
+                    onSelectCompany(company);
+                  }
                 }}
                 disabled={!isAuthorized}
                 className={`group relative text-left p-6 sm:p-7 rounded-3xl border transition-all duration-200 flex flex-col justify-between h-56 sm:h-60 overflow-hidden ${
-                  isAuthorized
+                  isSelected
+                    ? `bg-slate-900 border-sky-400 ring-2 ring-sky-500/40 -translate-y-1 shadow-xl shadow-sky-500/10 cursor-pointer ${company.cardBorderHover}`
+                    : isAuthorized
                     ? `bg-slate-900/90 hover:bg-slate-900 border-slate-800 hover:-translate-y-1 shadow-lg cursor-pointer ${company.cardBorderHover}`
                     : 'bg-slate-950/60 border-slate-900 opacity-50 cursor-not-allowed'
                 }`}
@@ -134,8 +154,8 @@ export const CompanySelectorView: React.FC<CompanySelectorViewProps> = ({
                   {/* Status Badge */}
                   <div>
                     {isPreLogin ? (
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${company.badgeBg} ${company.badgeText} ${company.badgeBorder}`}>
-                        Acessar Portal
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${isSelected ? 'bg-sky-500/20 text-sky-300 border-sky-400/40 shadow-sm' : `${company.badgeBg} ${company.badgeText} ${company.badgeBorder}`}`}>
+                        {isSelected ? 'Selecionada' : 'Selecionar'}
                       </span>
                     ) : isAuthorized ? (
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${company.badgeBg} ${company.badgeText} ${company.badgeBorder}`}>
@@ -163,7 +183,9 @@ export const CompanySelectorView: React.FC<CompanySelectorViewProps> = ({
 
                   <div
                     className={`w-9 h-9 rounded-2xl flex items-center justify-center transition-all duration-200 ${
-                      isAuthorized
+                      isSelected
+                        ? 'bg-sky-500 text-white scale-105 shadow-md shadow-sky-500/30'
+                        : isAuthorized
                         ? 'bg-slate-800 text-slate-300 group-hover:text-white group-hover:scale-105'
                         : 'bg-slate-900 text-slate-600'
                     }`}
@@ -182,6 +204,33 @@ export const CompanySelectorView: React.FC<CompanySelectorViewProps> = ({
             );
           })}
         </div>
+
+        {/* Assinatura do Criador — Marca Oficial Lucas Zinatto */}
+        <div className="mt-8 mb-4 flex flex-col items-center justify-center text-center select-none animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-slate-800/80 backdrop-blur-md shadow-sm transition-all hover:border-slate-700/80 group">
+            <span className="text-[10px] sm:text-[11px] uppercase tracking-widest text-slate-500 font-semibold group-hover:text-slate-400 transition-colors">
+              Criado por
+            </span>
+            <span className="h-3 w-px bg-slate-700/60" />
+            <span className="text-xs sm:text-[13px] font-bold tracking-wide text-slate-200 group-hover:text-white transition-colors">
+              Lucas Zinatto
+            </span>
+          </div>
+        </div>
+
+        {/* Botão de Acesso ao Login (Visível no fluxo inicial pré-login) */}
+        {isPreLogin && (
+          <div className="w-full flex justify-center pb-2 animate-fade-in">
+            <button
+              type="button"
+              onClick={() => onSelectCompany(activeSelectedCompany)}
+              className={`w-full sm:w-auto min-w-[280px] max-w-md flex items-center justify-center gap-3 px-8 py-3.5 rounded-2xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r ${activeSelectedCompany.buttonGradient} ${activeSelectedCompany.buttonHoverGradient} shadow-xl shadow-black/40 border border-white/20 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer`}
+            >
+              <span>ACESSAR LOGIN — {activeSelectedCompany.nome.toUpperCase()}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </main>
 
       {/* Footer */}
