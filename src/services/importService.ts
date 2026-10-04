@@ -285,7 +285,8 @@ export async function executeImport(
   fileName: string,
   sheetName: string,
   userEmail: string = 'Administrador',
-  onProgress?: ImportProgressCallback
+  onProgress?: ImportProgressCallback,
+  empresaId?: string
 ): Promise<ImportacaoLog> {
   const stats = {
     produtoresCriados: 0,
@@ -313,7 +314,9 @@ export async function executeImport(
   });
 
   const tecnicosMap = new Map<string, string>(); // nomeUpper -> id
-  const { data: existingTecnicos } = await supabase.from('tecnicos').select('id, nome');
+  let tecQuery = supabase.from('tecnicos').select('id, nome');
+  if (empresaId) tecQuery = tecQuery.eq('empresa_id', empresaId);
+  const { data: existingTecnicos } = await tecQuery;
   (existingTecnicos || []).forEach((t: any) => {
     tecnicosMap.set(cleanText(t.nome).toUpperCase(), t.id);
   });
@@ -324,10 +327,20 @@ export async function executeImport(
 
   const missingTecnicos = uniqueTecnicosNames.filter(name => !tecnicosMap.has(name.toUpperCase()));
   if (missingTecnicos.length > 0) {
-    const { data: insertedTecs } = await supabase
+    const tecRows = missingTecnicos.map(nome => ({
+      nome,
+      empresa_id: empresaId
+    }));
+
+    const { data: insertedTecs, error: insertTecErr } = await supabase
       .from('tecnicos')
-      .insert(missingTecnicos.map(nome => ({ nome })))
+      .insert(tecRows)
       .select('id, nome');
+
+    if (insertTecErr) {
+      console.error('Erro ao inserir técnicos na importação:', insertTecErr);
+      throw insertTecErr;
+    }
     
     (insertedTecs || []).forEach((t: any) => {
       tecnicosMap.set(cleanText(t.nome).toUpperCase(), t.id);
@@ -345,7 +358,9 @@ export async function executeImport(
   });
 
   const produtoresMap = new Map<string, string>(); // nomeUpper -> id
-  const { data: existingProdutores } = await supabase.from('produtores').select('id, nome');
+  let prodQuery = supabase.from('produtores').select('id, nome');
+  if (empresaId) prodQuery = prodQuery.eq('empresa_id', empresaId);
+  const { data: existingProdutores } = await prodQuery;
   (existingProdutores || []).forEach((p: any) => {
     produtoresMap.set(cleanText(p.nome).toUpperCase(), p.id);
   });
@@ -356,10 +371,20 @@ export async function executeImport(
 
   const missingProdutores = uniqueProdutoresNames.filter(name => !produtoresMap.has(name.toUpperCase()));
   if (missingProdutores.length > 0) {
-    const { data: insertedProds } = await supabase
+    const prodRows = missingProdutores.map(nome => ({
+      nome,
+      empresa_id: empresaId
+    }));
+
+    const { data: insertedProds, error: insertProdErr } = await supabase
       .from('produtores')
-      .insert(missingProdutores.map(nome => ({ nome })))
+      .insert(prodRows)
       .select('id, nome');
+
+    if (insertProdErr) {
+      console.error('Erro ao inserir produtores na importação:', insertProdErr);
+      throw insertProdErr;
+    }
 
     (insertedProds || []).forEach((p: any) => {
       produtoresMap.set(cleanText(p.nome).toUpperCase(), p.id);
@@ -377,9 +402,9 @@ export async function executeImport(
   });
 
   const aviariosMap = new Map<string, string>(); // produtorId###numeroInstalacao -> aviarioId
-  const { data: existingAviarios } = await supabase
-    .from('cadastro_aviarios')
-    .select('id, produtor_id, numero_instalacao');
+  let avQuery = supabase.from('cadastro_aviarios').select('id, produtor_id, numero_instalacao');
+  if (empresaId) avQuery = avQuery.eq('empresa_id', empresaId);
+  const { data: existingAviarios } = await avQuery;
   
   (existingAviarios || []).forEach((a: any) => {
     aviariosMap.set(`${a.produtor_id}###${cleanText(a.numero_instalacao).toUpperCase()}`, a.id);
@@ -398,28 +423,34 @@ export async function executeImport(
       stats.aviariosAtualizados++;
     }
 
-    aviariosToUpsert.push({
+    const avRow: any = {
       produtor_id: produtorId,
       tecnico_id: tecnicoId,
       numero_instalacao: row.instalacaoClean,
       status: 'Ativo',
       updated_at: new Date().toISOString()
-    });
+    };
+    if (empresaId) avRow.empresa_id = empresaId;
+    aviariosToUpsert.push(avRow);
   }
 
   // Upsert aviários em lotes de 100
   const chunkSize = 100;
   for (let i = 0; i < aviariosToUpsert.length; i += chunkSize) {
     const chunk = aviariosToUpsert.slice(i, i + chunkSize);
-    await supabase.from('cadastro_aviarios').upsert(chunk, {
+    const { error: upsertErr } = await supabase.from('cadastro_aviarios').upsert(chunk, {
       onConflict: 'produtor_id,numero_instalacao'
     });
+    if (upsertErr) {
+      console.error('Erro no upsert de aviários:', upsertErr);
+      throw upsertErr;
+    }
   }
 
-  // Recarregar mapa completo de aviários
-  const { data: allAviariosUpdated } = await supabase
-    .from('cadastro_aviarios')
-    .select('id, produtor_id, numero_instalacao');
+  // Recarregar mapa completo de aviários da empresa
+  let allAvQuery = supabase.from('cadastro_aviarios').select('id, produtor_id, numero_instalacao');
+  if (empresaId) allAvQuery = allAvQuery.eq('empresa_id', empresaId);
+  const { data: allAviariosUpdated } = await allAvQuery;
   
   (allAviariosUpdated || []).forEach((a: any) => {
     aviariosMap.set(`${a.produtor_id}###${cleanText(a.numero_instalacao).toUpperCase()}`, a.id);
@@ -434,7 +465,9 @@ export async function executeImport(
   });
 
   // Identificar setups existentes para contagem de criados vs atualizados
-  const { data: existingSetups } = await supabase.from('setups_aviarios').select('aviario_id');
+  let setupQuery = supabase.from('setups_aviarios').select('aviario_id');
+  if (empresaId) setupQuery = setupQuery.eq('empresa_id', empresaId);
+  const { data: existingSetups } = await setupQuery;
   const existingSetupsSet = new Set((existingSetups || []).map((s: any) => s.aviario_id));
 
   const setupsToUpsert: any[] = [];
@@ -452,7 +485,7 @@ export async function executeImport(
     }
 
     const d = row.data;
-    setupsToUpsert.push({
+    const sRow: any = {
       aviario_id: aviarioId,
       pressao_vedacao_media: parseNullableNumber(d.pressao_vedacao_media),
       pressao_trabalho_media: parseNullableNumber(d.pressao_trabalho_media),
@@ -476,16 +509,22 @@ export async function executeImport(
       alarme_caixas: parseNullableBoolean(d.alarme_caixas),
       alarme_caixas_func: parseNullableBoolean(d.alarme_caixas_func),
       lux_100: parseNullableNumber(d.lux_100),
+      empresa_id: empresaId,
       updated_at: new Date().toISOString()
-    });
+    };
+    setupsToUpsert.push(sRow);
   }
 
   // Upsert setups em lotes de 100
   for (let i = 0; i < setupsToUpsert.length; i += chunkSize) {
     const chunk = setupsToUpsert.slice(i, i + chunkSize);
-    await supabase.from('setups_aviarios').upsert(chunk, {
+    const { error: upsertSetupErr } = await supabase.from('setups_aviarios').upsert(chunk, {
       onConflict: 'aviario_id'
     });
+    if (upsertSetupErr) {
+      console.error('Erro no upsert de setups:', upsertSetupErr);
+      throw upsertSetupErr;
+    }
   }
 
   // Linhas com erro de validação
@@ -507,7 +546,7 @@ export async function executeImport(
     stats
   });
 
-  const logPayload = {
+  const logPayload: any = {
     nome_arquivo: fileName,
     aba_origem: sheetName,
     total_registros: rows.length,
@@ -521,28 +560,37 @@ export async function executeImport(
     setups_atualizados: stats.setupsAtualizados,
     registros_com_erro: stats.erros,
     erros_json: logsErros.length > 0 ? logsErros : null,
-    importado_por: userEmail
+    importado_por: userEmail,
+    empresa_id: empresaId
   };
 
-  const { data: savedLog } = await supabase
+  const { data: savedLog, error: logErr } = await supabase
     .from('importacoes')
     .insert([logPayload])
     .select('*')
     .single();
 
+  if (logErr) {
+    console.error('Erro ao salvar log de importação:', logErr);
+    throw logErr;
+  }
+
   return savedLog || (logPayload as any);
 }
 
 /**
- * Carrega a lista do histórico de importações
+ * Carrega a lista do histórico de importações (filtrado por empresa)
  */
-export async function loadImportacoesHistory(): Promise<ImportacaoLog[]> {
-  const { data, error } = await supabase
-    .from('importacoes')
-    .select('*')
-    .order('created_at', { ascending: false });
+export async function loadImportacoesHistory(empresaId?: string): Promise<ImportacaoLog[]> {
+  let query = supabase.from('importacoes').select('*');
+  if (empresaId) query = query.eq('empresa_id', empresaId);
+  const { data, error } = await query.order('created_at', { ascending: false });
 
   if (error) {
+    if (error.message?.includes('empresa_id')) {
+      const fallback = await supabase.from('importacoes').select('*').order('created_at', { ascending: false });
+      return fallback.data || [];
+    }
     console.error('Erro ao carregar histórico de importações:', error);
     return [];
   }

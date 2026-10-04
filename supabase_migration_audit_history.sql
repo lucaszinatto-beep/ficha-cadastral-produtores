@@ -1,7 +1,7 @@
 -- ==============================================================================
 -- MIGRAÇÃO: Auditoria e Histórico de Versões da Ficha Técnica (Setup de Aviários)
 -- Execute este script no SQL Editor do seu projeto Supabase:
--- https://supabase.com/dashboard/project/evzmmdteliaupztfqepl/sql/new
+-- https://supabase.com/dashboard/project/ebixhddonbiqtrsyvdry/sql/new
 -- ==============================================================================
 
 -- 1. Adicionar colunas de autoria em setups_aviarios (se ainda não existirem)

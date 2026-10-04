@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2, AlertCircle, Sparkles, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { supabase } from '../services/supabase';
-
 import { Session } from '@supabase/supabase-js';
+import { CompanyThemeConfig, DEFAULT_COMPANY } from '../config/companies';
 
 interface LoginViewProps {
-  onLoginSuccess?: () => void;
+  company?: CompanyThemeConfig;
+  onLoginSuccess?: (company?: CompanyThemeConfig) => void;
+  onBackToCompanySelect?: () => void;
   initialSession?: Session | null;
   isRecovering?: boolean;
 }
 
-export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSession, isRecovering }) => {
+export const LoginView: React.FC<LoginViewProps> = ({ 
+  company,
+  onLoginSuccess, 
+  onBackToCompanySelect,
+  initialSession, 
+  isRecovering 
+}) => {
+  const targetCompany = company || DEFAULT_COMPANY;
   const [view, setView] = useState<'login' | 'forgot_password' | 'force_update' | 'reset_password'>('login');
   
   const [email, setEmail] = useState('');
@@ -79,11 +88,60 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
         return;
       }
 
-      if (data.session) {
+      if (data.session && data.user) {
+        // REGRA DE SEGURANÇA MULTIEMPRESA:
+        // Validar no Supabase se o usuário possui perfil e vínculo com a empresa selecionada
+        
+        // 1. Obter perfil do usuário em public.profiles pelo UUID autenticado (data.user.id)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, level')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        // 2. Determinar Super Admin a partir dos dados do banco ou e-mails de governança
+        const userEmailNormalized = (data.user.email || '').toLowerCase().trim();
+        const KNOWN_SUPER_ADMIN_EMAILS = [
+          'lucas_zinatto@hotmail.com',
+          'lucas.zinatto@belloalimentos.com.br',
+          'joao.moraes@belloalimentos.com.br'
+        ];
+        const isKnownSuperAdmin = KNOWN_SUPER_ADMIN_EMAILS.includes(userEmailNormalized);
+        const isSuperAdmin = isKnownSuperAdmin || profile?.role === 'super_admin' || (profile?.level ?? 0) >= 100;
+
+        if (!isSuperAdmin) {
+          // 3. Usuário regular: verificar se possui vínculo ativo em public.usuarios_empresas
+          const { data: vinculo, error: vinculoErr } = await supabase
+            .from('usuarios_empresas')
+            .select('id, ativo')
+            .eq('user_id', data.user.id)
+            .eq('empresa_id', targetCompany.id)
+            .eq('ativo', true)
+            .maybeSingle();
+
+          const isTableMissing = vinculoErr && (
+            vinculoErr.code === '42P01' || 
+            vinculoErr.code === 'PGRST205' ||
+            vinculoErr.message?.includes('does not exist') ||
+            vinculoErr.message?.includes('schema cache')
+          );
+          const isBelloDefault = targetCompany.id === 'e1100000-0000-0000-0000-000000000001';
+
+          const hasAccess = Boolean(vinculo) || (isTableMissing && isBelloDefault);
+
+          if (!hasAccess) {
+            // BLOQUEIA ACESSO E DESCONECTA A SESSÃO IMEDIATAMENTE
+            await supabase.auth.signOut();
+            setErrorMessage('Você não possui acesso a esta empresa.');
+            setIsLoading(false);
+            return;
+          }
+        }
+
         if (data.user?.user_metadata?.force_password_change) {
           setView('force_update');
         } else {
-          if (onLoginSuccess) onLoginSuccess();
+          if (onLoginSuccess) onLoginSuccess(targetCompany);
         }
       }
     } catch (err: any) {
@@ -140,22 +198,24 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
     try {
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
-        data: { force_password_change: false }
+        data: {
+          force_password_change: false
+        }
       });
 
       if (error) {
-        setErrorMessage(error.message || 'Erro ao atualizar a senha.');
+        setErrorMessage(error.message || 'Erro ao atualizar senha.');
         return;
       }
 
       if (view === 'reset_password') {
         setSuccessMessage('Senha redefinida com sucesso! Redirecionando...');
         setTimeout(() => {
-          if (onLoginSuccess) onLoginSuccess();
+          if (onLoginSuccess) onLoginSuccess(targetCompany);
         }, 1500);
       } else {
         // force_update
-        if (onLoginSuccess) onLoginSuccess();
+        if (onLoginSuccess) onLoginSuccess(targetCompany);
       }
     } catch (err: any) {
       setErrorMessage('Erro inesperado ao atualizar senha.');
@@ -176,28 +236,49 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col justify-center items-center p-4 selection:bg-sky-500 selection:text-white relative overflow-hidden">
       
       {/* Elementos Decorativos de Fundo */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div 
+        className="absolute -top-40 -left-40 w-96 h-96 rounded-full blur-3xl pointer-events-none opacity-20"
+        style={{ backgroundColor: targetCompany.cor_primaria }}
+      />
+      <div 
+        className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full blur-3xl pointer-events-none opacity-20"
+        style={{ backgroundColor: targetCompany.cor_destaque }}
+      />
 
       <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl shadow-black/50 backdrop-blur-xl space-y-6 relative z-10 animate-scale-up">
         
-        {/* Cabeçalho com Logo Oficial Bello */}
+        {/* Botão Voltar para Seleção de Empresa */}
+        {onBackToCompanySelect && (
+          <button
+            type="button"
+            onClick={onBackToCompanySelect}
+            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors cursor-pointer group"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+            <span>← Voltar para seleção de empresa</span>
+          </button>
+        )}
+
+        {/* Cabeçalho Dinâmico com Logo Oficial da Empresa */}
         <div className="flex flex-col items-center text-center space-y-3">
-          <div className="bg-white rounded-2xl p-3 shadow-[0_0_30px_rgba(56,189,248,0.5)] border border-sky-400/50 flex items-center justify-center animate-pulse relative z-10 transition-all duration-700">
+          <div 
+            className="rounded-2xl p-3 shadow-lg border border-slate-700/50 flex items-center justify-center relative z-10 transition-all duration-500 max-w-[220px] mx-auto overflow-hidden"
+            style={{ backgroundColor: targetCompany.logoBoxBg || '#ffffff' }}
+          >
             <img
-              src="/Logo_Bello.png"
-              alt="Bello Alimentos"
-              className="h-12 w-auto object-contain"
+              src={targetCompany.logo_path || '/logos/bello.png'}
+              alt={targetCompany.nome}
+              className="h-12 max-w-[190px] w-auto object-contain select-none"
             />
           </div>
           
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[11px] font-bold uppercase tracking-wider mb-1">
-              <Sparkles className="w-3 h-3 text-sky-400" />
-              <span>Acesso Restrito</span>
+            <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-bold uppercase tracking-wider mb-1.5 ${targetCompany.badgeBg} ${targetCompany.badgeBorder} ${targetCompany.badgeText}`}>
+              <Sparkles className="w-3 h-3" />
+              <span>{targetCompany.nome}</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase leading-none mt-2">
-              Setup <span className="text-sky-400">Granja</span>
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase leading-none mt-1">
+              {targetCompany.nome}
             </h1>
             <p className="text-xs text-slate-400 mt-2">
               {view === 'login' && "Acesso exclusivo para colaboradores e extensionistas"}
@@ -210,9 +291,20 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
 
         {/* Mensagens de Feedback */}
         {errorMessage && (
-          <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2.5 animate-shake">
-            <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
-            <span>{errorMessage}</span>
+          <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex flex-col gap-2 animate-shake">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
+              <span className="font-medium">{errorMessage}</span>
+            </div>
+            {onBackToCompanySelect && errorMessage.includes('não possui acesso') && (
+              <button
+                type="button"
+                onClick={onBackToCompanySelect}
+                className="mt-1 text-xs font-bold text-sky-400 hover:text-sky-300 underline self-start pl-6 cursor-pointer"
+              >
+                ← Voltar para seleção de empresa
+              </button>
+            )}
           </div>
         )}
         
@@ -236,7 +328,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
                   type="email"
                   required
                   autoComplete="email"
-                  placeholder="seu.email@belloalimentos.com.br"
+                  placeholder="seu.email@empresa.com.br"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 text-xs rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
@@ -283,12 +375,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-sky-600 to-blue-700 hover:from-blue-500 hover:to-sky-500 border border-sky-400/40 shadow-lg shadow-sky-600/30 hover:shadow-sky-600/50 transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-50 cursor-pointer mt-2"
+              className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold text-white bg-gradient-to-r ${targetCompany.buttonGradient} ${targetCompany.buttonHoverGradient} border border-white/20 shadow-lg shadow-black/40 transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-50 mt-2 cursor-pointer`}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Autenticando...</span>
+                  <span>Validando credenciais...</span>
                 </>
               ) : (
                 <span>ENTRAR NO SISTEMA</span>
@@ -308,7 +400,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
                 <input
                   type="email"
                   required
-                  placeholder="seu.email@belloalimentos.com.br"
+                  placeholder="seu.email@empresa.com.br"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 text-xs rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all"
@@ -319,7 +411,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-500 hover:to-sky-400 border border-sky-400/40 shadow-lg shadow-sky-600/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-50 mt-2"
+              className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold text-white bg-gradient-to-r ${targetCompany.buttonGradient} ${targetCompany.buttonHoverGradient} border border-white/20 shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-50 mt-2 cursor-pointer`}
             >
               {isLoading ? (
                 <>
@@ -334,7 +426,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
             <button
               type="button"
               onClick={resetState}
-              className="w-full flex items-center justify-center gap-2 py-3 text-xs font-bold text-slate-300 hover:text-white transition-colors"
+              className="w-full flex items-center justify-center gap-2 py-3 text-xs font-bold text-slate-300 hover:text-white transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>VOLTAR AO LOGIN</span>
@@ -397,7 +489,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 border border-emerald-400/40 shadow-lg shadow-emerald-600/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-50 mt-2"
+              className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold text-white bg-gradient-to-r ${targetCompany.buttonGradient} ${targetCompany.buttonHoverGradient} border border-white/20 shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-50 mt-2 cursor-pointer`}
             >
               {isLoading ? (
                 <>
@@ -418,15 +510,15 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, initialSes
             <span>Autenticação Segura via Supabase Auth</span>
           </div>
           <p className="text-[10px] text-slate-500 leading-relaxed">
-            Usuários e permissões são gerenciados diretamente pelo administrador do sistema. Cadastro público desabilitado.
+            Usuários e permissões gerenciados por empresa. Cadastro público desabilitado.
           </p>
         </div>
 
       </div>
 
-      {/* Assinatura Bello Alimentos */}
+      {/* Assinatura Dinâmica da Empresa */}
       <footer className="mt-8 text-center text-xs text-slate-600">
-        Bello Alimentos © 2026 • Gestão de Ambiência e Setup de Granjas
+        {targetCompany.nome} © 2026 • Gestão de Ambiência e Setup de Granjas
       </footer>
 
     </div>

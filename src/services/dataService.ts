@@ -45,33 +45,47 @@ export async function validateSupabaseConnection(): Promise<{
   }
 }
 
-export async function fetchProdutores(): Promise<Produtor[]> {
+export async function fetchProdutores(empresaId?: string): Promise<Produtor[]> {
+  if (!empresaId) {
+    console.warn('fetchProdutores invocado sem empresaId. Retornando lista vazia por segurança.');
+    return [];
+  }
   const { data, error } = await supabase
     .from('produtores')
     .select('*')
+    .eq('empresa_id', empresaId)
     .order('nome', { ascending: true });
 
   if (error) {
-    console.error('Erro ao buscar produtores:', error);
+    console.error('Erro ao buscar produtores por empresa:', error);
     throw error;
   }
-  return data || [];
+  return (data || []) as Produtor[];
 }
 
-export async function fetchTecnicos(): Promise<Tecnico[]> {
+export async function fetchTecnicos(empresaId?: string): Promise<Tecnico[]> {
+  if (!empresaId) {
+    console.warn('fetchTecnicos invocado sem empresaId. Retornando lista vazia por segurança.');
+    return [];
+  }
   const { data, error } = await supabase
     .from('tecnicos')
     .select('*')
+    .eq('empresa_id', empresaId)
     .order('nome', { ascending: true });
 
   if (error) {
-    console.error('Erro ao buscar técnicos:', error);
+    console.error('Erro ao buscar técnicos por empresa:', error);
     throw error;
   }
-  return data || [];
+  return (data || []) as Tecnico[];
 }
 
-export async function fetchAviarios(): Promise<Aviario[]> {
+export async function fetchAviarios(empresaId?: string): Promise<Aviario[]> {
+  if (!empresaId) {
+    console.warn('fetchAviarios invocado sem empresaId. Retornando lista vazia por segurança.');
+    return [];
+  }
   const { data, error } = await supabase
     .from('cadastro_aviarios')
     .select(`
@@ -80,26 +94,28 @@ export async function fetchAviarios(): Promise<Aviario[]> {
       tecnico:tecnicos(*),
       setup:setups_aviarios(*)
     `)
+    .eq('empresa_id', empresaId)
     .order('numero_instalacao', { ascending: true });
 
   if (error) {
-    console.error('Erro ao buscar aviários:', error);
+    console.error('Erro ao buscar aviários por empresa:', error);
     throw error;
   }
   return (data || []) as Aviario[];
 }
 
-export async function fetchAviariosByProdutor(produtorId: string): Promise<Aviario[]> {
-  const { data, error } = await supabase
-    .from('cadastro_aviarios')
-    .select(`
-      *,
-      produtor:produtores(*),
-      tecnico:tecnicos(*),
-      setup:setups_aviarios(*)
-    `)
-    .eq('produtor_id', produtorId)
-    .order('numero_instalacao', { ascending: true });
+export async function fetchAviariosByProdutor(produtorId: string, empresaId?: string): Promise<Aviario[]> {
+  let query = supabase.from('cadastro_aviarios').select(`
+    *,
+    produtor:produtores(*),
+    tecnico:tecnicos(*),
+    setup:setups_aviarios(*)
+  `).eq('produtor_id', produtorId);
+
+  if (empresaId) {
+    query = query.eq('empresa_id', empresaId);
+  }
+  const { data, error } = await query.order('numero_instalacao', { ascending: true });
 
   if (error) {
     console.error('Erro ao buscar aviários por produtor:', error);
@@ -215,7 +231,8 @@ export async function saveSetupData(
   payload: Partial<SetupAviario>,
   userProfile?: UserProfile | null,
   tipoAcaoOverride?: 'CRIACAO' | 'EDICAO' | 'RESTAURACAO',
-  resumoCustomizado?: string
+  resumoCustomizado?: string,
+  empresaId?: string
 ): Promise<SetupAviario> {
   // 1. Obter registro atual completo antes de alterar
   const { data: existing } = await supabase
@@ -316,6 +333,10 @@ export async function saveSetupData(
     updated_by_name: currentUserName
   };
 
+  if (empresaId) {
+    cleanPayload.empresa_id = empresaId;
+  }
+
   if (isInitial || !existing?.created_by_name) {
     cleanPayload.created_by_id = currentUserId;
     cleanPayload.created_by_name = currentUserName;
@@ -337,13 +358,13 @@ export async function saveSetupData(
       .select('*')
       .single();
 
-    if (updateRes.error && updateRes.error.message?.includes('column')) {
-      // Se colunas de autoria ainda não existem na tabela, remove-as e tenta novamente
+    if (updateRes.error && (updateRes.error.message?.includes('column') || updateRes.error.message?.includes('empresa_id'))) {
       const fallbackPayload = { ...cleanPayload };
       delete fallbackPayload.created_by_id;
       delete fallbackPayload.created_by_name;
       delete fallbackPayload.updated_by_id;
       delete fallbackPayload.updated_by_name;
+      delete fallbackPayload.empresa_id;
 
       updateRes = await supabase
         .from('setups_aviarios')
@@ -362,12 +383,13 @@ export async function saveSetupData(
       .select('*')
       .single();
 
-    if (insertRes.error && insertRes.error.message?.includes('column')) {
+    if (insertRes.error && (insertRes.error.message?.includes('column') || insertRes.error.message?.includes('empresa_id'))) {
       const fallbackPayload = { ...cleanPayload };
       delete fallbackPayload.created_by_id;
       delete fallbackPayload.created_by_name;
       delete fallbackPayload.updated_by_id;
       delete fallbackPayload.updated_by_name;
+      delete fallbackPayload.empresa_id;
 
       insertRes = await supabase
         .from('setups_aviarios')
@@ -390,6 +412,7 @@ export async function saveSetupData(
     id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `hist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     aviario_id: aviarioId,
     setup_id: savedData.id,
+    empresa_id: empresaId || (savedData as any)?.empresa_id,
     versao: novaVersao,
     tipo_acao: tipoAcao,
     usuario_id: currentUserId,
@@ -409,6 +432,7 @@ export async function saveSetupData(
         id: novoRegistroHistorico.id,
         aviario_id: novoRegistroHistorico.aviario_id,
         setup_id: novoRegistroHistorico.setup_id,
+        empresa_id: novoRegistroHistorico.empresa_id,
         versao: novoRegistroHistorico.versao,
         tipo_acao: novoRegistroHistorico.tipo_acao,
         usuario_id: novoRegistroHistorico.usuario_id,
@@ -570,14 +594,22 @@ export const DEFAULT_SETUP_VALUES: Partial<SetupAviario> = {
 
 export async function applyDefaultSetupValues(
   aviarioId: string,
-  userProfile?: UserProfile | null
+  userProfile?: UserProfile | null,
+  empresaId?: string,
+  companyName?: string
 ): Promise<SetupAviario> {
+  const padraoNome = companyName || 'Bello Alimentos';
+  const customValues: Partial<SetupAviario> = {
+    ...DEFAULT_SETUP_VALUES,
+    observacoes: `Padrão Técnico ${padraoNome} aplicado.`
+  };
   return await saveSetupData(
     aviarioId,
-    DEFAULT_SETUP_VALUES,
+    customValues,
     userProfile,
     'EDICAO',
-    'Atribuição dos parâmetros técnicos padrão da Bello Alimentos'
+    `Atribuição dos parâmetros técnicos padrão da ${padraoNome}`,
+    empresaId
   );
 }
 
@@ -600,17 +632,26 @@ export async function createProdutor(payload: {
   telefone?: string | null;
   email?: string | null;
   aviariosIniciais?: Array<{ numero: string; tecnico_id?: string | null }>;
+  empresa_id?: string;
 }): Promise<Produtor> {
+  const rowData: any = {
+    nome: payload.nome.trim(),
+    municipio: payload.municipio?.trim() || null,
+    codigo_avicultor: payload.codigo_avicultor?.trim() || null,
+    telefone: payload.telefone?.trim() || null,
+    email: payload.email?.trim() || null,
+    status: 'Ativo'
+  };
+
+  if (payload.empresa_id) {
+    rowData.empresa_id = payload.empresa_id;
+  } else {
+    throw new Error('empresa_id é obrigatório para cadastrar um produtor.');
+  }
+
   const { data: produtor, error: prodError } = await supabase
     .from('produtores')
-    .insert([{
-      nome: payload.nome.trim(),
-      municipio: payload.municipio?.trim() || null,
-      codigo_avicultor: payload.codigo_avicultor?.trim() || null,
-      telefone: payload.telefone?.trim() || null,
-      email: payload.email?.trim() || null,
-      status: 'Ativo'
-    }])
+    .insert([rowData])
     .select('*')
     .single();
 
@@ -622,6 +663,7 @@ export async function createProdutor(payload: {
       produtor_id: produtor.id,
       numero_instalacao: a.numero.trim(),
       tecnico_id: a.tecnico_id || null,
+      empresa_id: payload.empresa_id,
       status: 'Ativo'
     }));
 
@@ -686,14 +728,26 @@ export async function deleteAviario(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function createAviario(produtorId: string, numeroInstalacao: string, tecnicoId?: string | null): Promise<Aviario> {
+export async function createAviario(
+  produtorId: string, 
+  numeroInstalacao: string, 
+  tecnicoId?: string | null,
+  empresaId?: string
+): Promise<Aviario> {
+  if (!empresaId) {
+    throw new Error('empresaId é obrigatório para cadastrar um aviário.');
+  }
+
+  const rowData: any = {
+    produtor_id: produtorId,
+    numero_instalacao: numeroInstalacao.trim(),
+    tecnico_id: tecnicoId || null,
+    empresa_id: empresaId
+  };
+
   const { data, error } = await supabase
     .from('cadastro_aviarios')
-    .insert([{
-      produtor_id: produtorId,
-      numero_instalacao: numeroInstalacao.trim(),
-      tecnico_id: tecnicoId || null
-    }])
+    .insert([rowData])
     .select(`
       *,
       produtor:produtores(*),
@@ -711,16 +765,24 @@ export async function createTecnico(payload: {
   unidade?: string | null;
   telefone?: string | null;
   email?: string | null;
+  empresa_id: string;
 }): Promise<Tecnico> {
+  if (!payload.empresa_id) {
+    throw new Error('empresa_id é obrigatório para cadastrar um extensionista.');
+  }
+
+  const rowData: any = {
+    nome: payload.nome.trim(),
+    unidade: payload.unidade?.trim() || 'Unidade Integrada',
+    telefone: payload.telefone?.trim() || null,
+    email: payload.email?.trim() || null,
+    empresa_id: payload.empresa_id,
+    status: 'Ativo'
+  };
+
   const { data, error } = await supabase
     .from('tecnicos')
-    .insert([{
-      nome: payload.nome.trim(),
-      unidade: payload.unidade?.trim() || 'Bello Alimentos',
-      telefone: payload.telefone?.trim() || null,
-      email: payload.email?.trim() || null,
-      status: 'Ativo'
-    }])
+    .insert([rowData])
     .select('*')
     .single();
 

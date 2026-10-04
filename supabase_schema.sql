@@ -1,7 +1,7 @@
 -- ==============================================================================
 -- SCHEMA SUPABASE: Ficha Cadastral de Produtores & Setup de Granjas (Bello Alimentos)
 -- Execute este script no SQL Editor do seu projeto Supabase:
--- https://supabase.com/dashboard/project/evzmmdteliaupztfqepl/sql/new
+-- https://supabase.com/dashboard/project/ebixhddonbiqtrsyvdry/sql/new
 -- ==============================================================================
 
 -- 1. Extensões

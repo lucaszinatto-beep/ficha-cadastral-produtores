@@ -24,6 +24,7 @@ import {
   deleteProdutor,
   createAviario
 } from '../services/dataService';
+import { useCompany } from '../context/CompanyContext';
 
 interface ProdutoresViewProps {
   produtores: Produtor[];
@@ -42,6 +43,7 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
   onRefresh,
   userLevel = 10
 }) => {
+  const { currentCompany } = useCompany();
   const [filter, setFilter] = useState('');
 
   // Modal de Produtor (Cadastro / Edição)
@@ -146,7 +148,8 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
           codigo_avicultor: produtorForm.codigo_avicultor.trim() || null,
           telefone: produtorForm.telefone.trim() || null,
           email: produtorForm.email.trim() || null,
-          aviariosIniciais: initialAviarios
+          aviariosIniciais: initialAviarios,
+          empresa_id: currentCompany.id
         });
         showToast(`Produtor "${produtorForm.nome.trim()}" cadastrado com sucesso!`);
       }
@@ -177,7 +180,8 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
       await createAviario(
         targetProdutorForAviario.id,
         newAviarioNumero.trim(),
-        newAviarioTecnicoId || null
+        newAviarioTecnicoId || null,
+        currentCompany.id
       );
       showToast(`Aviário ${newAviarioNumero.trim()} cadastrado para ${targetProdutorForAviario.nome}!`);
       setIsAddAviarioModalOpen(false);
@@ -236,11 +240,15 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">
-              Produtores Cadastrados ({produtores.length})
+            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+              <span>Produtores Cadastrados</span>
+              <span className="text-sm font-normal text-slate-400 font-mono">({produtores.length})</span>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-sky-400 border border-slate-700 font-medium">
+                {currentCompany.nome}
+              </span>
             </h2>
             <p className="text-xs text-slate-400">
-              Listagem consolidada de todos os produtores, municípios e aviários vinculados.
+              Listagem consolidada de produtores vinculados à empresa <strong className="text-slate-300">{currentCompany.nome}</strong>.
             </p>
           </div>
         </div>
@@ -265,7 +273,7 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white font-semibold text-xs shadow-lg shadow-blue-600/30 border border-sky-400/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Plus className="w-4 h-4" />
-              <span>Cadastrar Produtor</span>
+              <span>Novo Produtor ({currentCompany.nome})</span>
             </button>
           )}
         </div>
@@ -275,9 +283,13 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
       {filteredProdutores.length === 0 ? (
         <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-12 text-center text-slate-400">
           <Users className="w-12 h-12 mx-auto text-slate-600 mb-3" />
-          <p className="text-base font-semibold text-slate-300">Nenhum produtor encontrado</p>
-          <p className="text-xs text-slate-500 mt-1">
-            {filter ? 'Tente ajustar sua busca ou cadastre um novo.' : 'Cadastre o primeiro produtor usando o botão acima.'}
+          <p className="text-base font-semibold text-slate-200">
+            Nenhum produtor cadastrado para {currentCompany.nome}
+          </p>
+          <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+            {filter 
+              ? 'Nenhum produtor encontrado com os termos pesquisados. Tente ajustar o filtro.' 
+              : `Esta empresa ainda não possui produtores integrados. Utilize o botão "Novo Produtor" ou realize uma importação de planilha para começar.`}
           </p>
         </div>
       ) : (

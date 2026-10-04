@@ -6,6 +6,7 @@ import {
 import confetti from 'canvas-confetti';
 import { parseExcelFile, executeImport } from '../services/importService';
 import { ImportPreviewSummary, ImportacaoLog } from '../types/database';
+import { useCompany } from '../context/CompanyContext';
 
 interface ImportModalProps {
   isOpen: boolean;
@@ -102,6 +103,8 @@ export const ImportModal: React.FC<ImportModalProps> = ({
     }
   };
 
+  const { currentCompany } = useCompany();
+
   const handleStartImport = async () => {
     if (!previewSummary || !file) return;
 
@@ -109,7 +112,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
     setImportProgress({
       stage: 'produtores',
       percent: 5,
-      message: 'Iniciando processamento seguro sem duplicidade...',
+      message: `Iniciando processamento seguro para ${currentCompany.nome}...`,
       stats: null
     });
 
@@ -118,10 +121,11 @@ export const ImportModal: React.FC<ImportModalProps> = ({
         previewSummary.allRows,
         file.name,
         selectedSheet,
-        'Lucas Zinatto (Admin)',
+        'Administrador',
         (progress) => {
           setImportProgress(progress);
-        }
+        },
+        currentCompany.id
       );
 
       setImportResult(result);
@@ -213,9 +217,12 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                 <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-normal">
                   Upsert Inteligente
                 </span>
+                <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${currentCompany.badgeBg} ${currentCompany.badgeText} ${currentCompany.badgeBorder}`}>
+                  {currentCompany.nome}
+                </span>
               </h2>
               <p className="text-xs text-slate-400">
-                Importe uma planilha Excel para cadastrar ou atualizar produtores, aviários, técnicos e dados de setup.
+                Importe uma planilha Excel para cadastrar ou atualizar dados exclusivamente para <strong className="text-slate-200">{currentCompany.nome}</strong>.
               </p>
             </div>
           </div>

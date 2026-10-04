@@ -1,4 +1,5 @@
-import { Aviario, SetupAviario } from '../types/database';
+import { Aviario, SetupAviario, Empresa } from '../types/database';
+import { CompanyThemeConfig } from '../config/companies';
 
 function formatNum(val: number | null | undefined, unit: string = ''): string {
   if (val === null || val === undefined || isNaN(Number(val))) return '-';
@@ -14,12 +15,15 @@ function formatBool(val: boolean | null | undefined): string {
 /**
  * Gera o documento HTML completo e limpo para impressão oficial A4 Retrato
  */
-export function generateFichaHtml(aviarios: Aviario[]): string {
+export function generateFichaHtml(aviarios: Aviario[], company?: Empresa | CompanyThemeConfig | null): string {
   const todayStr = new Date().toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
   });
+
+  const logoUrl = company?.logo_path || '/logos/bello.png';
+  const companyName = company?.nome || 'Bello Alimentos';
 
   const pagesHtml = aviarios.map((aviario, index) => {
     const setup: Partial<SetupAviario> = aviario.setup || {};
@@ -31,7 +35,7 @@ export function generateFichaHtml(aviarios: Aviario[]): string {
         <!-- CABEÇALHO -->
         <div class="header-box">
           <div class="header-left">
-            <img src="/Logo_Bello.png" alt="Bello Alimentos" class="logo-img" />
+            <img src="${logoUrl}" alt="${companyName}" class="logo-img" />
             <div class="header-title">
               <span class="sub-badge">Set Up Granja • Gestão de Frangos de Corte</span>
               <h1 class="main-title">Ficha Técnica de Setup de Aviário</h1>
@@ -39,7 +43,7 @@ export function generateFichaHtml(aviarios: Aviario[]): string {
           </div>
           <div class="header-right">
             <div>Data: <strong>${todayStr}</strong></div>
-            <div>Documento Oficial • Bello Alimentos</div>
+            <div>Documento Oficial • ${companyName}</div>
           </div>
         </div>
 
@@ -313,7 +317,7 @@ export function generateFichaHtml(aviarios: Aviario[]): string {
 
         <!-- 5. RODAPÉ -->
         <div class="footer-row">
-          <span>Bello Alimentos S.A. • Gestão de Ambiência e Setup</span>
+          <span>${companyName} • Gestão de Ambiência e Setup</span>
           <span>Página ${index + 1} de ${aviarios.length} • 1 Aviário por Folha A4</span>
         </div>
 
@@ -326,7 +330,7 @@ export function generateFichaHtml(aviarios: Aviario[]): string {
     <html lang="pt-BR">
     <head>
       <meta charset="UTF-8">
-      <title>Ficha Técnica de Setup • Bello Alimentos</title>
+      <title>Ficha Técnica de Setup • ${companyName}</title>
       <style>
         @page {
           size: A4 portrait;
@@ -666,7 +670,7 @@ export function generateFichaHtml(aviarios: Aviario[]): string {
  * Dispara a impressão limpa e isolada usando um iframe oculto
  * Garante 100% de fundo branco, sem interferência do tema escuro do site!
  */
-export function executeIsolatedPrint(aviarios: Aviario[]): void {
+export function executeIsolatedPrint(aviarios: Aviario[], company?: Empresa | CompanyThemeConfig | null): void {
   if (!aviarios || aviarios.length === 0) return;
 
   // Cria iframe oculto
@@ -688,7 +692,7 @@ export function executeIsolatedPrint(aviarios: Aviario[]): void {
     return;
   }
 
-  const htmlContent = generateFichaHtml(aviarios);
+  const htmlContent = generateFichaHtml(aviarios, company);
   doc.open();
   doc.write(htmlContent);
   doc.close();

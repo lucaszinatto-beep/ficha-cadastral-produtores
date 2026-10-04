@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Header } from './components/Header';
 import { CascadeFilterBar } from './components/CascadeFilterBar';
 import { FichaSetupCard } from './components/FichaSetupCard';
@@ -8,6 +8,9 @@ import { ImportHistoryView } from './components/ImportHistoryView';
 import { ProdutoresView } from './components/ProdutoresView';
 import { TecnicosView } from './components/TecnicosView';
 import { TutorialModal } from './components/TutorialModal';
+import { CompanySelectorView } from './components/CompanySelectorView';
+import { CompanyProvider, useCompany } from './context/CompanyContext';
+import { CompanyThemeConfig, DEFAULT_COMPANY } from './config/companies';
 import { fetchProdutores, fetchAviarios, fetchTecnicos } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
 import { fetchMyProfile, UserProfile, ACCESS_LEVELS } from './services/profileService';
@@ -17,12 +20,25 @@ import { LoginView } from './components/LoginView';
 import { Produtor, Aviario, Tecnico, ImportacaoLog } from './types/database';
 import { RefreshCw, ShieldCheck, Home, AlertCircle, BookOpen } from 'lucide-react';
 
-export const App: React.FC = () => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [isAuthChecking, setIsAuthChecking] = useState(true);
-  const [showSplash, setShowSplash] = useState(false);
-  const [isRecoveringPassword, setIsRecoveringPassword] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+/**
+ * Conteúdo Principal da Aplicação consumindo o CompanyContext (Pós-Autenticação)
+ */
+const AppMain: React.FC<{
+  session: Session;
+  userProfile: UserProfile | null;
+  onLogout: () => void;
+}> = ({ session, userProfile, onLogout }) => {
+  const { 
+    currentCompany, 
+    userCompanies, 
+    allCompanies, 
+    isSuperAdmin, 
+    switchCompany 
+  } = useCompany();
+
+  // Controla se o seletor de empresa está aberto dentro do painel autenticado
+  const [isSelectorViewActive, setIsSelectorViewActive] = useState<boolean>(false);
+
   const [activeTab, setActiveTab] = useState<'fichas' | 'produtores' | 'tecnicos' | 'historico'>('fichas');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
@@ -31,7 +47,7 @@ export const App: React.FC = () => {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Data States
+  // Data States escopados por empresa
   const [produtores, setProdutores] = useState<Produtor[]>([]);
   const [aviarios, setAviarios] = useState<Aviario[]>([]);
   const [tecnicos, setTecnicos] = useState<Tecnico[]>([]);
@@ -41,15 +57,16 @@ export const App: React.FC = () => {
   const [selectedProdutorId, setSelectedProdutorId] = useState<string>('');
   const [selectedAviarioId, setSelectedAviarioId] = useState<string>('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async (companyId?: string) => {
+    const targetCompanyId = companyId || currentCompany.id;
     setIsLoading(true);
     setLoadError(null);
     try {
       const [prodData, avData, tecData, logsData] = await Promise.all([
-        fetchProdutores(),
-        fetchAviarios(),
-        fetchTecnicos(),
-        loadImportacoesHistory()
+        fetchProdutores(targetCompanyId),
+        fetchAviarios(targetCompanyId),
+        fetchTecnicos(targetCompanyId),
+        loadImportacoesHistory(targetCompanyId)
       ]);
 
       setProdutores(prodData);
@@ -57,13 +74,12 @@ export const App: React.FC = () => {
       setTecnicos(tecData);
       setImportLogs(logsData);
 
-      // Auto-seleciona o primeiro produtor e aviário caso nada esteja selecionado
+      // Auto-seleciona o primeiro produtor e aviário da empresa ativa caso necessário
       if (prodData.length > 0) {
         setSelectedProdutorId(prev => {
           const exists = prodData.some(p => p.id === prev);
           const activeProdId = exists && prev ? prev : prodData[0].id;
           
-          // Ajusta aviário vinculado
           const relatedAviarios = avData.filter(a => a.produtor_id === activeProdId);
           if (relatedAviarios.length > 0) {
             setSelectedAviarioId(prevAv => {
@@ -76,6 +92,9 @@ export const App: React.FC = () => {
 
           return activeProdId;
         });
+      } else {
+        setSelectedProdutorId('');
+        setSelectedAviarioId('');
       }
     } catch (err: any) {
       console.error('Erro ao carregar dados do Supabase:', err);
@@ -83,55 +102,23 @@ export const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentCompany.id]);
 
-  const loadUserProfile = async () => {
-    const profile = await fetchMyProfile();
-    setUserProfile(profile);
-  };
-
+  // Recarrega os dados sempre que a empresa ativa for alterada ou o seletor for fechado
   useEffect(() => {
-    // 1. Obter sessão atual salva
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setIsAuthChecking(false);
-      if (session) {
-        loadData();
-        loadUserProfile();
-      }
-    });
+    if (!isSelectorViewActive && currentCompany?.id) {
+      loadData(currentCompany.id);
+    }
+  }, [currentCompany?.id, isSelectorViewActive, loadData]);
 
-    // 2. Escutar mudanças na autenticação (login, logout, refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
-      setSession(currentSession);
-      setIsAuthChecking(false);
-      if (currentSession) {
-        if (event === 'PASSWORD_RECOVERY') {
-          setIsRecoveringPassword(true);
-        }
-        if (event === 'SIGNED_IN' && !currentSession.user?.user_metadata?.force_password_change) {
-          setShowSplash(true);
-          setTimeout(() => setShowSplash(false), 1500);
-        }
-        loadData();
-        loadUserProfile();
-      } else {
-        setUserProfile(null);
-      }
-    });
+  // Nível de acesso do usuário (Super Admin sempre tem acesso total)
+  const userLevel = isSuperAdmin ? ACCESS_LEVELS.SUPER_ADMIN : (userProfile?.level ?? ACCESS_LEVELS.VIEWER);
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  // Nível de acesso do usuário (fallback para viewer se profile não carregou)
-  const userLevel = userProfile?.level ?? ACCESS_LEVELS.VIEWER;
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setSession(null);
-    setUserProfile(null);
+  // Manipulador de Seleção de Empresa no CompanySelectorView dentro do painel
+  const handleSelectCompany = (company: CompanyThemeConfig) => {
+    switchCompany(company.id);
+    sessionStorage.setItem('company_selected_session', 'true');
+    setIsSelectorViewActive(false);
   };
 
   // Aviários filtrados do produtor selecionado
@@ -176,69 +163,40 @@ export const App: React.FC = () => {
     return produtores.filter(p => p.nome.toLowerCase().includes(q));
   }, [produtores, searchQuery]);
 
-  // 1. Tela de Carregamento da Autenticação
-  if (isAuthChecking) {
+  // Se o usuário solicitou trocar de empresa através do Header, exibe o seletor com as empresas autorizadas
+  if (isSelectorViewActive) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center space-y-4">
-        <RefreshCw className="w-8 h-8 text-sky-400 animate-spin" />
-        <p className="text-xs font-semibold text-slate-400">Verificando sessão segura...</p>
-      </div>
-    );
-  }
-
-  // 2. Tela de Login se não estiver autenticado, ou se precisar forçar troca de senha/recuperação
-  const forcePasswordChange = session?.user?.user_metadata?.force_password_change === true;
-  
-  if (!session || forcePasswordChange || isRecoveringPassword) {
-    return (
-      <LoginView 
-        onLoginSuccess={() => {
-          setIsRecoveringPassword(false);
-          loadData();
-        }} 
-        initialSession={session} 
-        isRecovering={isRecoveringPassword}
+      <CompanySelectorView
+        userCompanies={userCompanies}
+        allCompanies={allCompanies}
+        isSuperAdmin={isSuperAdmin}
+        userEmail={session.user.email}
+        onSelectCompany={handleSelectCompany}
+        onLogout={onLogout}
+        isPreLogin={false}
       />
-    );
-  }
-
-  // 2.5 Splash de Transição (Pós-login)
-  if (showSplash) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden z-[100]">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"></div>
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl"></div>
-        
-        <div className="bg-white rounded-3xl p-6 shadow-[0_0_80px_rgba(56,189,248,0.8)] border border-sky-400 z-10 animate-logo-transition">
-          <img
-            src="/Logo_Bello.png"
-            alt="Bello Alimentos"
-            className="h-20 w-auto object-contain"
-          />
-        </div>
-      </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
       
-      {/* Top Header com Logo Oficial, Busca e Perfil */}
+      {/* Top Header com Logo Oficial da Empresa Ativa, Switcher, Busca e Perfil */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenTutorial={() => setIsTutorialOpen(true)}
+        onOpenCompanySelector={() => setIsSelectorViewActive(true)}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         totalProdutores={produtores.length}
         totalAviarios={aviarios.length}
         userEmail={session.user.email}
-        onLogout={handleLogout}
+        onLogout={onLogout}
         onOpenUserManagement={() => setIsUserManagementOpen(true)}
         userLevel={userLevel}
-        userRole={userProfile?.role}
+        userRole={isSuperAdmin ? 'super_admin' : userProfile?.role}
       />
 
       {/* Main Content Area */}
@@ -255,8 +213,8 @@ export const App: React.FC = () => {
               </div>
             </div>
             <button
-              onClick={loadData}
-              className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all"
+              onClick={() => loadData(currentCompany.id)}
+              className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Tentar Novamente
             </button>
@@ -266,20 +224,22 @@ export const App: React.FC = () => {
         {isLoading ? (
           <div className="py-24 text-center space-y-4">
             <RefreshCw className="w-10 h-10 text-sky-400 animate-spin mx-auto" />
-            <p className="text-sm font-semibold text-slate-300">Carregando dados da Bello Alimentos...</p>
+            <p className="text-sm font-semibold text-slate-300">
+              Carregando dados da {currentCompany.nome}...
+            </p>
           </div>
         ) : produtores.length === 0 ? (
-          /* Estado Vazio Limpo (Sem botões redundantes, usando apenas o do topo) */
+          /* Estado Vazio Limpo Escopado à Empresa Ativa */
           <div className="py-16 text-center space-y-3 max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
             <Home className="w-12 h-12 text-slate-600 mx-auto" />
-            <h2 className="text-lg font-bold text-white">Nenhum produtor encontrado no banco de dados</h2>
+            <h2 className="text-lg font-bold text-white">Nenhum produtor cadastrado em {currentCompany.nome}</h2>
             <p className="text-xs text-slate-400">
-              Utilize o botão <strong className="text-sky-400">IMPORTAR BASE DE DADOS</strong> no topo da página para carregar os registros.
+              Utilize o botão <strong className="text-sky-400">IMPORTAR BASE DE DADOS</strong> no topo da página ou cadastre novos produtores na aba <strong className="text-slate-200">Produtores</strong>.
             </p>
-            <div className="pt-2">
+            <div className="pt-2 flex items-center justify-center gap-3">
               <button
                 onClick={() => setIsTutorialOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 border border-slate-700 text-xs font-semibold transition-all shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 border border-slate-700 text-xs font-semibold transition-all shadow-sm cursor-pointer"
               >
                 <BookOpen className="w-4 h-4" />
                 <span>Ver Tutorial da Plataforma</span>
@@ -311,7 +271,7 @@ export const App: React.FC = () => {
                     aviario={currentAviario}
                     allTecnicos={tecnicos}
                     allAviariosOfProdutor={aviariosOfSelectedProdutor}
-                    onSetupUpdated={loadData}
+                    onSetupUpdated={() => loadData(currentCompany.id)}
                     userProfile={userProfile}
                   />
                 ) : (
@@ -331,7 +291,7 @@ export const App: React.FC = () => {
                 aviarios={aviarios}
                 tecnicos={tecnicos}
                 onSelectProdutorAndAviario={handleSelectProdutorAndAviario}
-                onRefresh={loadData}
+                onRefresh={() => loadData(currentCompany.id)}
                 userLevel={userLevel}
               />
             )}
@@ -343,7 +303,7 @@ export const App: React.FC = () => {
                 aviarios={aviarios}
                 produtores={produtores}
                 onSelectProdutorAndAviario={handleSelectProdutorAndAviario}
-                onRefresh={loadData}
+                onRefresh={() => loadData(currentCompany.id)}
                 userLevel={userLevel}
               />
             )}
@@ -353,7 +313,7 @@ export const App: React.FC = () => {
               <ImportHistoryView
                 logs={importLogs}
                 isLoading={isLoading}
-                onRefresh={loadData}
+                onRefresh={() => loadData(currentCompany.id)}
                 onOpenImportModal={() => setIsImportModalOpen(true)}
               />
             )}
@@ -363,10 +323,10 @@ export const App: React.FC = () => {
 
       </main>
 
-      {/* Rodapé com Indicador de Conexão */}
+      {/* Rodapé Dinâmico com Indicador da Empresa Ativa */}
       <footer className="no-print bg-slate-900/80 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
-          <span>Bello Alimentos © 2026 • Ficha Cadastral e Setup de Granjas</span>
+          <span>{currentCompany.nome} © 2026 • Ficha Cadastral e Setup de Granjas</span>
           <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Supabase Conectado ({produtores.length} produtores / {aviarios.length} aviários sincronizados)</span>
@@ -374,18 +334,18 @@ export const App: React.FC = () => {
         </div>
       </footer>
 
-      {/* Modal de Importação */}
+      {/* Modal de Importação com Escopo da Empresa Ativa */}
       <ImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        onImportSuccess={loadData}
+        onImportSuccess={() => loadData(currentCompany.id)}
         onViewHistory={() => {
-          loadData();
+          loadData(currentCompany.id);
           setActiveTab('historico');
         }}
       />
 
-      {/* Modal de Gestão de Usuários */}
+      {/* Modal de Gestão de Usuários e Vínculos Multiempresa */}
       <UserManagementModal
         isOpen={isUserManagementOpen}
         onClose={() => setIsUserManagementOpen(false)}
@@ -403,6 +363,141 @@ export const App: React.FC = () => {
       />
 
     </div>
+  );
+};
+
+/**
+ * Componente Raiz: Gerencia o Fluxo de Entrada Pré-Login, Seleção de Empresa e Autenticação
+ */
+export const App: React.FC = () => {
+  const [session, setSession] = useState<Session | null>(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
+  const [isRecoveringPassword, setIsRecoveringPassword] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+  // Empresa selecionada antes do login pelo usuário
+  const [selectedCompanyForLogin, setSelectedCompanyForLogin] = useState<CompanyThemeConfig | null>(null);
+
+  const loadUserProfile = async () => {
+    const profile = await fetchMyProfile();
+    setUserProfile(profile);
+  };
+
+  useEffect(() => {
+    // 1. Obter sessão atual salva
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsAuthChecking(false);
+      if (session) {
+        loadUserProfile();
+      }
+    });
+
+    // 2. Escutar mudanças na autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      setSession(currentSession);
+      setIsAuthChecking(false);
+      if (currentSession) {
+        if (event === 'PASSWORD_RECOVERY') {
+          setIsRecoveringPassword(true);
+        }
+        if (event === 'SIGNED_IN' && !currentSession.user?.user_metadata?.force_password_change) {
+          setShowSplash(true);
+          setTimeout(() => setShowSplash(false), 1500);
+        }
+        loadUserProfile();
+      } else {
+        setUserProfile(null);
+        setSelectedCompanyForLogin(null);
+        sessionStorage.removeItem('company_selected_session');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    sessionStorage.removeItem('company_selected_session');
+    setSelectedCompanyForLogin(null);
+    setSession(null);
+    setUserProfile(null);
+  };
+
+  // 1. Tela de Carregamento da Autenticação
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center space-y-4">
+        <RefreshCw className="w-8 h-8 text-sky-400 animate-spin" />
+        <p className="text-xs font-semibold text-slate-400">Verificando sessão segura...</p>
+      </div>
+    );
+  }
+
+  // 2. FLUXO PRÉ-LOGIN:
+  // Se o usuário NÃO está autenticado (ou precisa atualizar senha/recuperar):
+  const forcePasswordChange = session?.user?.user_metadata?.force_password_change === true;
+  
+  if (!session || forcePasswordChange || isRecoveringPassword) {
+    // 2.1 Se ainda não selecionou a empresa, exibe obrigatoriamente a tela "SELECIONE A EMPRESA"
+    if (!selectedCompanyForLogin && !isRecoveringPassword && !forcePasswordChange) {
+      return (
+        <CompanySelectorView
+          isPreLogin={true}
+          onSelectCompany={(company) => {
+            setSelectedCompanyForLogin(company);
+            localStorage.setItem('active_company_id', company.id);
+          }}
+        />
+      );
+    }
+
+    // 2.2 Após selecionar a empresa, abre a tela de LOGIN DA EMPRESA ESCOLHIDA
+    return (
+      <LoginView 
+        company={selectedCompanyForLogin || DEFAULT_COMPANY}
+        onBackToCompanySelect={() => setSelectedCompanyForLogin(null)}
+        onLoginSuccess={() => {
+          setIsRecoveringPassword(false);
+          loadUserProfile();
+        }} 
+        initialSession={session} 
+        isRecovering={isRecoveringPassword}
+      />
+    );
+  }
+
+  // 3. Splash de Transição (Pós-login)
+  if (showSplash) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden z-[100]">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"></div>
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl"></div>
+        
+        <div className="bg-white rounded-3xl p-6 shadow-[0_0_80px_rgba(56,189,248,0.8)] border border-sky-400 z-10 animate-logo-transition">
+          <img
+            src={selectedCompanyForLogin?.logo_path || '/logos/bello.png'}
+            alt="Portal de Acesso"
+            className="h-20 w-auto object-contain"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // 4. Usuário Autenticado: Entra no Painel da Empresa Ativa
+  return (
+    <CompanyProvider userProfile={userProfile}>
+      <AppMain
+        session={session}
+        userProfile={userProfile}
+        onLogout={handleLogout}
+      />
+    </CompanyProvider>
   );
 };
 

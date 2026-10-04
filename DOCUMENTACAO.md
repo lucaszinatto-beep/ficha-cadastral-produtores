@@ -215,8 +215,8 @@ erDiagram
 
 ### 5.1. Variáveis de Ambiente (`.env`)
 ```env
-VITE_SUPABASE_URL="https://evzmmdteliaupztfqepl.supabase.co"
-VITE_SUPABASE_ANON_KEY="sb_publishable_OooYawrnpBv0JRjkWxMHxQ_4K2m6T__"
+VITE_SUPABASE_URL="https://ebixhddonbiqtrsyvdry.supabase.co"
+VITE_SUPABASE_ANON_KEY="sb_publishable_Fgi4B-Ad1liJpTku0WD8DA_2eb5OXsC"
 ```
 
 ### 5.2. Comandos de Execução
@@ -238,27 +238,59 @@ bun run build # ou npm run build
 ```
 ├── .env                       # Configuração de chaves do Supabase
 ├── supabase_schema.sql        # Script SQL completo de criação do banco
+├── supabase_migration_multiempresa.sql # Script SQL da arquitetura multiempresas
 ├── DOCUMENTACAO.md            # Esta documentação completa
 ├── README.md                  # Apresentação do repositório
 ├── public/
-│   └── Logo_Bello.png         # Logo oficial da marca
+│   ├── Logo_Bello.png         # Logo legado Bello
+│   └── logos/                 # Logos oficiais das 4 empresas
+│       ├── bello.png          # Bello Alimentos
+│       ├── levo.png           # Levo Alimentos
+│       ├── frango_ouro.png    # Frango Ouro
+│       └── pluma.png          # Pluma Agroavícola
 ├── src/
-│   ├── App.tsx                # Orquestrador de estado e abas
+│   ├── App.tsx                # Orquestrador de estado, CompanyProvider e seleção
 │   ├── main.tsx               # Entrypoint React
 │   ├── index.css              # Estilização global Tailwind v4
+│   ├── config/
+│   │   └── companies.ts       # Configurações de tema, UUIDs e metadados das 4 empresas
+│   ├── context/
+│   │   └── CompanyContext.tsx # Contexto e hook useCompany para controle de empresa ativa
 │   ├── types/
-│   │   └── database.ts        # Tipagens TypeScript completas
+│   │   └── database.ts        # Tipagens TypeScript completas com suporte multiempresa
 │   ├── services/
 │   │   ├── supabase.ts        # Instância do cliente Supabase
-│   │   ├── dataService.ts     # Operações de CRUD e consultas
-│   │   └── importService.ts   # Engine de parsing e processamento Excel
+│   │   ├── dataService.ts     # Operações de CRUD com filtro estrito por empresa_id
+│   │   ├── importService.ts   # Importação Excel escopada por empresa_id
+│   │   ├── profileService.ts  # Gestão de perfis e duplicação de acessos multiempresa
+│   │   └── printService.ts    # Impressão oficial isolada com branding da empresa
 │   └── components/
-│       ├── Header.tsx         # Cabeçalho com logo e contadores
-│       ├── BelloLogo.tsx      # Componente de renderização do logo
+│       ├── Header.tsx         # Cabeçalho com logo dinâmico e switcher de empresa
+│       ├── CompanyLogo.tsx    # Renderizador proporcional de logomarca oficial
+│       ├── CompanySelectorView.tsx # Tela de seleção com os 4 cards de empresas
 │       ├── CascadeFilterBar.tsx # Barra de filtro cascata Produtor -> Aviário
 │       ├── FichaSetupCard.tsx # Ficha técnica de setup e edição
-│       ├── ProdutoresView.tsx # Visão de cartões de produtores
-│       ├── TecnicosView.tsx   # Gestão completa de Extensionistas (CRUD)
-│       ├── ImportModal.tsx    # Modal de upload, validação e importação
-│       └── ImportHistoryView.tsx # Histórico de logs de importação
+│       ├── FichaPrintDocument.tsx # Documento A4 oficial dinâmico por empresa
+│       ├── PrintSetupModal.tsx # Modal de impressão/PDF por empresa
+│       ├── ProdutoresView.tsx # Visão de produtores escopada por empresa
+│       ├── TecnicosView.tsx   # Gestão de Extensionistas escopada por empresa
+│       ├── ImportModal.tsx    # Modal de importação com identificação de empresa alvo
+│       ├── ImportHistoryView.tsx # Histórico de logs de importação por empresa
+│       └── UserManagementModal.tsx # Gestão de usuários e duplicação de vínculos
 ```
+
+---
+
+## 7. 🏢 Arquitetura Multiempresas (Multi-Tenant)
+
+### 7.1. Empresas Suportadas
+1. **Bello Alimentos** (ID: `e1100000-0000-0000-0000-000000000001`, Slug: `bello`)
+2. **Levo Alimentos** (ID: `e1100000-0000-0000-0000-000000000002`, Slug: `levo`)
+3. **Frango Ouro** (ID: `e1100000-0000-0000-0000-000000000003`, Slug: `frango_ouro`)
+4. **Pluma Agroavícola** (ID: `e1100000-0000-0000-0000-000000000004`, Slug: `pluma`)
+
+### 7.2. Isolamento de Dados
+- **Banco de Dados (RLS)**: Cada tabela operacional possui a coluna `empresa_id` vinculada a `empresas(id)`. As políticas do Supabase validam a participação do usuário autenticado na tabela `usuarios_empresas` (ou privilégio de `super_admin`), bloqueando no próprio PostgreSQL consultas, inserções, atualizações e exclusões entre empresas diferentes.
+- **Frontend Scoping**: O `CompanyContext` garante que todas as chamadas de API (`fetchProdutores`, `fetchAviarios`, `fetchTecnicos`, `saveSetupData`, `executeImport`) enviem explicitamente o `empresa_id` ativo.
+- **Duplicação Segura de Usuários**: A função `duplicateUserAccess` permite que Super Admins concedam acesso a um usuário em múltiplas empresas sem duplicar registros operacionais (produtores, aviários ou fichas).
+

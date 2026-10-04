@@ -3,6 +3,7 @@ import { Printer, X, FileText, Layers } from 'lucide-react';
 import { Aviario } from '../types/database';
 import { FichaPrintDocument } from './FichaPrintDocument';
 import { executeIsolatedPrint } from '../services/printService';
+import { useCompany } from '../context/CompanyContext';
 
 interface PrintSetupModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const PrintSetupModal: React.FC<PrintSetupModalProps> = ({
   currentAviario,
   allAviariosOfProdutor
 }) => {
+  const { currentCompany } = useCompany();
   const [printMode, setPrintMode] = useState<'single' | 'all'>('all');
 
   if (!isOpen) return null;
@@ -29,7 +31,7 @@ export const PrintSetupModal: React.FC<PrintSetupModalProps> = ({
     : (allAviariosOfProdutor.length > 0 ? allAviariosOfProdutor : [currentAviario]);
 
   const handleExecutePrint = () => {
-    executeIsolatedPrint(aviariosToPrint);
+    executeIsolatedPrint(aviariosToPrint, currentCompany);
   };
 
   return (
@@ -47,7 +49,7 @@ export const PrintSetupModal: React.FC<PrintSetupModalProps> = ({
                 Impressão Oficial & Exportação PDF (A4 Retrato)
               </h3>
               <p className="text-xs text-slate-400">
-                Padrão oficial Bello Alimentos • 1 Aviário por Folha A4
+                Padrão oficial {currentCompany.nome} • 1 Aviário por Folha A4
               </p>
             </div>
           </div>
@@ -125,7 +127,7 @@ export const PrintSetupModal: React.FC<PrintSetupModalProps> = ({
 
           {/* Folha A4 em Fundo Branco Limpo */}
           <div className="w-full max-w-[620px] bg-white text-slate-950 rounded-xl shadow-2xl p-4 border border-slate-300 overflow-hidden transform scale-[0.98] origin-top transition-transform">
-            <FichaPrintDocument aviariosToPrint={aviariosToPrint.slice(0, 1)} />
+            <FichaPrintDocument aviariosToPrint={aviariosToPrint.slice(0, 1)} company={currentCompany} />
             {aviariosToPrint.length > 1 && (
               <div className="mt-4 pt-3 border-t-2 border-dashed border-slate-400 text-center text-xs font-bold text-slate-500">
                 + Mais {aviariosToPrint.length - 1} aviários serão gerados nas páginas seguintes (1 por folha A4).

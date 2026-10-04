@@ -9,7 +9,8 @@ import {
   saveSetupData, updateAviarioTecnico, fetchSetupHistorico, restoreSetupVersion,
   deleteSetupHistoricoItem, clearAllSetupHistorico, applyDefaultSetupValues 
 } from '../services/dataService';
-import { BelloLogo } from './BelloLogo';  
+import { CompanyLogo } from './CompanyLogo';
+import { useCompany } from '../context/CompanyContext';
 import { PrintSetupModal } from './PrintSetupModal';
 import { FichaHistoryModal } from './FichaHistoryModal';
 
@@ -30,6 +31,7 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   onSetupUpdated,
   userProfile = null
 }) => {
+  const { currentCompany } = useCompany();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
@@ -75,7 +77,14 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
       if (selectedTecnicoId !== aviario.tecnico_id) {
         await updateAviarioTecnico(aviario.id, selectedTecnicoId || null);
       }
-      await saveSetupData(aviario.id, formData, userProfile);
+      await saveSetupData(
+        aviario.id, 
+        formData, 
+        userProfile, 
+        undefined, 
+        undefined, 
+        currentCompany.id
+      );
       
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
@@ -111,7 +120,12 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   const handleApplyDefaultValues = async () => {
     setIsApplyingDefault(true);
     try {
-      const updated = await applyDefaultSetupValues(aviario.id, userProfile);
+      const updated = await applyDefaultSetupValues(
+        aviario.id, 
+        userProfile, 
+        currentCompany.id, 
+        currentCompany.nome
+      );
       setFormData(updated);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
@@ -386,11 +400,14 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
 
           <div className="md:col-span-4 flex justify-start md:justify-end items-center w-full mt-2 md:mt-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-800">
             <div className="flex flex-col items-end">
-              <div className="h-10 md:h-12 bg-white rounded-xl px-3 py-1.5 flex items-center shadow-md border border-white/20">
-                <BelloLogo className="h-8 md:h-9" />
+              <div 
+                className="h-10 md:h-12 bg-white rounded-xl px-3 py-1.5 flex items-center shadow-md border"
+                style={{ borderColor: currentCompany.cor_destaque }}
+              >
+                <CompanyLogo company={currentCompany} className="h-8 md:h-9" />
               </div>
               <div className="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1.5">
-                Gestão de Frangos de Corte
+                {currentCompany.nome} • Setup
               </div>
             </div>
           </div>
@@ -697,7 +714,7 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed">
-              Você está prestes a aplicar os <strong>Parâmetros Padrão Recomendados da Bello Alimentos</strong> para o aviário <strong className="text-sky-300 font-mono">{aviario.numero_instalacao}</strong> do produtor <strong className="text-white uppercase">{aviario.produtor?.nome}</strong>.
+              Você está prestes a aplicar os <strong>Parâmetros Padrão Recomendados da {currentCompany.nome}</strong> para o aviário <strong className="text-sky-300 font-mono">{aviario.numero_instalacao}</strong> do produtor <strong className="text-white uppercase">{aviario.produtor?.nome}</strong>.
             </p>
 
             <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1.5 text-slate-300 font-mono">

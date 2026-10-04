@@ -1,11 +1,13 @@
 import React from 'react';
-import { Aviario, SetupAviario } from '../types/database';
+import { Aviario, SetupAviario, Empresa } from '../types/database';
+import { CompanyThemeConfig } from '../config/companies';
 
 interface FichaPrintDocumentProps {
   aviariosToPrint: Aviario[];
+  company?: Empresa | CompanyThemeConfig | null;
 }
 
-export const FichaPrintDocument: React.FC<FichaPrintDocumentProps> = ({ aviariosToPrint }) => {
+export const FichaPrintDocument: React.FC<FichaPrintDocumentProps> = ({ aviariosToPrint, company }) => {
   const formatNum = (val: number | null | undefined, unit: string = '') => {
     if (val === null || val === undefined || isNaN(Number(val))) return '-';
     return `${val} ${unit}`.trim();
@@ -23,6 +25,9 @@ export const FichaPrintDocument: React.FC<FichaPrintDocumentProps> = ({ aviarios
     year: 'numeric'
   });
 
+  const logoSrc = company?.logo_path || '/logos/bello.png';
+  const companyName = company?.nome || 'Bello Alimentos';
+
   return (
     <div className="print-pages-wrapper bg-white text-slate-950 font-sans">
       {aviariosToPrint.map((aviario, index) => {
@@ -38,8 +43,8 @@ export const FichaPrintDocument: React.FC<FichaPrintDocumentProps> = ({ aviarios
             <div className="border border-slate-400 rounded p-2 mb-2 bg-white flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img
-                  src="/Logo_Bello.png"
-                  alt="Bello Alimentos"
+                  src={logoSrc}
+                  alt={companyName}
                   className="h-9 w-auto object-contain"
                 />
                 <div className="border-l border-slate-300 pl-3">
@@ -54,7 +59,7 @@ export const FichaPrintDocument: React.FC<FichaPrintDocumentProps> = ({ aviarios
 
               <div className="text-right text-[9px] text-slate-600 font-mono">
                 <div>Data: <strong>{todayStr}</strong></div>
-                <div>Documento Oficial • Bello Alimentos</div>
+                <div>Documento Oficial • {companyName}</div>
               </div>
             </div>
 

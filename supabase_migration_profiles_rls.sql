@@ -1,7 +1,7 @@
 -- ==============================================================================
 -- MIGRAÇÃO: Perfis de Usuário + RLS Real (Proposta Pragmática)
 -- Execute no SQL Editor do Supabase:
--- https://supabase.com/dashboard/project/evzmmdteliaupztfqepl/sql/new
+-- https://supabase.com/dashboard/project/ebixhddonbiqtrsyvdry/sql/new
 -- ==============================================================================
 
 -- ============================================================================
@@ -70,25 +70,30 @@ $$;
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- Qualquer usuário autenticado pode ver todos os perfis
+DROP POLICY IF EXISTS "profiles_select_authenticated" ON public.profiles;
 CREATE POLICY "profiles_select_authenticated"
 ON public.profiles FOR SELECT TO authenticated
 USING (true);
 
 -- Usuário pode atualizar apenas seu próprio nome
+DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
 CREATE POLICY "profiles_update_own"
 ON public.profiles FOR UPDATE TO authenticated
 USING (id = auth.uid())
 WITH CHECK (id = auth.uid());
 
 -- Admin (level >= 80) pode inserir/atualizar qualquer profile
+DROP POLICY IF EXISTS "profiles_admin_insert" ON public.profiles;
 CREATE POLICY "profiles_admin_insert"
 ON public.profiles FOR INSERT TO authenticated
 WITH CHECK (public.get_my_level() >= 80);
 
+DROP POLICY IF EXISTS "profiles_admin_update" ON public.profiles;
 CREATE POLICY "profiles_admin_update"
 ON public.profiles FOR UPDATE TO authenticated
 USING (public.get_my_level() >= 80);
 
+DROP POLICY IF EXISTS "profiles_admin_delete" ON public.profiles;
 CREATE POLICY "profiles_admin_delete"
 ON public.profiles FOR DELETE TO authenticated
 USING (public.get_my_level() >= 80);
@@ -214,8 +219,17 @@ WHERE NOT EXISTS (
 )
 ON CONFLICT (id) DO NOTHING;
 
--- ============================================================================
--- PRONTO! Agora:
+-- 7.1 Garantir perfil Super Admin (Nível 100) para Lucas Zinatto
+INSERT INTO public.profiles (id, full_name, role, level)
+SELECT id, 'Lucas Zinatto', 'super_admin', 100
+FROM auth.users
+WHERE lower(trim(email)) = 'lucas.zinatto@belloalimentos.com.br'
+ON CONFLICT (id) DO UPDATE
+SET
+    full_name = 'Lucas Zinatto',
+    role = 'super_admin',
+    level = 100,
+    updated_at = now();
 -- ✅ Novos usuários cadastrados no Auth recebem role='viewer', level=10
 -- ✅ Usuários já existentes receberam role='admin', level=80
 -- ✅ Tabelas protegidas: só usuários logados podem ler, só level>=50 pode editar

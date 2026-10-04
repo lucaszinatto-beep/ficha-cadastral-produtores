@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Tecnico, Aviario, Produtor } from '../types/database';
 import { createTecnico, updateTecnico, deleteTecnico } from '../services/dataService';
+import { useCompany } from '../context/CompanyContext';
 
 interface TecnicosViewProps {
   tecnicos: Tecnico[];
@@ -33,6 +34,7 @@ export const TecnicosView: React.FC<TecnicosViewProps> = ({
   onRefresh,
   userLevel = 10
 }) => {
+  const { currentCompany } = useCompany();
   const [filter, setFilter] = useState('');
   
   // Modal de Cadastro / Edição
@@ -40,7 +42,7 @@ export const TecnicosView: React.FC<TecnicosViewProps> = ({
   const [editingTecnico, setEditingTecnico] = useState<Tecnico | null>(null);
   const [formData, setFormData] = useState({
     nome: '',
-    unidade: 'Bello Alimentos',
+    unidade: currentCompany.nome,
     telefone: '',
     email: '',
     status: 'Ativo'
@@ -65,7 +67,7 @@ export const TecnicosView: React.FC<TecnicosViewProps> = ({
     setEditingTecnico(null);
     setFormData({
       nome: '',
-      unidade: 'Bello Alimentos',
+      unidade: currentCompany.nome,
       telefone: '',
       email: '',
       status: 'Ativo'
@@ -78,7 +80,7 @@ export const TecnicosView: React.FC<TecnicosViewProps> = ({
     setEditingTecnico(tecnico);
     setFormData({
       nome: tecnico.nome || '',
-      unidade: tecnico.unidade || 'Bello Alimentos',
+      unidade: tecnico.unidade || currentCompany.nome,
       telefone: tecnico.telefone || '',
       email: tecnico.email || '',
       status: tecnico.status || 'Ativo'
@@ -112,7 +114,8 @@ export const TecnicosView: React.FC<TecnicosViewProps> = ({
           nome: formData.nome.trim(),
           unidade: formData.unidade.trim(),
           telefone: formData.telefone.trim() || null,
-          email: formData.email.trim() || null
+          email: formData.email.trim() || null,
+          empresa_id: currentCompany.id
         });
         showToast(`Extensionista "${formData.nome.trim()}" cadastrado com sucesso!`);
       }
