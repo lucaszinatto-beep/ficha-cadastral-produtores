@@ -317,7 +317,7 @@ export const removeUserCompanyAccess = async (
 };
 
 /**
- * Altera/redefine a senha de um usuário via função segura do Supabase (RPC) ou Auth direto.
+ * Altera/redefine a senha de um usuário via Edge Function segura ou Auth direto.
  */
 export const adminResetUserPassword = async (
   targetUserId: string,
@@ -338,24 +338,38 @@ export const adminResetUserPassword = async (
       return { success: true, message: 'Senha alterada com sucesso.' };
     }
 
-    // Para alterar senha de outro usuário, invoca a função RPC segura com SECURITY DEFINER
-    const { data, error } = await supabase.rpc('admin_reset_user_password', {
+    // 1. Invoca a Edge Function segura 'admin-reset-password'
+    try {
+      const { data: edgeData, error: edgeErr } = await supabase.functions.invoke('admin-reset-password', {
+        body: {
+          target_user_id: targetUserId,
+          new_password: newPassword
+        }
+      });
+
+      if (!edgeErr && edgeData) {
+        if (edgeData.error) {
+          return { success: false, error: edgeData.error };
+        }
+        return { success: true, message: edgeData.message || 'Senha alterada com sucesso.' };
+      }
+
+      console.warn('Edge Function retornou erro ou indisponível, tentando fallback RPC:', edgeErr?.message);
+    } catch (edgeCallErr: any) {
+      console.warn('Falha ao contatar Edge Function, acionando fallback RPC:', edgeCallErr?.message);
+    }
+
+    // 2. Fallback via RPC segura no PostgreSQL
+    const { data: rpcData, error: rpcErr } = await supabase.rpc('admin_reset_user_password', {
       target_user_id: targetUserId,
       new_password: newPassword
     });
 
-    if (error) {
-      // Se a função ainda não foi executada no banco do Supabase
-      if (error.code === '42883' || error.message?.includes('does not exist') || error.message?.includes('PGRST202')) {
-        return {
-          success: false,
-          error: 'A função de alteração administrativa de senha precisa ser instalada no Supabase. Execute o script "supabase_migration_admin_actions.sql" no SQL Editor do Supabase.'
-        };
-      }
-      return { success: false, error: error.message };
+    if (rpcErr) {
+      return { success: false, error: rpcErr.message || 'Erro ao alterar senha do usuário.' };
     }
 
-    return { success: true, message: data?.message || 'Senha alterada com sucesso.' };
+    return { success: true, message: rpcData?.message || 'Senha alterada com sucesso.' };
   } catch (err: any) {
     return { success: false, error: err?.message || 'Erro inesperado ao alterar senha.' };
   }
@@ -385,18 +399,38 @@ export const adminDeleteUser = async (
       };
     }
 
-    // 3. Tenta chamar a RPC segura do Supabase (exclui de auth.users, profiles, empresas e auditoria)
-    const { data, error: rpcErr } = await supabase.rpc('admin_delete_user', {
+    // 3. Invoca a Edge Function segura 'admin-delete-user'
+    try {
+      const { data: edgeData, error: edgeErr } = await supabase.functions.invoke('admin-delete-user', {
+        body: {
+          target_user_id: targetUserId
+        }
+      });
+
+      if (!edgeErr && edgeData) {
+        if (edgeData.error) {
+          return { success: false, error: edgeData.error };
+        }
+        return { success: true, message: edgeData.message || 'Usuário excluído com sucesso.' };
+      }
+
+      console.warn('Edge Function admin-delete-user indisponível, acionando fallback RPC:', edgeErr?.message);
+    } catch (edgeCallErr: any) {
+      console.warn('Falha na chamada da Edge Function admin-delete-user, acionando fallback RPC:', edgeCallErr?.message);
+    }
+
+    // 4. Fallback via RPC segura do Supabase
+    const { data: rpcData, error: rpcErr } = await supabase.rpc('admin_delete_user', {
       target_user_id: targetUserId
     });
 
     if (!rpcErr) {
-      return { success: true, message: data?.message || 'Usuário excluído com sucesso.' };
+      return { success: true, message: rpcData?.message || 'Usuário excluído com sucesso.' };
     }
 
     console.warn('RPC admin_delete_user não disponível, executando exclusão direta via RLS de tabelas:', rpcErr.message);
 
-    // 4. Fallback resiliente: remove vínculos de multiempresa, tabela sistema e perfil diretamente
+    // 5. Fallback resiliente: remove vínculos de multiempresa, tabela sistema e perfil diretamente
     const errors: string[] = [];
 
     // Remover empresas
@@ -435,7 +469,7 @@ export const adminDeleteUser = async (
     if (errors.length > 0) {
       return {
         success: false,
-        error: `Falha ao remover dados do usuário: ${errors.join('; ')}. Para exclusão completa de auth.users, execute o script "supabase_migration_admin_actions.sql" no SQL Editor.`
+        error: `Falha ao remover dados do usuário: ${errors.join('; ')}.`
       };
     }
 
