@@ -37,7 +37,11 @@ serve(async (req) => {
       })
     }
 
-    const { target_user_id } = await req.json()
+    const body = await req.json()
+    const target_user_id = body.target_user_id
+    const empresa_id = body.empresa_id || body.target_empresa_id
+    const is_global_delete = Boolean(body.is_global_delete)
+
     if (!target_user_id) {
       return new Response(JSON.stringify({ error: 'target_user_id é obrigatório' }), {
         status: 400,
@@ -45,9 +49,9 @@ serve(async (req) => {
       })
     }
 
-    // Não permitir que um usuário exclua a própria conta
+    // Não permitir auto-exclusão
     if (callerUser.id === target_user_id) {
-      return new Response(JSON.stringify({ error: 'Não é permitido excluir a própria conta' }), {
+      return new Response(JSON.stringify({ error: 'Não é permitido remover a própria conta ou acesso.' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
@@ -72,49 +76,125 @@ serve(async (req) => {
 
     const callerLevel = isSuper ? 100 : (callerProfile?.level ?? 0)
 
-    if (callerLevel < 80) {
-      return new Response(JSON.stringify({ error: 'Permissão negada: nível insuficiente para excluir usuários' }), {
+    const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    })
+
+    // =========================================================================
+    // CASO A: REMOÇÃO DE ACESSO DE EMPRESA ESPECÍFICA (MODO PADRÃO SEGURO)
+    // =========================================================================
+    if (empresa_id && !is_global_delete) {
+      // Validar se o chamador é admin da empresa solicitada (ou super admin)
+      if (!isSuper) {
+        const { data: callerMembership } = await adminClient
+          .from('usuarios_empresas')
+          .select('level, ativo')
+          .eq('user_id', callerUser.id)
+          .eq('empresa_id', empresa_id)
+          .maybeSingle()
+
+        if (!callerMembership || !callerMembership.ativo || (callerMembership.level ?? 0) < 80) {
+          return new Response(JSON.stringify({ error: 'Você não tem permissão de administrador nesta empresa.' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          })
+        }
+      }
+
+      // Validar nível do usuário alvo na empresa
+      const { data: targetMembership } = await adminClient
+        .from('usuarios_empresas')
+        .select('level, role')
+        .eq('user_id', target_user_id)
+        .eq('empresa_id', empresa_id)
+        .maybeSingle()
+
+      if (!targetMembership) {
+        return new Response(JSON.stringify({ error: 'Usuário não possui acesso ativo nesta empresa.' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
+
+      if (!isSuper && (targetMembership.level ?? 10) >= callerLevel) {
+        return new Response(JSON.stringify({ error: 'Permissão insuficiente para remover usuário com nível igual ou superior.' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
+
+      // Obter nome da empresa para log
+      const { data: companyData } = await adminClient
+        .from('empresas')
+        .select('nome')
+        .eq('id', empresa_id)
+        .maybeSingle()
+
+      // REMOVER APENAS O VÍNCULO DESTA EMPRESA
+      const { error: delLinkErr } = await adminClient
+        .from('usuarios_empresas')
+        .delete()
+        .eq('user_id', target_user_id)
+        .eq('empresa_id', empresa_id)
+
+      if (delLinkErr) {
+        return new Response(JSON.stringify({ error: 'Falha ao remover vínculo: ' + delLinkErr.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
+
+      // Registrar auditoria
+      try {
+        await adminClient.from('audit_user_access').insert({
+          actor_user_id: callerUser.id,
+          target_user_id: target_user_id,
+          empresa_id: empresa_id,
+          action: 'REVOKE_ACCESS',
+          details: { empresa_nome: companyData?.nome, message: 'Acesso removido exclusivamente desta empresa' }
+        })
+      } catch (_) {}
+
+      return new Response(JSON.stringify({ 
+        success: true, 
+        message: `Acesso do usuário à empresa ${companyData?.nome || ''} removido com sucesso.` 
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    // =========================================================================
+    // CASO B: EXCLUSÃO GLOBAL DE CONTA (ESTRITAMENTE SUPER ADMIN)
+    // =========================================================================
+    if (!isSuper) {
+      return new Response(JSON.stringify({ 
+        error: 'Permissão negada: apenas Super Administradores podem excluir contas globalmente.' 
+      }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
-    // 3. Cliente administrativo com service_role
-    const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: { autoRefreshToken: false, persistSession: false }
-    })
-
-    // Checar hierarquia do usuário alvo
+    // Checar hierarquia do alvo
     const { data: targetProfile } = await adminClient
       .from('profiles')
       .select('id, level, role, full_name, email')
       .eq('id', target_user_id)
       .maybeSingle()
 
-    const targetLevel = targetProfile?.level ?? 10
-
-    if (callerLevel < 100 && targetLevel >= callerLevel) {
-      return new Response(JSON.stringify({ error: 'Permissão negada: administradores não podem excluir usuários de nível igual ou superior' }), {
-        status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      })
-    }
-
-    // 4. Registrar auditoria antes da exclusão
+    // Registrar auditoria global
     try {
-      await adminClient.from('auditoria_usuarios').insert({
-        acao: 'EXCLUSAO_USUARIO',
-        autor_id: callerUser.id,
-        autor_nome: callerProfile?.full_name || callerEmail,
-        autor_email: callerEmail,
-        alvo_id: target_user_id,
-        alvo_nome: targetProfile?.full_name,
-        alvo_email: targetProfile?.email,
-        detalhes: { timestamp: new Date().toISOString() }
+      await adminClient.from('audit_user_access').insert({
+        actor_user_id: callerUser.id,
+        target_user_id: target_user_id,
+        empresa_id: null,
+        action: 'GLOBAL_DELETE',
+        details: { target_email: targetProfile?.email, message: 'Exclusão global da conta executada pelo Super Admin' }
       })
     } catch (_) {}
 
-    // 5. Excluir dados relacionados
+    // Excluir todos os vínculos de empresas
     await adminClient
       .from('usuarios_empresas')
       .delete()
@@ -126,13 +206,16 @@ serve(async (req) => {
 
     await adminClient.from('profiles').delete().eq('id', target_user_id)
 
-    // 6. Excluir do Supabase Auth
+    // Excluir do Supabase Auth
     const { error: deleteAuthErr } = await adminClient.auth.admin.deleteUser(target_user_id)
     if (deleteAuthErr) {
       console.warn('Erro ao deletar de auth.users:', deleteAuthErr.message)
     }
 
-    return new Response(JSON.stringify({ success: true, message: 'Usuário excluído com sucesso.' }), {
+    return new Response(JSON.stringify({ 
+      success: true, 
+      message: 'Conta do usuário e todos os acessos globais foram excluídos com sucesso.' 
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
