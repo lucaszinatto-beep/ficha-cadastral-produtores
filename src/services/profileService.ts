@@ -316,4 +316,137 @@ export const removeUserCompanyAccess = async (
   }
 };
 
+/**
+ * Altera/redefine a senha de um usuário via função segura do Supabase (RPC) ou Auth direto.
+ */
+export const adminResetUserPassword = async (
+  targetUserId: string,
+  newPassword: string,
+  currentUserProfile?: UserProfile | null
+): Promise<{ success: boolean; message?: string; error?: string }> => {
+  try {
+    if (!newPassword || newPassword.length < 6) {
+      return { success: false, error: 'A nova senha deve conter no mínimo 6 caracteres.' };
+    }
+
+    // Se o usuário estiver alterando sua própria senha, usa o método nativo do cliente Supabase Auth
+    if (currentUserProfile && currentUserProfile.id === targetUserId) {
+      const { error: ownErr } = await supabase.auth.updateUser({ password: newPassword });
+      if (ownErr) {
+        return { success: false, error: ownErr.message };
+      }
+      return { success: true, message: 'Senha alterada com sucesso.' };
+    }
+
+    // Para alterar senha de outro usuário, invoca a função RPC segura com SECURITY DEFINER
+    const { data, error } = await supabase.rpc('admin_reset_user_password', {
+      target_user_id: targetUserId,
+      new_password: newPassword
+    });
+
+    if (error) {
+      // Se a função ainda não foi executada no banco do Supabase
+      if (error.code === '42883' || error.message?.includes('does not exist') || error.message?.includes('PGRST202')) {
+        return {
+          success: false,
+          error: 'A função de alteração administrativa de senha precisa ser instalada no Supabase. Execute o script "supabase_migration_admin_actions.sql" no SQL Editor do Supabase.'
+        };
+      }
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, message: data?.message || 'Senha alterada com sucesso.' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Erro inesperado ao alterar senha.' };
+  }
+};
+
+/**
+ * Exclui um usuário do sistema (revoga vínculos de multiempresa, perfil e credenciais do Auth).
+ */
+export const adminDeleteUser = async (
+  targetUserId: string,
+  targetUserProfile?: UserProfile | null,
+  currentUserProfile?: UserProfile | null
+): Promise<{ success: boolean; message?: string; error?: string }> => {
+  try {
+    // 1. Validação de auto-exclusão
+    if (currentUserProfile && currentUserProfile.id === targetUserId) {
+      return { success: false, error: 'Não é permitido excluir a própria conta.' };
+    }
+
+    // 2. Validação de hierarquia
+    const callerLevel = currentUserProfile?.level || 0;
+    const targetLevel = targetUserProfile?.level || 10;
+    if (callerLevel < 100 && targetLevel >= callerLevel) {
+      return {
+        success: false,
+        error: 'Permissão negada: administradores não podem excluir usuários com nível de acesso igual ou superior.'
+      };
+    }
+
+    // 3. Tenta chamar a RPC segura do Supabase (exclui de auth.users, profiles, empresas e auditoria)
+    const { data, error: rpcErr } = await supabase.rpc('admin_delete_user', {
+      target_user_id: targetUserId
+    });
+
+    if (!rpcErr) {
+      return { success: true, message: data?.message || 'Usuário excluído com sucesso.' };
+    }
+
+    console.warn('RPC admin_delete_user não disponível, executando exclusão direta via RLS de tabelas:', rpcErr.message);
+
+    // 4. Fallback resiliente: remove vínculos de multiempresa, tabela sistema e perfil diretamente
+    const errors: string[] = [];
+
+    // Remover empresas
+    const { error: empErr } = await supabase
+      .from('usuarios_empresas')
+      .delete()
+      .or(`user_id.eq.${targetUserId},usuario_id.eq.${targetUserId}`);
+    if (empErr) errors.push(`Empresas: ${empErr.message}`);
+
+    // Remover tabela de usuários do sistema legado (se existir)
+    try {
+      await supabase.from('usuarios_sistema').delete().eq('id', targetUserId);
+    } catch (_) {}
+
+    // Remover do perfil
+    const { error: profErr } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('id', targetUserId);
+    if (profErr) errors.push(`Perfil: ${profErr.message}`);
+
+    // Registrar auditoria se a tabela existir
+    try {
+      await supabase.from('auditoria_usuarios').insert({
+        acao: 'EXCLUSAO_USUARIO',
+        autor_id: currentUserProfile?.id,
+        autor_nome: currentUserProfile?.full_name || 'Admin',
+        autor_email: currentUserProfile?.email,
+        alvo_id: targetUserId,
+        alvo_nome: targetUserProfile?.full_name || 'Usuário',
+        alvo_email: targetUserProfile?.email,
+        detalhes: { data: new Date().toISOString() }
+      });
+    } catch (_) {}
+
+    if (errors.length > 0) {
+      return {
+        success: false,
+        error: `Falha ao remover dados do usuário: ${errors.join('; ')}. Para exclusão completa de auth.users, execute o script "supabase_migration_admin_actions.sql" no SQL Editor.`
+      };
+    }
+
+    return {
+      success: true,
+      message: 'Usuário e vínculos removidos do sistema com sucesso.'
+    };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Erro inesperado ao excluir usuário.' };
+  }
+};
+
+
 

@@ -12,7 +12,12 @@ import {
   Check, 
   CheckSquare, 
   Square,
-  Info
+  Info,
+  KeyRound,
+  Trash2,
+  Eye,
+  EyeOff,
+  AlertTriangle
 } from 'lucide-react';
 import { 
   UserProfile, 
@@ -22,14 +27,18 @@ import {
   fetchUserCompaniesMemberships, 
   duplicateUserAccess, 
   removeUserCompanyAccess,
+  adminResetUserPassword,
+  adminDeleteUser,
   ACCESS_LEVELS 
 } from '../services/profileService';
 import { useCompany } from '../context/CompanyContext';
+import { supabase } from '../services/supabase';
 
 interface UserManagementModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentUserLevel: number;
+  currentUserProfile?: UserProfile | null;
 }
 
 const ROLE_OPTIONS = [
@@ -42,7 +51,8 @@ const ROLE_OPTIONS = [
 export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   isOpen,
   onClose,
-  currentUserLevel
+  currentUserLevel,
+  currentUserProfile
 }) => {
   const { currentCompany, refreshUserCompanies, allCompanies } = useCompany();
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
@@ -51,6 +61,19 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Usuário autenticado ativo para validação de auto-exclusão
+  const [currentUserId, setCurrentUserId] = useState<string | null>(currentUserProfile?.id || null);
+
+  useEffect(() => {
+    if (currentUserProfile?.id) {
+      setCurrentUserId(currentUserProfile.id);
+    } else {
+      supabase.auth.getUser().then(({ data }) => {
+        if (data.user) setCurrentUserId(data.user.id);
+      });
+    }
+  }, [currentUserProfile]);
 
   // Filtro por empresa
   const [companyFilter, setCompanyFilter] = useState<string>('all');
@@ -71,6 +94,143 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   const [selectedCompanyIds, setSelectedCompanyIds] = useState<string[]>([]);
   const [duplicateRole, setDuplicateRole] = useState('viewer');
   const [isSavingDuplication, setIsSavingDuplication] = useState(false);
+
+  // Modal: Alterar Senha do Usuário
+  const [passwordModalUser, setPasswordModalUser] = useState<UserProfile | null>(null);
+  const [modalNewPassword, setModalNewPassword] = useState('');
+  const [modalConfirmPassword, setModalConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+  const [passwordModalError, setPasswordModalError] = useState<string | null>(null);
+
+  // Modal: Excluir Usuário
+  const [deleteModalUser, setDeleteModalUser] = useState<UserProfile | null>(null);
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
+  const [deleteModalError, setDeleteModalError] = useState<string | null>(null);
+
+  // Regras de Segurança e Hierarquia
+  const canManageUser = (targetProfile: UserProfile): boolean => {
+    if (currentUserLevel >= ACCESS_LEVELS.SUPER_ADMIN) return true;
+    if (currentUserId && targetProfile.id === currentUserId) return true;
+    return targetProfile.level < currentUserLevel;
+  };
+
+  const canDeleteUser = (targetProfile: UserProfile): boolean => {
+    if (currentUserId && targetProfile.id === currentUserId) return false;
+    if (currentUserLevel >= ACCESS_LEVELS.SUPER_ADMIN) return true;
+    if (currentUserLevel >= ACCESS_LEVELS.ADMIN) {
+      return targetProfile.level < currentUserLevel;
+    }
+    return false;
+  };
+
+  const getDeleteTooltip = (targetProfile: UserProfile): string => {
+    if (currentUserId && targetProfile.id === currentUserId) {
+      return 'Não é permitido excluir a própria conta';
+    }
+    if (!canDeleteUser(targetProfile)) {
+      return 'Permissão insuficiente para excluir este usuário';
+    }
+    return 'Excluir usuário';
+  };
+
+  const handleOpenPasswordModal = (profile: UserProfile) => {
+    setPasswordModalUser(profile);
+    setModalNewPassword('');
+    setModalConfirmPassword('');
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setPasswordModalError(null);
+  };
+
+  const handleClosePasswordModal = () => {
+    setPasswordModalUser(null);
+    setModalNewPassword('');
+    setModalConfirmPassword('');
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setPasswordModalError(null);
+  };
+
+  const handleSavePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!passwordModalUser) return;
+
+    if (!modalNewPassword) {
+      setPasswordModalError('Senha obrigatória.');
+      return;
+    }
+    if (!modalConfirmPassword) {
+      setPasswordModalError('Confirmação obrigatória.');
+      return;
+    }
+    if (modalNewPassword.length < 6) {
+      setPasswordModalError('A senha deve conter no mínimo 6 caracteres.');
+      return;
+    }
+    if (modalNewPassword !== modalConfirmPassword) {
+      setPasswordModalError('As duas senhas devem ser iguais.');
+      return;
+    }
+
+    setIsSavingPassword(true);
+    setPasswordModalError(null);
+    try {
+      const res = await adminResetUserPassword(
+        passwordModalUser.id,
+        modalNewPassword,
+        currentUserProfile || (currentUserId ? { id: currentUserId, level: currentUserLevel } as any : null)
+      );
+
+      if (!res.success) {
+        throw new Error(res.error || 'Erro ao alterar senha.');
+      }
+
+      setSuccessMsg('Senha alterada com sucesso.');
+      handleClosePasswordModal();
+    } catch (err: any) {
+      setPasswordModalError(err.message || 'Erro ao alterar senha.');
+    } finally {
+      setIsSavingPassword(false);
+    }
+  };
+
+  const handleOpenDeleteModal = (profile: UserProfile) => {
+    setDeleteModalUser(profile);
+    setDeleteModalError(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalUser(null);
+    setDeleteModalError(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModalUser) return;
+    setIsDeletingUser(true);
+    setDeleteModalError(null);
+    try {
+      const res = await adminDeleteUser(
+        deleteModalUser.id,
+        deleteModalUser,
+        currentUserProfile || (currentUserId ? { id: currentUserId, level: currentUserLevel } as any : null)
+      );
+
+      if (!res.success) {
+        throw new Error(res.error || 'Erro ao excluir usuário.');
+      }
+
+      setSuccessMsg(`Usuário ${deleteModalUser.full_name} excluído com sucesso.`);
+      handleCloseDeleteModal();
+      await loadProfiles();
+      await refreshUserCompanies();
+    } catch (err: any) {
+      setDeleteModalError(err.message || 'Erro ao excluir usuário.');
+    } finally {
+      setIsDeletingUser(false);
+    }
+  };
 
   const loadProfiles = async () => {
     setIsLoading(true);
@@ -100,6 +260,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
       loadProfiles();
       setIsCreating(false);
       setDuplicatingUser(null);
+      setPasswordModalUser(null);
+      setDeleteModalUser(null);
       setSuccessMsg(null);
       setNewCompanyIds([currentCompany.id]);
     }
@@ -239,7 +401,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden font-sans">
+      <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden font-sans">
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-800 bg-slate-900/50">
@@ -564,7 +726,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         <th className="p-4">Nome & E-mail</th>
                         <th className="p-4">Cargo / Nível</th>
                         <th className="p-4">Empresas Autorizadas</th>
-                        <th className="p-4 text-center">Ações</th>
+                        <th className="p-4 text-center min-w-[270px]">Ações</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800/50">
@@ -646,29 +808,45 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                                 </div>
                               </td>
                               <td className="p-4">
-                                <div className="flex items-center justify-center gap-2">
-                                  {/* Botão Gerenciar Empresas / Duplicar Acesso */}
+                                <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                                  {/* 1. Botão Gerenciar Empresas / Duplicar Acesso */}
                                   <button
                                     onClick={() => handleOpenDuplicate(profile)}
-                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-sky-400 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 transition-all cursor-pointer"
+                                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-sky-400 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 transition-all cursor-pointer shadow-sm"
                                     title="Gerenciar e duplicar empresas autorizadas"
                                   >
-                                    <Copy className="w-3.5 h-3.5" />
-                                    <span>Gerenciar Empresas</span>
+                                    <Copy className="w-3.5 h-3.5 shrink-0" />
+                                    <span className="hidden sm:inline">Gerenciar Empresas</span>
                                   </button>
 
+                                  {/* 2. Botão Alterar Senha */}
+                                  <button
+                                    onClick={() => handleOpenPasswordModal(profile)}
+                                    disabled={!canManageUser(profile)}
+                                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition-all shadow-sm ${
+                                      canManageUser(profile)
+                                        ? 'text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border-cyan-500/30 hover:border-cyan-500/50 cursor-pointer'
+                                        : 'text-slate-600 bg-slate-900 border-slate-800 opacity-40 cursor-not-allowed'
+                                    }`}
+                                    title={canManageUser(profile) ? 'Alterar senha' : 'Permissão insuficiente para alterar senha'}
+                                  >
+                                    <KeyRound className="w-3.5 h-3.5 shrink-0" />
+                                    <span className="hidden lg:inline">Alterar Senha</span>
+                                  </button>
+
+                                  {/* 3. Botão Editar Usuário */}
                                   {editingId === profile.id ? (
                                     <>
                                       <button
                                         onClick={() => handleSaveEdit(profile.id)}
-                                        className="p-1.5 rounded-lg text-emerald-400 bg-emerald-400/10 hover:bg-emerald-400/20 transition-colors cursor-pointer"
-                                        title="Salvar"
+                                        className="p-1.5 rounded-xl text-emerald-400 bg-emerald-400/10 hover:bg-emerald-400/20 border border-emerald-500/30 transition-colors cursor-pointer shadow-sm"
+                                        title="Salvar alteração de cargo"
                                       >
                                         <Save className="w-4 h-4" />
                                       </button>
                                       <button
                                         onClick={() => setEditingId(null)}
-                                        className="p-1.5 rounded-lg text-slate-400 bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
+                                        className="p-1.5 rounded-xl text-slate-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors cursor-pointer"
                                         title="Cancelar"
                                       >
                                         <X className="w-4 h-4" />
@@ -677,15 +855,35 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                                   ) : (
                                     <button
                                       onClick={() => {
+                                        if (!canManageUser(profile)) return;
                                         setEditingId(profile.id);
                                         setEditingRole(profile.role);
                                       }}
-                                      className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
-                                      title="Alterar Cargo"
+                                      disabled={!canManageUser(profile)}
+                                      className={`p-1.5 rounded-xl border transition-colors shadow-sm ${
+                                        canManageUser(profile)
+                                          ? 'text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border-slate-700 cursor-pointer'
+                                          : 'text-slate-600 bg-slate-900 border-slate-800 opacity-40 cursor-not-allowed'
+                                      }`}
+                                      title={canManageUser(profile) ? 'Editar usuário' : 'Permissão insuficiente para editar usuário'}
                                     >
                                       <Pencil className="w-4 h-4" />
                                     </button>
                                   )}
+
+                                  {/* 4. Botão Excluir Usuário */}
+                                  <button
+                                    onClick={() => handleOpenDeleteModal(profile)}
+                                    disabled={!canDeleteUser(profile)}
+                                    className={`p-1.5 rounded-xl border transition-colors shadow-sm ${
+                                      canDeleteUser(profile)
+                                        ? 'text-rose-400 hover:text-rose-200 bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/20 hover:border-rose-500/40 cursor-pointer'
+                                        : 'text-slate-600 bg-slate-900 border-slate-800 opacity-30 cursor-not-allowed'
+                                    }`}
+                                    title={getDeleteTooltip(profile)}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
                                 </div>
                               </td>
                             </tr>
@@ -698,6 +896,182 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
             </div>
           )}
         </div>
+
+        {/* MODAL SECUNDÁRIO: ALTERAR SENHA */}
+        {passwordModalUser && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+            <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-md shadow-2xl p-6 overflow-hidden">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                    <KeyRound className="w-5 h-5 text-cyan-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-white">Alterar senha do usuário</h3>
+                    <p className="text-xs text-slate-400">Defina uma nova senha de acesso</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleClosePasswordModal}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  title="Fechar"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Informações do Usuário */}
+              <div className="my-4 p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800">
+                <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-1">Usuário</div>
+                <div className="text-sm font-bold text-white">{passwordModalUser.full_name}</div>
+                {passwordModalUser.email && (
+                  <div className="text-xs text-cyan-400 font-medium mt-0.5">{passwordModalUser.email}</div>
+                )}
+              </div>
+
+              {passwordModalError && (
+                <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-2.5 text-rose-400 text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <p>{passwordModalError}</p>
+                </div>
+              )}
+
+              <form onSubmit={handleSavePassword} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Nova senha
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showNewPassword ? 'text' : 'password'}
+                      required
+                      minLength={6}
+                      value={modalNewPassword}
+                      onChange={e => setModalNewPassword(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      className="w-full px-4 py-2.5 pr-10 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                      title={showNewPassword ? 'Ocultar senha' : 'Ver senha'}
+                    >
+                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Confirmar nova senha
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      required
+                      minLength={6}
+                      value={modalConfirmPassword}
+                      onChange={e => setModalConfirmPassword(e.target.value)}
+                      placeholder="Repita a nova senha"
+                      className="w-full px-4 py-2.5 pr-10 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                      title={showConfirmPassword ? 'Ocultar senha' : 'Ver senha'}
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-3">
+                  <button
+                    type="button"
+                    onClick={handleClosePasswordModal}
+                    className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm transition-all"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSavingPassword}
+                    className="flex-1 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-lg shadow-cyan-600/30 transition-all disabled:opacity-50 flex justify-center items-center gap-2"
+                  >
+                    {isSavingPassword && <Loader2 className="w-4 h-4 animate-spin" />}
+                    Salvar nova senha
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL SECUNDÁRIO: EXCLUIR USUÁRIO */}
+        {deleteModalUser && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/85 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+            <div className="bg-slate-900 border border-rose-500/30 rounded-3xl w-full max-w-md shadow-2xl p-6 overflow-hidden">
+              <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6" />
+              </div>
+
+              <h3 className="text-xl font-bold text-white text-center mb-1">
+                Excluir usuário?
+              </h3>
+              <p className="text-xs text-slate-400 text-center mb-4">
+                Confirme a exclusão definitiva do perfil selecionado
+              </p>
+
+              <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2 mb-4">
+                <p className="text-xs text-slate-300">
+                  Você está prestes a excluir o usuário <span className="font-bold text-white">{deleteModalUser.full_name}</span>
+                </p>
+                {deleteModalUser.email && (
+                  <p className="text-xs text-sky-400 font-medium">
+                    E-mail: <span className="underline">{deleteModalUser.email}</span>
+                  </p>
+                )}
+                <div className="pt-2 border-t border-slate-800/80 text-[11px] text-amber-300/90 flex items-start gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-400" />
+                  <span>Esta ação removerá o acesso do usuário ao sistema e às empresas autorizadas.</span>
+                </div>
+                <p className="text-[11px] font-semibold text-rose-400">
+                  Esta operação não poderá ser desfeita.
+                </p>
+              </div>
+
+              {deleteModalError && (
+                <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-2.5 text-rose-400 text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <p>{deleteModalError}</p>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleCloseDeleteModal}
+                  disabled={isDeletingUser}
+                  className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmDelete}
+                  disabled={isDeletingUser}
+                  className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm shadow-lg shadow-rose-600/30 transition-all disabled:opacity-50 flex justify-center items-center gap-2"
+                >
+                  {isDeletingUser && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Excluir usuário
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

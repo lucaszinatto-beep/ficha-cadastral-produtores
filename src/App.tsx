@@ -350,6 +350,7 @@ const AppMain: React.FC<{
         isOpen={isUserManagementOpen}
         onClose={() => setIsUserManagementOpen(false)}
         currentUserLevel={userLevel}
+        currentUserProfile={userProfile}
       />
 
       {/* Modal de Tutorial Interativo & Guia da Plataforma */}
