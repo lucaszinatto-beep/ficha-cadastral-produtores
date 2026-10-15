@@ -305,9 +305,19 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                   )}
                 </button>
 
-                <div className="mt-6 flex items-center gap-2 text-[11px] text-slate-500">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Arquivos permitidos: <strong>.xlsx</strong> e <strong>.xls</strong> • Detecção automática da aba <strong>Tbl_txt</strong></span>
+                <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-800/80 w-full text-[11px] text-slate-500">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <span>Arquivos: <strong>.xlsx</strong> e <strong>.xls</strong> • Detecção automática de <strong>Tbl_txt</strong></span>
+                  </div>
+                  <a
+                    href="/MODELO_PADRAO_IMPORTACAO_PAINEL.xlsx"
+                    download="MODELO_PADRAO_IMPORTACAO_PAINEL.xlsx"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-sky-400 hover:text-sky-300 transition-all shadow-sm"
+                  >
+                    <Download className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Baixar Modelo Oficial (.xlsx)</span>
+                  </a>
                 </div>
               </div>
             </div>
