@@ -30,6 +30,12 @@ export const ACCESS_LEVELS = {
   VIEWER: 10,
 };
 
+export const KNOWN_SUPER_ADMIN_EMAILS = [
+  'lucas_zinatto@hotmail.com',
+  'lucas.zinatto@belloalimentos.com.br',
+  'joao.moraes@belloalimentos.com.br'
+];
+
 /**
  * Retorna o perfil completo do usuário autenticado no momento.
  */
@@ -37,6 +43,9 @@ export const fetchCurrentUserProfile = async (): Promise<UserProfile | null> => 
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
+
+    const emailNormalized = (user.email || '').toLowerCase().trim();
+    const isKnownSuper = KNOWN_SUPER_ADMIN_EMAILS.includes(emailNormalized);
 
     const { data, error } = await supabase
       .from('profiles')
@@ -49,9 +58,9 @@ export const fetchCurrentUserProfile = async (): Promise<UserProfile | null> => 
       return {
         id: user.id,
         email: user.email,
-        full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuário',
-        role: 'viewer',
-        level: ACCESS_LEVELS.VIEWER
+        full_name: user.user_metadata?.full_name || (isKnownSuper ? 'Lucas Zinatto' : user.email?.split('@')[0]) || 'Usuário',
+        role: isKnownSuper ? 'super_admin' : 'viewer',
+        level: isKnownSuper ? ACCESS_LEVELS.SUPER_ADMIN : ACCESS_LEVELS.VIEWER
       };
     }
 
@@ -59,14 +68,16 @@ export const fetchCurrentUserProfile = async (): Promise<UserProfile | null> => 
       return {
         id: user.id,
         email: user.email,
-        full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuário',
-        role: 'viewer',
-        level: ACCESS_LEVELS.VIEWER
+        full_name: user.user_metadata?.full_name || (isKnownSuper ? 'Lucas Zinatto' : user.email?.split('@')[0]) || 'Usuário',
+        role: isKnownSuper ? 'super_admin' : 'viewer',
+        level: isKnownSuper ? ACCESS_LEVELS.SUPER_ADMIN : ACCESS_LEVELS.VIEWER
       };
     }
 
     return {
       ...data,
+      role: isKnownSuper ? 'super_admin' : (data.role || 'viewer'),
+      level: isKnownSuper ? 100 : (data.level ?? 10),
       email: data.email || user.email
     } as UserProfile;
   } catch (err) {

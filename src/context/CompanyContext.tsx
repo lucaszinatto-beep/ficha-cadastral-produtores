@@ -149,7 +149,9 @@ export const CompanyProvider: React.FC<{
   }, [userProfile, currentCompany.id, setCurrentCompany, loadAllCompanies]);
 
   const isSuperAdmin = useMemo(() => {
-    return userProfile?.role === 'super_admin' || (userProfile?.level ?? 0) >= 100;
+    const emailNormalized = (userProfile?.email || '').toLowerCase().trim();
+    const isKnown = KNOWN_SUPER_ADMIN_EMAILS.includes(emailNormalized);
+    return isKnown || userProfile?.role === 'super_admin' || (userProfile?.level ?? 0) >= 100;
   }, [userProfile]);
 
   useEffect(() => {

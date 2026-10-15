@@ -144,6 +144,10 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
         data = await fetchCompanyProfiles(currentCompany.id);
       }
 
+      if (isSuperAdmin && currentUserProfile && !data.some(p => p.id === currentUserProfile.id)) {
+        data = [currentUserProfile, ...data];
+      }
+
       setProfiles(data);
 
       // Carregar os vínculos de empresas de cada perfil

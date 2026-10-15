@@ -13,7 +13,7 @@ import { CompanyProvider, useCompany } from './context/CompanyContext';
 import { CompanyThemeConfig, DEFAULT_COMPANY, INITIAL_COMPANIES_LIST, getCompanyById } from './config/companies';
 import { fetchProdutores, fetchAviarios, fetchTecnicos } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
-import { fetchMyProfile, UserProfile, ACCESS_LEVELS } from './services/profileService';
+import { fetchMyProfile, UserProfile, ACCESS_LEVELS, KNOWN_SUPER_ADMIN_EMAILS } from './services/profileService';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from './services/supabase';
 import { LoginView } from './components/LoginView';
@@ -112,7 +112,10 @@ const AppMain: React.FC<{
   }, [currentCompany?.id, isSelectorViewActive, loadData]);
 
   // Nível de acesso do usuário (Super Admin sempre tem acesso total)
-  const userLevel = isSuperAdmin ? ACCESS_LEVELS.SUPER_ADMIN : (userProfile?.level ?? ACCESS_LEVELS.VIEWER);
+  const userEmailNormalized = (session?.user?.email || '').toLowerCase().trim();
+  const isKnownSuper = KNOWN_SUPER_ADMIN_EMAILS.includes(userEmailNormalized);
+  const effectiveSuperAdmin = isSuperAdmin || isKnownSuper || userProfile?.role === 'super_admin' || (userProfile?.level ?? 0) >= 100;
+  const userLevel = effectiveSuperAdmin ? ACCESS_LEVELS.SUPER_ADMIN : (userProfile?.level ?? ACCESS_LEVELS.VIEWER);
 
   // Manipulador de Seleção de Empresa no CompanySelectorView dentro do painel
   const handleSelectCompany = (company: CompanyThemeConfig) => {
@@ -196,7 +199,7 @@ const AppMain: React.FC<{
         onLogout={onLogout}
         onOpenUserManagement={() => setIsUserManagementOpen(true)}
         userLevel={userLevel}
-        userRole={isSuperAdmin ? 'super_admin' : userProfile?.role}
+        userRole={effectiveSuperAdmin ? 'super_admin' : userProfile?.role}
       />
 
       {/* Main Content Area */}
@@ -456,44 +459,61 @@ export const App: React.FC = () => {
   }, [userProfile]);
 
   useEffect(() => {
+    let isMounted = true;
+
     // 1. Obter sessão atual salva
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!isMounted) return;
       setSession(session);
-      setIsAuthChecking(false);
       if (session) {
         const prof = await loadUserProfile();
-        loadUserCompaniesForSession(session, prof);
+        if (isMounted) {
+          await loadUserCompaniesForSession(session, prof);
+        }
       } else {
-        loadUserCompaniesForSession(null);
+        await loadUserCompaniesForSession(null);
+      }
+      if (isMounted) {
+        setIsAuthChecking(false);
       }
     });
 
     // 2. Escutar mudanças na autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      if (!isMounted) return;
       setSession(currentSession);
-      setIsAuthChecking(false);
       if (currentSession) {
         if (event === 'PASSWORD_RECOVERY') {
           setIsRecoveringPassword(true);
         }
         if (event === 'SIGNED_IN' && !currentSession.user?.user_metadata?.force_password_change) {
           setShowSplash(true);
-          setTimeout(() => setShowSplash(false), 1500);
+          setTimeout(() => {
+            if (isMounted) setShowSplash(false);
+          }, 1500);
         }
         const prof = await loadUserProfile();
-        loadUserCompaniesForSession(currentSession, prof);
+        if (isMounted) {
+          await loadUserCompaniesForSession(currentSession, prof);
+        }
       } else {
         setUserProfile(null);
         setSelectedCompanyForLogin(null);
         sessionStorage.removeItem('company_selected_session');
-        loadUserCompaniesForSession(null);
+        if (isMounted) {
+          await loadUserCompaniesForSession(null);
+        }
+      }
+      if (isMounted) {
+        setIsAuthChecking(false);
       }
     });
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
-  }, [loadUserCompaniesForSession]);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
