@@ -10,7 +10,7 @@ import { TecnicosView } from './components/TecnicosView';
 import { TutorialModal } from './components/TutorialModal';
 import { CompanySelectorView } from './components/CompanySelectorView';
 import { CompanyProvider, useCompany } from './context/CompanyContext';
-import { CompanyThemeConfig, DEFAULT_COMPANY } from './config/companies';
+import { CompanyThemeConfig, DEFAULT_COMPANY, INITIAL_COMPANIES_LIST, getCompanyById } from './config/companies';
 import { fetchProdutores, fetchAviarios, fetchTecnicos } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
 import { fetchMyProfile, UserProfile, ACCESS_LEVELS } from './services/profileService';
@@ -377,26 +377,99 @@ export const App: React.FC = () => {
   const [isRecoveringPassword, setIsRecoveringPassword] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
+  // Empresas disponíveis e autorizadas para o fluxo de autenticação e retorno
+  const [userCompanies, setUserCompanies] = useState<CompanyThemeConfig[]>(INITIAL_COMPANIES_LIST);
+  const [allCompanies, setAllCompanies] = useState<CompanyThemeConfig[]>(INITIAL_COMPANIES_LIST);
+
   // Empresa selecionada antes do login pelo usuário
   const [selectedCompanyForLogin, setSelectedCompanyForLogin] = useState<CompanyThemeConfig | null>(null);
 
   const loadUserProfile = async () => {
     const profile = await fetchMyProfile();
     setUserProfile(profile);
+    return profile;
   };
+
+  const loadUserCompaniesForSession = useCallback(async (currentSession: Session | null, profileOverride?: UserProfile | null) => {
+    try {
+      const { data: dbEmpresas } = await supabase
+        .from('empresas')
+        .select('*')
+        .eq('ativo', true)
+        .order('nome', { ascending: true });
+
+      const available = dbEmpresas && dbEmpresas.length > 0
+        ? dbEmpresas.map(d => ({ ...getCompanyById(d.id), ...d }))
+        : INITIAL_COMPANIES_LIST;
+
+      setAllCompanies(available);
+
+      if (!currentSession?.user) {
+        setUserCompanies(available);
+        return;
+      }
+
+      const emailNormalized = (currentSession.user.email || '').toLowerCase().trim();
+      const KNOWN_SUPER_ADMIN_EMAILS = [
+        'lucas_zinatto@hotmail.com',
+        'lucas.zinatto@belloalimentos.com.br',
+        'joao.moraes@belloalimentos.com.br'
+      ];
+
+      const profile = profileOverride !== undefined ? profileOverride : userProfile;
+      const isSuper = KNOWN_SUPER_ADMIN_EMAILS.includes(emailNormalized) ||
+                      profile?.role === 'super_admin' ||
+                      (profile?.level ?? 0) >= 100;
+
+      if (isSuper) {
+        setUserCompanies(available);
+        return;
+      }
+
+      const { data: panelData } = await supabase
+        .from('usuario_empresa_painel')
+        .select('empresa_id, ativo')
+        .eq('user_id', currentSession.user.id)
+        .eq('painel_id', 'ficha_cadastral')
+        .eq('ativo', true);
+
+      const { data: ueData } = await supabase
+        .from('usuarios_empresas')
+        .select('empresa_id, ativo')
+        .eq('user_id', currentSession.user.id)
+        .eq('ativo', true);
+
+      const allowedIds = new Set([
+        ...(panelData || []).map(p => p.empresa_id),
+        ...(ueData || []).map(u => u.empresa_id)
+      ]);
+
+      if (allowedIds.size > 0) {
+        const filtered = available.filter(c => allowedIds.has(c.id));
+        setUserCompanies(filtered.length > 0 ? filtered : available);
+      } else {
+        setUserCompanies(available);
+      }
+    } catch {
+      setUserCompanies(INITIAL_COMPANIES_LIST);
+    }
+  }, [userProfile]);
 
   useEffect(() => {
     // 1. Obter sessão atual salva
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setIsAuthChecking(false);
       if (session) {
-        loadUserProfile();
+        const prof = await loadUserProfile();
+        loadUserCompaniesForSession(session, prof);
+      } else {
+        loadUserCompaniesForSession(null);
       }
     });
 
     // 2. Escutar mudanças na autenticação
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       setSession(currentSession);
       setIsAuthChecking(false);
       if (currentSession) {
@@ -407,18 +480,20 @@ export const App: React.FC = () => {
           setShowSplash(true);
           setTimeout(() => setShowSplash(false), 1500);
         }
-        loadUserProfile();
+        const prof = await loadUserProfile();
+        loadUserCompaniesForSession(currentSession, prof);
       } else {
         setUserProfile(null);
         setSelectedCompanyForLogin(null);
         sessionStorage.removeItem('company_selected_session');
+        loadUserCompaniesForSession(null);
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [loadUserCompaniesForSession]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -438,25 +513,42 @@ export const App: React.FC = () => {
     );
   }
 
-  // 2. FLUXO PRÉ-LOGIN:
+  // 2. FLUXO PRÉ-LOGIN / PRIMEIRO ACESSO / RECUPERAÇÃO:
   // Se o usuário NÃO está autenticado (ou precisa atualizar senha/recuperar):
   const forcePasswordChange = session?.user?.user_metadata?.force_password_change === true;
   
   if (!session || forcePasswordChange || isRecoveringPassword) {
-    // 2.1 Se ainda não selecionou a empresa, exibe obrigatoriamente a tela "SELECIONE A EMPRESA"
-    if (!selectedCompanyForLogin && !isRecoveringPassword && !forcePasswordChange) {
+    // 2.1 Se ainda não selecionou a empresa (ou se clicou em voltar para seleção de empresa),
+    // exibe confiavelmente a tela "SELECIONE A EMPRESA":
+    if (!selectedCompanyForLogin && !isRecoveringPassword) {
+      const emailNormalized = (session?.user?.email || '').toLowerCase().trim();
+      const isSuper = Boolean(
+        (session?.user?.email && [
+          'lucas_zinatto@hotmail.com',
+          'lucas.zinatto@belloalimentos.com.br',
+          'joao.moraes@belloalimentos.com.br'
+        ].includes(emailNormalized)) ||
+        userProfile?.role === 'super_admin' ||
+        (userProfile?.level ?? 0) >= 100
+      );
+
       return (
         <CompanySelectorView
-          isPreLogin={true}
+          isPreLogin={!session}
+          userCompanies={userCompanies}
+          allCompanies={allCompanies}
+          isSuperAdmin={isSuper}
+          userEmail={session?.user?.email}
           onSelectCompany={(company) => {
             setSelectedCompanyForLogin(company);
             localStorage.setItem('active_company_id', company.id);
           }}
+          onLogout={handleLogout}
         />
       );
     }
 
-    // 2.2 Após selecionar a empresa, abre a tela de LOGIN DA EMPRESA ESCOLHIDA
+    // 2.2 Após selecionar a empresa, abre a tela de LOGIN / PRIMEIRO ACESSO DA EMPRESA ESCOLHIDA
     return (
       <LoginView 
         company={selectedCompanyForLogin || DEFAULT_COMPANY}

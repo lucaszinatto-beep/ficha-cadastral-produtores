@@ -1,4 +1,3 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const corsHeaders = {
@@ -6,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -41,6 +40,7 @@ serve(async (req) => {
     const target_user_id = body.target_user_id
     const empresa_id = body.empresa_id || body.target_empresa_id
     const is_global_delete = Boolean(body.is_global_delete)
+    const target_painel_id = body.painel_id || 'ficha_cadastral'
 
     if (!target_user_id) {
       return new Response(JSON.stringify({ error: 'target_user_id é obrigatório' }), {
@@ -51,7 +51,7 @@ serve(async (req) => {
 
     // Não permitir auto-exclusão
     if (callerUser.id === target_user_id) {
-      return new Response(JSON.stringify({ error: 'Não é permitido remover a própria conta ou acesso.' }), {
+      return new Response(JSON.stringify({ error: 'Não é permitido remover o próprio acesso.' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
@@ -81,7 +81,7 @@ serve(async (req) => {
     })
 
     // =========================================================================
-    // CASO A: REMOÇÃO DE ACESSO DE EMPRESA ESPECÍFICA (MODO PADRÃO SEGURO)
+    // CASO A: REMOÇÃO DE ACESSO DE EMPRESA ESPECÍFICA NO PAINEL
     // =========================================================================
     if (empresa_id && !is_global_delete) {
       // Validar se o chamador é admin da empresa solicitada (ou super admin)
@@ -130,18 +130,27 @@ serve(async (req) => {
         .eq('id', empresa_id)
         .maybeSingle()
 
-      // REMOVER APENAS O VÍNCULO DESTA EMPRESA
-      const { error: delLinkErr } = await adminClient
-        .from('usuarios_empresas')
+      // REMOVER DO PAINEL ESPECÍFICO (usuario_empresa_painel)
+      await adminClient
+        .from('usuario_empresa_painel')
         .delete()
         .eq('user_id', target_user_id)
         .eq('empresa_id', empresa_id)
+        .eq('painel_id', target_painel_id)
 
-      if (delLinkErr) {
-        return new Response(JSON.stringify({ error: 'Falha ao remover vínculo: ' + delLinkErr.message }), {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        })
+      // Se não houver outros painéis ativos para essa empresa, remover vínculo de usuarios_empresas
+      const { data: remainingPanels } = await adminClient
+        .from('usuario_empresa_painel')
+        .select('id')
+        .eq('user_id', target_user_id)
+        .eq('empresa_id', empresa_id)
+
+      if (!remainingPanels || remainingPanels.length === 0) {
+        await adminClient
+          .from('usuarios_empresas')
+          .delete()
+          .eq('user_id', target_user_id)
+          .eq('empresa_id', empresa_id)
       }
 
       // Registrar auditoria
@@ -150,14 +159,18 @@ serve(async (req) => {
           actor_user_id: callerUser.id,
           target_user_id: target_user_id,
           empresa_id: empresa_id,
-          action: 'REVOKE_ACCESS',
-          details: { empresa_nome: companyData?.nome, message: 'Acesso removido exclusivamente desta empresa' }
+          action: 'REVOKE_PANEL_ACCESS',
+          details: { 
+            empresa_nome: companyData?.nome, 
+            painel_id: target_painel_id,
+            message: 'Acesso ao painel removido para esta empresa' 
+          }
         })
       } catch (_) {}
 
       return new Response(JSON.stringify({ 
         success: true, 
-        message: `Acesso do usuário à empresa ${companyData?.nome || ''} removido com sucesso.` 
+        message: `Acesso do usuário ao painel na empresa ${companyData?.nome || ''} removido com sucesso.` 
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -165,56 +178,87 @@ serve(async (req) => {
     }
 
     // =========================================================================
-    // CASO B: EXCLUSÃO GLOBAL DE CONTA (ESTRITAMENTE SUPER ADMIN)
+    // CASO B: REMOÇÃO TOTAL DO PAINEL FICHA CADASTRAL (ISOLAMENTO LÓGICO SEGURO)
+    // NUNCA EXCLUI auth.users OU usuarios_sistema OU profiles!
     // =========================================================================
     if (!isSuper) {
       return new Response(JSON.stringify({ 
-        error: 'Permissão negada: apenas Super Administradores podem excluir contas globalmente.' 
+        error: 'Permissão negada: apenas Super Administradores podem remover acessos completos do painel.' 
       }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
-    // Checar hierarquia do alvo
+    // Obter dados do usuário para auditoria
     const { data: targetProfile } = await adminClient
       .from('profiles')
       .select('id, level, role, full_name, email')
       .eq('id', target_user_id)
       .maybeSingle()
 
-    // Registrar auditoria global
+    // 1. Remover todos os vínculos deste usuário no painel ficha_cadastral
+    const { error: delPanelErr } = await adminClient
+      .from('usuario_empresa_painel')
+      .delete()
+      .eq('user_id', target_user_id)
+      .eq('painel_id', 'ficha_cadastral')
+
+    if (delPanelErr) {
+      return new Response(JSON.stringify({ error: 'Erro ao desvincular do painel: ' + delPanelErr.message }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    // 2. Verificar se o usuário ainda possui vínculos em outros painéis (ex: central_frango_forte)
+    const { data: otherPanels } = await adminClient
+      .from('usuario_empresa_painel')
+      .select('empresa_id, painel_id')
+      .eq('user_id', target_user_id)
+
+    const otherEmpresaIds = new Set((otherPanels || []).map(p => p.empresa_id))
+
+    // 3. Remover de usuarios_empresas apenas para as empresas onde o usuário não tem outros painéis
+    const { data: userCompanies } = await adminClient
+      .from('usuarios_empresas')
+      .select('empresa_id')
+      .or(`user_id.eq.${target_user_id},usuario_id.eq.${target_user_id}`)
+
+    if (userCompanies && userCompanies.length > 0) {
+      for (const uc of userCompanies) {
+        if (!otherEmpresaIds.has(uc.empresa_id)) {
+          await adminClient
+            .from('usuarios_empresas')
+            .delete()
+            .eq('empresa_id', uc.empresa_id)
+            .or(`user_id.eq.${target_user_id},usuario_id.eq.${target_user_id}`)
+        }
+      }
+    }
+
+    // 4. REGISTRAR AUDITORIA SEGURA (PRESERVANDO auth.users E OUTROS SISTEMAS)
     try {
-      await adminClient.from('audit_user_access').insert({
-        actor_user_id: callerUser.id,
-        target_user_id: target_user_id,
-        empresa_id: null,
-        action: 'GLOBAL_DELETE',
-        details: { target_email: targetProfile?.email, message: 'Exclusão global da conta executada pelo Super Admin' }
+      await adminClient.from('auditoria_usuarios').insert({
+        acao: 'REMOCAO_PAINEL_FICHA_CADASTRAL',
+        autor_id: callerUser.id,
+        autor_nome: callerProfile?.full_name || callerEmail,
+        autor_email: callerEmail,
+        alvo_id: target_user_id,
+        alvo_nome: targetProfile?.full_name || 'Usuário',
+        alvo_email: targetProfile?.email,
+        detalhes: {
+          timestamp: new Date().toISOString(),
+          painel_id: 'ficha_cadastral',
+          auth_users_preservado: true,
+          message: 'Acesso ao painel Ficha Cadastral revogado; conta global do Auth preservada.'
+        }
       })
     } catch (_) {}
 
-    // Excluir todos os vínculos de empresas
-    await adminClient
-      .from('usuarios_empresas')
-      .delete()
-      .or(`user_id.eq.${target_user_id},usuario_id.eq.${target_user_id}`)
-
-    try {
-      await adminClient.from('usuarios_sistema').delete().eq('id', target_user_id)
-    } catch (_) {}
-
-    await adminClient.from('profiles').delete().eq('id', target_user_id)
-
-    // Excluir do Supabase Auth
-    const { error: deleteAuthErr } = await adminClient.auth.admin.deleteUser(target_user_id)
-    if (deleteAuthErr) {
-      console.warn('Erro ao deletar de auth.users:', deleteAuthErr.message)
-    }
-
     return new Response(JSON.stringify({ 
       success: true, 
-      message: 'Conta do usuário e todos os acessos globais foram excluídos com sucesso.' 
+      message: 'Acesso ao painel Ficha Cadastral removido com sucesso. A conta global no Auth foi preservada para manter o acesso a outros sistemas.' 
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

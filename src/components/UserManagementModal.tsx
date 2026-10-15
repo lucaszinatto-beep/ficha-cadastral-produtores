@@ -329,7 +329,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
     }
   };
 
-  // Excluir Conta Globalmente (Super Admin)
+  // Remover Acesso do Ficha Cadastral (Super Admin)
   const handleOpenGlobalDelete = (profile: UserProfile) => {
     setGlobalDeleteUser(profile);
     setGlobalDeleteConfirmText('');
@@ -338,8 +338,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
   const handleConfirmGlobalDelete = async () => {
     if (!globalDeleteUser) return;
-    if (globalDeleteConfirmText !== 'EXCLUIR') {
-      setGlobalDeleteError('Digite EXCLUIR para confirmar a exclusão definitiva.');
+    if (globalDeleteConfirmText !== 'REMOVER') {
+      setGlobalDeleteError('Digite REMOVER para confirmar a remoção de acesso.');
       return;
     }
 
@@ -352,15 +352,15 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
       );
 
       if (!res.success) {
-        throw new Error(res.error || 'Erro ao excluir conta global.');
+        throw new Error(res.error || 'Erro ao remover acesso do painel.');
       }
 
-      setSuccessMsg(`Conta global de ${globalDeleteUser.full_name} excluída definitivamente.`);
+      setSuccessMsg(`Acesso de ${globalDeleteUser.full_name} ao painel Ficha Cadastral removido com sucesso. A conta global no Auth foi preservada.`);
       setGlobalDeleteUser(null);
       await loadProfiles();
       await refreshUserCompanies();
     } catch (err: any) {
-      setGlobalDeleteError(err.message || 'Erro ao excluir conta global.');
+      setGlobalDeleteError(err.message || 'Erro ao remover acesso.');
     } finally {
       setIsDeletingGlobal(false);
     }
@@ -424,13 +424,17 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold text-white">Gestão de Usuários & Acessos</h2>
                 <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                  Isolamento por Empresa Ativo
+                  Isolamento por Painel & Empresa
                 </span>
               </div>
               
-              {/* Badge Contextual da Empresa Atual */}
+              {/* Badge Contextual do Painel e da Empresa Atual */}
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs text-slate-400">Painel Ativo:</span>
+                <span className="text-xs text-slate-400">Escopo Atual:</span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-indigo-950/80 border border-indigo-500/40 text-indigo-300">
+                  Painel Ficha Cadastral
+                </span>
+                <span className="text-slate-600">•</span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-sky-950 border border-sky-500/40 text-sky-300">
                   <Building2 className="w-3.5 h-3.5 text-sky-400" />
                   {currentCompany.nome}
@@ -861,12 +865,12 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                                   <span className="hidden sm:inline">Remover Acesso</span>
                                 </button>
 
-                                {/* 5. Botão EXCLUIR CONTA GLOBAL (Exclusivo Super Admin) */}
+                                {/* 5. Botão REMOVER ACESSO DO PAINEL (Exclusivo Super Admin) */}
                                 {isSuperAdmin && currentUserId !== profile.id && (
                                   <button
                                     onClick={() => handleOpenGlobalDelete(profile)}
                                     className="p-1.5 rounded-xl text-rose-400 hover:text-rose-200 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all cursor-pointer shadow-sm"
-                                    title="Excluir conta globalmente (Super Admin)"
+                                    title="Remover acesso do Ficha Cadastral (Super Admin)"
                                   >
                                     <ShieldAlert className="w-3.5 h-3.5" />
                                   </button>
@@ -1056,7 +1060,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
           </div>
         )}
 
-        {/* MODAL SECUNDÁRIO: EXCLUIR CONTA GLOBAL (EXCLUSIVO SUPER ADMIN) */}
+        {/* MODAL SECUNDÁRIO: REMOVER ACESSO DO PAINEL (EXCLUSIVO SUPER ADMIN) */}
         {globalDeleteUser && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/90 backdrop-blur-sm p-4 animate-in fade-in duration-150">
             <div className="bg-slate-900 border border-rose-600/50 rounded-3xl w-full max-w-md shadow-2xl p-6 overflow-hidden">
@@ -1065,10 +1069,10 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
               </div>
 
               <h3 className="text-xl font-bold text-white text-center mb-1">
-                Excluir Conta Global Definitivamente?
+                Remover Acesso do Ficha Cadastral?
               </h3>
               <p className="text-xs text-rose-400 text-center font-bold mb-4">
-                AÇÃO EXCLUSIVA DE SUPER ADMINISTRAÇÃO
+                ISOLAMENTO LÓGICO DE PAINEL
               </p>
 
               <div className="p-4 rounded-2xl bg-slate-950/90 border border-rose-500/30 space-y-2 mb-4">
@@ -1078,23 +1082,23 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 {globalDeleteUser.email && (
                   <p className="text-xs text-sky-400 font-mono">{globalDeleteUser.email}</p>
                 )}
-                <div className="pt-2 border-t border-slate-800 text-[11px] text-rose-300 flex items-start gap-1.5">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500 mt-0.5" />
+                <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-300 flex items-start gap-1.5">
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
                   <span>
-                    Isso excluirá a conta de autenticação (Auth.users), o perfil e os vínculos em <strong>TODAS</strong> as empresas do sistema.
+                    Este usuário perderá o acesso ao painel <strong>Ficha Cadastral</strong> em todas as empresas. A conta global no <strong>Supabase Auth</strong> será <strong>PRESERVADA</strong> para manter o funcionamento de outros sistemas vinculados (como Central Frango Forte).
                   </span>
                 </div>
               </div>
 
               <div className="mb-4">
                 <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Digite <span className="text-rose-400 font-bold">EXCLUIR</span> para confirmar:
+                  Digite <span className="text-rose-400 font-bold">REMOVER</span> para confirmar:
                 </label>
                 <input
                   type="text"
                   value={globalDeleteConfirmText}
                   onChange={e => setGlobalDeleteConfirmText(e.target.value)}
-                  placeholder="EXCLUIR"
+                  placeholder="REMOVER"
                   className="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-center text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
                 />
               </div>
@@ -1118,11 +1122,11 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 <button
                   type="button"
                   onClick={handleConfirmGlobalDelete}
-                  disabled={isDeletingGlobal || globalDeleteConfirmText !== 'EXCLUIR'}
+                  disabled={isDeletingGlobal || globalDeleteConfirmText !== 'REMOVER'}
                   className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm shadow-lg shadow-rose-600/30 transition-all disabled:opacity-40 flex justify-center items-center gap-2"
                 >
                   {isDeletingGlobal && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Excluir Globalmente
+                  Remover do Painel
                 </button>
               </div>
             </div>

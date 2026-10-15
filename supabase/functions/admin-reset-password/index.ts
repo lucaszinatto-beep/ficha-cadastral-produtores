@@ -1,4 +1,3 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const corsHeaders = {
@@ -6,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -87,7 +86,7 @@ serve(async (req) => {
     // Checar hierarquia do usuário alvo
     const { data: targetProfile } = await adminClient
       .from('profiles')
-      .select('id, level, role')
+      .select('id, level, role, full_name, email')
       .eq('id', target_user_id)
       .maybeSingle()
 
@@ -100,10 +99,16 @@ serve(async (req) => {
       })
     }
 
-    // 4. Alteração real da senha no Supabase Auth
+    // 4. Alteração real da senha no Supabase Auth + confirmação de e-mail garantida
     const { data: updatedUser, error: updateErr } = await adminClient.auth.admin.updateUserById(
       target_user_id,
-      { password: new_password }
+      { 
+        password: new_password,
+        email_confirm: true,
+        user_metadata: {
+          force_password_change: true
+        }
+      }
     )
 
     if (updateErr) {
@@ -113,7 +118,7 @@ serve(async (req) => {
       })
     }
 
-    // 5. Registrar auditoria se a tabela existir
+    // 5. Registrar auditoria
     try {
       await adminClient.from('auditoria_usuarios').insert({
         acao: 'ALTERACAO_SENHA',
@@ -121,6 +126,8 @@ serve(async (req) => {
         autor_nome: callerProfile?.full_name || callerEmail,
         autor_email: callerEmail,
         alvo_id: target_user_id,
+        alvo_nome: targetProfile?.full_name || 'Usuário',
+        alvo_email: targetProfile?.email,
         detalhes: { timestamp: new Date().toISOString() }
       })
     } catch (_) {}

@@ -100,18 +100,35 @@ export const CompanyProvider: React.FC<{
         return;
       }
 
-      // Buscar vínculos em usuarios_empresas
-      const { data, error } = await supabase
-        .from('usuarios_empresas')
+      // Buscar vínculos em usuario_empresa_painel para o painel ficha_cadastral
+      let allowedIds = new Set<string>();
+
+      const { data: panelData, error: panelError } = await supabase
+        .from('usuario_empresa_painel')
         .select('empresa_id, role, level, ativo')
         .eq('user_id', user.id)
+        .eq('painel_id', 'ficha_cadastral')
         .eq('ativo', true);
 
-      if (error || !data || data.length === 0) {
-        // Fallback seguro: vincula à Bello Alimentos para usuários pré-existentes
+      if (!panelError && panelData && panelData.length > 0) {
+        allowedIds = new Set(panelData.map(d => d.empresa_id));
+      } else {
+        // Fallback retroativo caso ainda não esteja no novo formato
+        const { data: ueData } = await supabase
+          .from('usuarios_empresas')
+          .select('empresa_id, role, level, ativo')
+          .eq('user_id', user.id)
+          .eq('ativo', true);
+
+        if (ueData && ueData.length > 0) {
+          allowedIds = new Set(ueData.map(d => d.empresa_id));
+        }
+      }
+
+      if (allowedIds.size === 0) {
+        // Sem empresas autorizadas no painel: default
         setUserCompanies([DEFAULT_COMPANY]);
       } else {
-        const allowedIds = new Set(data.map(d => d.empresa_id));
         const matched = availableCompanies.filter(c => allowedIds.has(c.id));
         if (matched.length > 0) {
           setUserCompanies(matched);

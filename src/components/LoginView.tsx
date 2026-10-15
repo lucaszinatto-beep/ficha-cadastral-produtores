@@ -79,9 +79,9 @@ export const LoginView: React.FC<LoginViewProps> = ({
 
       if (error) {
         if (error.message.includes('Invalid login credentials')) {
-          setErrorMessage('E-mail ou senha incorretos. Verifique suas credenciais.');
+          setErrorMessage('E-mail ou senha inválidos. Verifique suas credenciais.');
         } else if (error.message.includes('Email not confirmed')) {
-          setErrorMessage('E-mail cadastrado mas ainda não confirmado no Supabase.');
+          setErrorMessage('Este e-mail está cadastrado, porém ainda não foi confirmado no Supabase. Solicite a confirmação ao administrador.');
         } else {
           setErrorMessage(error.message || 'Erro ao realizar login no Supabase.');
         }
@@ -89,10 +89,8 @@ export const LoginView: React.FC<LoginViewProps> = ({
       }
 
       if (data.session && data.user) {
-        // REGRA DE SEGURANÇA MULTIEMPRESA:
-        // Validar no Supabase se o usuário possui perfil e vínculo com a empresa selecionada
-        
-        // 1. Obter perfil do usuário em public.profiles pelo UUID autenticado (data.user.id)
+        // REGRA DE SEGURANÇA E ISOLAMENTO POR PAINEL (FICHA CADASTRAL):
+        // 1. Obter perfil do usuário em public.profiles pelo UUID autenticado
         const { data: profile } = await supabase
           .from('profiles')
           .select('role, level')
@@ -110,29 +108,63 @@ export const LoginView: React.FC<LoginViewProps> = ({
         const isSuperAdmin = isKnownSuperAdmin || profile?.role === 'super_admin' || (profile?.level ?? 0) >= 100;
 
         if (!isSuperAdmin) {
-          // 3. Usuário regular: verificar se possui vínculo ativo em public.usuarios_empresas
-          const { data: vinculo, error: vinculoErr } = await supabase
-            .from('usuarios_empresas')
-            .select('id, ativo')
+          // 3. Buscar todos os vínculos do usuário para o painel ficha_cadastral
+          const { data: painelVinculos } = await supabase
+            .from('usuario_empresa_painel')
+            .select('empresa_id, ativo, painel_id')
             .eq('user_id', data.user.id)
-            .eq('empresa_id', targetCompany.id)
-            .eq('ativo', true)
-            .maybeSingle();
+            .eq('painel_id', 'ficha_cadastral');
 
-          const isTableMissing = vinculoErr && (
-            vinculoErr.code === '42P01' || 
-            vinculoErr.code === 'PGRST205' ||
-            vinculoErr.message?.includes('does not exist') ||
-            vinculoErr.message?.includes('schema cache')
-          );
-          const isBelloDefault = targetCompany.id === 'e1100000-0000-0000-0000-000000000001';
+          // Fallback retroativo em usuarios_empresas caso usuario_empresa_painel ainda não esteja populado
+          const { data: legadoVinculos } = await supabase
+            .from('usuarios_empresas')
+            .select('empresa_id, ativo')
+            .eq('user_id', data.user.id);
 
-          const hasAccess = Boolean(vinculo) || (isTableMissing && isBelloDefault);
+          const hasAnyPanelRecord = (painelVinculos && painelVinculos.length > 0) || (legadoVinculos && legadoVinculos.length > 0);
 
-          if (!hasAccess) {
-            // BLOQUEIA ACESSO E DESCONECTA A SESSÃO IMEDIATAMENTE
+          if (!hasAnyPanelRecord) {
+            // Caso A: Usuário existe no Supabase (ex: Central Frango Forte), mas não tem acesso ao Ficha Cadastral
             await supabase.auth.signOut();
-            setErrorMessage('Você não possui acesso a esta empresa.');
+            setErrorMessage('Usuário autenticado no Supabase, porém sem autorização de acesso ao painel Ficha Cadastral.');
+            setIsLoading(false);
+            return;
+          }
+
+          // Verificar status ativo no painel
+          const anyActive = (painelVinculos || []).some(v => v.ativo) || (legadoVinculos || []).some(v => v.ativo);
+          if (!anyActive) {
+            // Caso B: Usuário desativado no painel
+            await supabase.auth.signOut();
+            setErrorMessage('Seu acesso ao painel Ficha Cadastral está desativado. Entre em contato com o administrador.');
+            setIsLoading(false);
+            return;
+          }
+
+          // Verificar autorização específica para a empresa selecionada
+          const hasAccessToTargetCompany = 
+            (painelVinculos || []).some(v => v.empresa_id === targetCompany.id && v.ativo) ||
+            (legadoVinculos || []).some(v => v.empresa_id === targetCompany.id && v.ativo);
+
+          if (!hasAccessToTargetCompany) {
+            // Caso C: Usuário ativo na Ficha Cadastral, mas para outra empresa
+            // Obter nomes das empresas autorizadas
+            const allowedIds = new Set([
+              ...(painelVinculos || []).filter(v => v.ativo).map(v => v.empresa_id),
+              ...(legadoVinculos || []).filter(v => v.ativo).map(v => v.empresa_id)
+            ]);
+
+            const { data: allEmpresas } = await supabase.from('empresas').select('id, nome');
+            const allowedNames = (allEmpresas || [])
+              .filter(e => allowedIds.has(e.id))
+              .map(e => e.nome);
+
+            await supabase.auth.signOut();
+            if (allowedNames.length > 0) {
+              setErrorMessage(`Você não possui acesso à empresa ${targetCompany.nome}. Suas empresas autorizadas são: ${allowedNames.join(', ')}.`);
+            } else {
+              setErrorMessage(`Você não possui acesso à empresa ${targetCompany.nome} no painel Ficha Cadastral.`);
+            }
             setIsLoading(false);
             return;
           }
@@ -180,17 +212,26 @@ export const LoginView: React.FC<LoginViewProps> = ({
     }
   };
 
+  const isUpdatingRef = React.useRef(false);
+
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading || isUpdatingRef.current) return;
+
     if (newPassword.length < 6) {
-      setErrorMessage('A nova senha deve ter pelo menos 6 caracteres.');
+      setErrorMessage('A senha deve possuir no mínimo 6 caracteres.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setErrorMessage('As senhas não coincidem.');
+      setErrorMessage('A confirmação da senha não confere.');
+      return;
+    }
+    if (password && newPassword === password) {
+      setErrorMessage('Você precisa escolher uma senha diferente da senha temporária.');
       return;
     }
 
+    isUpdatingRef.current = true;
     setIsLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -204,7 +245,14 @@ export const LoginView: React.FC<LoginViewProps> = ({
       });
 
       if (error) {
-        setErrorMessage(error.message || 'Erro ao atualizar senha.');
+        const msg = (error.message || '').toLowerCase();
+        if (msg.includes('different from the old password') || msg.includes('same password') || msg.includes('different')) {
+          setErrorMessage('Você precisa escolher uma senha diferente da senha temporária.');
+        } else if (msg.includes('least 6') || msg.includes('least')) {
+          setErrorMessage('A senha deve possuir no mínimo 6 caracteres.');
+        } else {
+          setErrorMessage('Não foi possível atualizar a senha. Tente novamente.');
+        }
         return;
       }
 
@@ -212,15 +260,18 @@ export const LoginView: React.FC<LoginViewProps> = ({
         setSuccessMessage('Senha redefinida com sucesso! Redirecionando...');
         setTimeout(() => {
           if (onLoginSuccess) onLoginSuccess(targetCompany);
-        }, 1500);
+        }, 1200);
       } else {
-        // force_update
+        // force_update concluído com sucesso
+        setSuccessMessage('Senha atualizada com sucesso! Acessando...');
         if (onLoginSuccess) onLoginSuccess(targetCompany);
       }
     } catch (err: any) {
-      setErrorMessage('Erro inesperado ao atualizar senha.');
+      console.error('Erro inesperado ao atualizar senha:', err);
+      setErrorMessage('Não foi possível atualizar a senha. Tente novamente.');
     } finally {
       setIsLoading(false);
+      isUpdatingRef.current = false;
     }
   };
 
@@ -251,7 +302,11 @@ export const LoginView: React.FC<LoginViewProps> = ({
         {onBackToCompanySelect && (
           <button
             type="button"
-            onClick={onBackToCompanySelect}
+            onClick={() => {
+              setErrorMessage(null);
+              setSuccessMessage(null);
+              onBackToCompanySelect();
+            }}
             className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors cursor-pointer group"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
