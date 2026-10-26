@@ -59,6 +59,16 @@ export const ImportHistoryView: React.FC<ImportHistoryViewProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
+          <a
+            href="/MODELO_IMPORTACAO_FICHAS_SETUP.xlsx"
+            download="MODELO_IMPORTACAO_FICHAS_SETUP.xlsx"
+            className="px-3.5 py-2.5 rounded-xl text-xs font-bold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 hover:border-sky-400/60 transition-all flex items-center gap-1.5 shadow-sm"
+            title="Baixar Modelo Oficial (.xlsx)"
+          >
+            <Download className="w-4 h-4 text-sky-400" />
+            <span className="hidden sm:inline">Baixar Planilha Padrão</span>
+          </a>
+
           <button
             onClick={onRefresh}
             disabled={isLoading}

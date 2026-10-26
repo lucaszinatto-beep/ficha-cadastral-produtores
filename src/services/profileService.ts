@@ -246,7 +246,8 @@ export const createUserForCompany = async (
   role: string,
   level: number,
   companyId: string,
-  panelId: string = CURRENT_PANEL_ID
+  panelId: string = CURRENT_PANEL_ID,
+  unidade?: string | null
 ): Promise<{ success: boolean; user?: any; isExistingUser?: boolean; message?: string; error?: string }> => {
   try {
     const cleanEmail = email.toLowerCase().trim();
@@ -261,7 +262,8 @@ export const createUserForCompany = async (
           role,
           level,
           company_id: companyId,
-          panel_id: panelId
+          panel_id: panelId,
+          unidade: unidade || null
         }
       });
 
@@ -302,11 +304,12 @@ export const createUserForCompany = async (
             user_id: existingProfile.id,
             empresa_id: companyId,
             painel_id: panelId,
+            unidade: unidade || null,
             role,
             level,
             ativo: true,
             updated_at: new Date().toISOString()
-          }, { onConflict: 'user_id,empresa_id,painel_id' });
+          }, { onConflict: 'user_id,empresa_id,painel_id,unidade' });
 
         if (upsertErr) {
           return { success: false, error: 'Falha ao vincular usuário ao painel: ' + upsertErr.message };
@@ -320,6 +323,7 @@ export const createUserForCompany = async (
           .upsert({
             user_id: existingProfile.id,
             empresa_id: companyId,
+            unidade: unidade || null,
             role,
             level,
             ativo: true
@@ -396,10 +400,11 @@ export const createUserForCompany = async (
       user_id: newUserId,
       empresa_id: companyId,
       painel_id: panelId,
+      unidade: unidade || null,
       role,
       level,
       ativo: true
-    }, { onConflict: 'user_id,empresa_id,painel_id' });
+    }, { onConflict: 'user_id,empresa_id,painel_id,unidade' });
 
     if (linkErr) {
       console.warn('Erro ao criar vinculo em usuario_empresa_painel:', linkErr.message);

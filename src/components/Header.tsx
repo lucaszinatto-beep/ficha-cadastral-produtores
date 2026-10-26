@@ -14,7 +14,8 @@ import {
   ChevronDown,
   Check,
   Building2,
-  Grid
+  Grid,
+  Download
 } from 'lucide-react';
 import { CompanyLogo } from './CompanyLogo';
 import { useCompany } from '../context/CompanyContext';
@@ -59,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
   userLevel = 10,
   userRole = 'viewer'
 }) => {
-  const { currentCompany, userCompanies, isSuperAdmin, switchCompany } = useCompany();
+  const { currentCompany, currentUnit, userCompanies, isSuperAdmin, switchCompany } = useCompany();
   const [isCompanyMenuOpen, setIsCompanyMenuOpen] = useState(false);
   const companyMenuRef = useRef<HTMLDivElement>(null);
 
@@ -76,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const canSwitchCompany = isSuperAdmin || userCompanies.length > 1;
+  const canSwitchCompany = isSuperAdmin || userCompanies.length > 1 || currentCompany.slug === 'levo';
 
   return (
     <header className="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 transition-all font-sans">
@@ -95,11 +96,16 @@ export const Header: React.FC<HeaderProps> = ({
               <div>
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-bold tracking-wider uppercase border ${currentCompany.badgeBg} ${currentCompany.badgeText} ${currentCompany.badgeBorder}`}>
-                    Set Up Granja
+                    {currentUnit ? `Unidade ${currentUnit.nome}` : 'Set Up Granja'}
                   </span>
                 </div>
                 <h2 className="text-xs sm:text-sm font-black text-white tracking-tight flex items-center gap-1.5 mt-0.5">
                   <span>{currentCompany.nome}</span>
+                  {currentUnit && (
+                    <span className="text-purple-300 font-bold text-xs">
+                      • {currentUnit.nome}
+                    </span>
+                  )}
                 </h2>
               </div>
             </div>
@@ -142,7 +148,7 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* DROPDOWN: SELETOR / TROCA DE EMPRESA */}
+            {/* DROPDOWN: SELETOR / TROCA DE EMPRESA E UNIDADE */}
             <div className="relative" ref={companyMenuRef}>
               <button
                 type="button"
@@ -153,11 +159,13 @@ export const Header: React.FC<HeaderProps> = ({
                     ? 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-white cursor-pointer hover:border-slate-600 shadow-sm'
                     : 'bg-slate-900 border-slate-800 text-slate-300 cursor-default'
                 }`}
-                title={canSwitchCompany ? 'Trocar de empresa' : `Empresa atual: ${currentCompany.nome}`}
+                title={canSwitchCompany ? 'Trocar de empresa ou unidade' : `Empresa atual: ${currentCompany.nome}`}
               >
                 <Building2 className="w-3.5 h-3.5" style={{ color: currentCompany.cor_destaque }} />
-                <span className="hidden sm:inline text-slate-400 font-normal">Empresa:</span>
-                <span className="font-bold truncate max-w-[120px]">{currentCompany.nome}</span>
+                <span className="hidden sm:inline text-slate-400 font-normal">Ambiente:</span>
+                <span className="font-bold truncate max-w-[140px]">
+                  {currentUnit ? `${currentCompany.nome} (${currentUnit.nome})` : currentCompany.nome}
+                </span>
                 {canSwitchCompany && (
                   <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isCompanyMenuOpen ? 'rotate-180' : ''}`} />
                 )}
@@ -165,10 +173,10 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* Menu Dropdown de Troca de Empresa */}
               {isCompanyMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+                <div className="absolute right-0 mt-2 w-72 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-100">
                   <div className="px-3 py-2 border-b border-slate-800 flex items-center justify-between">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                      Trocar Empresa
+                      Ambiente de Acesso
                     </span>
                     {onOpenCompanySelector && (
                       <button
@@ -176,7 +184,7 @@ export const Header: React.FC<HeaderProps> = ({
                           setIsCompanyMenuOpen(false);
                           onOpenCompanySelector();
                         }}
-                        className="text-[10px] text-sky-400 hover:text-sky-300 font-semibold flex items-center gap-1"
+                        className="text-[10px] text-sky-400 hover:text-sky-300 font-semibold flex items-center gap-1 cursor-pointer"
                         title="Ver tela com todos os cards"
                       >
                         <Grid className="w-3 h-3" />
@@ -187,12 +195,51 @@ export const Header: React.FC<HeaderProps> = ({
 
                   <div className="py-1 space-y-1">
                     {userCompanies.map((comp) => {
-                      const isSelected = comp.id === currentCompany.id;
+                      const isLevo = comp.slug === 'levo';
+
+                      if (isLevo) {
+                        return (
+                          <div key={comp.id} className="space-y-1">
+                            <div className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-purple-300 flex items-center justify-between border-t border-slate-800/80 first:border-0 first:pt-1">
+                              <span>Levo Alimentos</span>
+                              <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300">2 Unidades</span>
+                            </div>
+                            {['LEVO_UMUARAMA', 'LEVO_CAPANEMA'].map((unitId) => {
+                              const unitName = unitId === 'LEVO_UMUARAMA' ? 'Umuarama' : 'Capanema';
+                              const isUnitSelected = currentCompany.id === comp.id && currentUnit?.id === unitId;
+                              return (
+                                <button
+                                  key={unitId}
+                                  onClick={() => {
+                                    switchCompany(comp.id, unitId);
+                                    setIsCompanyMenuOpen(false);
+                                  }}
+                                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                                    isUnitSelected 
+                                      ? 'bg-purple-950/80 border border-purple-500/40 text-purple-200' 
+                                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 truncate pl-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                                    <span className="truncate">Levo — {unitName}</span>
+                                  </div>
+                                  {isUnitSelected && (
+                                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        );
+                      }
+
+                      const isSelected = comp.id === currentCompany.id && !currentUnit;
                       return (
                         <button
                           key={comp.id}
                           onClick={() => {
-                            switchCompany(comp.id);
+                            switchCompany(comp.id, null);
                             setIsCompanyMenuOpen(false);
                           }}
                           className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
@@ -231,15 +278,28 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
+            {/* BOTÃO BAIXAR PLANILHA PADRÃO */}
+            <a
+              id="btn-baixar-planilha-padrao"
+              href="/MODELO_IMPORTACAO_FICHAS_SETUP.xlsx"
+              download="MODELO_IMPORTACAO_FICHAS_SETUP.xlsx"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 hover:border-sky-400/60 shadow-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              title="Baixar Modelo Oficial de Planilha Excel (.xlsx)"
+            >
+              <Download className="w-4 h-4 text-sky-400 shrink-0" />
+              <span className="hidden sm:inline">BAIXAR PLANILHA PADRÃO</span>
+              <span className="sm:hidden">MODELO</span>
+            </a>
+
             {/* BOTÃO DE IMPORTAÇÃO - Permitido para Super Admin ou Administrador da empresa ativa */}
             {userLevel >= 80 && (
               <button
                 id="btn-importar-base-unico"
                 onClick={onOpenImportModal}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r ${currentCompany.buttonGradient} ${currentCompany.buttonHoverGradient} border border-white/20 shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95`}
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r ${currentCompany.buttonGradient} ${currentCompany.buttonHoverGradient} border border-white/20 shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95 cursor-pointer`}
               >
                 <UploadCloud className="w-4 h-4" />
-                <span className="hidden sm:inline">IMPORTAR BASE</span>
+                <span className="hidden sm:inline">IMPORTAR PLANILHA</span>
                 <span className="sm:hidden">IMPORTAR</span>
               </button>
             )}

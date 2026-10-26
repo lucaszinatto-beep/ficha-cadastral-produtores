@@ -57,7 +57,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   currentUserLevel,
   currentUserProfile
 }) => {
-  const { currentCompany, refreshUserCompanies, allCompanies } = useCompany();
+  const { currentCompany, currentUnit, refreshUserCompanies, allCompanies } = useCompany();
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
   const [membershipsMap, setMembershipsMap] = useState<Record<string, string[]>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -210,13 +210,16 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
       const selectedRole = ROLE_OPTIONS.find(r => r.value === newRole);
       if (!selectedRole) throw new Error("Cargo inválido selecionado.");
       
+      const targetUnitId = currentCompany.slug === 'levo' ? currentUnit?.id : null;
       const res = await createUserForCompany(
         newEmail,
         newPassword,
         newFullName,
         selectedRole.value,
         selectedRole.level,
-        currentCompany.id
+        currentCompany.id,
+        undefined,
+        targetUnitId
       );
 
       if (!res.success) {

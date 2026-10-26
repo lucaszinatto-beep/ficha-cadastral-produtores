@@ -31,7 +31,7 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   onSetupUpdated,
   userProfile = null
 }) => {
-  const { currentCompany } = useCompany();
+  const { currentCompany, currentUnit } = useCompany();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
@@ -83,7 +83,8 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
         userProfile, 
         undefined, 
         undefined, 
-        currentCompany.id
+        currentCompany.id,
+        currentCompany.slug === 'levo' ? currentUnit?.id : null
       );
       
       setSaveSuccess(true);
@@ -124,7 +125,8 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
         aviario.id, 
         userProfile, 
         currentCompany.id, 
-        currentCompany.nome
+        currentCompany.nome,
+        currentCompany.slug === 'levo' ? currentUnit?.id : null
       );
       setFormData(updated);
       setSaveSuccess(true);

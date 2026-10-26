@@ -45,48 +45,58 @@ export async function validateSupabaseConnection(): Promise<{
   }
 }
 
-export async function fetchProdutores(empresaId?: string): Promise<Produtor[]> {
+export async function fetchProdutores(empresaId?: string, unidadeId?: string): Promise<Produtor[]> {
   if (!empresaId) {
     console.warn('fetchProdutores invocado sem empresaId. Retornando lista vazia por segurança.');
     return [];
   }
-  const { data, error } = await supabase
+  let query = supabase
     .from('produtores')
     .select('*')
-    .eq('empresa_id', empresaId)
-    .order('nome', { ascending: true });
+    .eq('empresa_id', empresaId);
+
+  if (unidadeId) {
+    query = query.eq('unidade', unidadeId);
+  }
+
+  const { data, error } = await query.order('nome', { ascending: true });
 
   if (error) {
-    console.error('Erro ao buscar produtores por empresa:', error);
+    console.error('Erro ao buscar produtores por empresa/unidade:', error);
     throw error;
   }
   return (data || []) as Produtor[];
 }
 
-export async function fetchTecnicos(empresaId?: string): Promise<Tecnico[]> {
+export async function fetchTecnicos(empresaId?: string, unidadeId?: string): Promise<Tecnico[]> {
   if (!empresaId) {
     console.warn('fetchTecnicos invocado sem empresaId. Retornando lista vazia por segurança.');
     return [];
   }
-  const { data, error } = await supabase
+  let query = supabase
     .from('tecnicos')
     .select('*')
-    .eq('empresa_id', empresaId)
-    .order('nome', { ascending: true });
+    .eq('empresa_id', empresaId);
+
+  if (unidadeId) {
+    query = query.eq('unidade', unidadeId);
+  }
+
+  const { data, error } = await query.order('nome', { ascending: true });
 
   if (error) {
-    console.error('Erro ao buscar técnicos por empresa:', error);
+    console.error('Erro ao buscar técnicos por empresa/unidade:', error);
     throw error;
   }
   return (data || []) as Tecnico[];
 }
 
-export async function fetchAviarios(empresaId?: string): Promise<Aviario[]> {
+export async function fetchAviarios(empresaId?: string, unidadeId?: string): Promise<Aviario[]> {
   if (!empresaId) {
     console.warn('fetchAviarios invocado sem empresaId. Retornando lista vazia por segurança.');
     return [];
   }
-  const { data, error } = await supabase
+  let query = supabase
     .from('cadastro_aviarios')
     .select(`
       *,
@@ -94,17 +104,22 @@ export async function fetchAviarios(empresaId?: string): Promise<Aviario[]> {
       tecnico:tecnicos(*),
       setup:setups_aviarios(*)
     `)
-    .eq('empresa_id', empresaId)
-    .order('numero_instalacao', { ascending: true });
+    .eq('empresa_id', empresaId);
+
+  if (unidadeId) {
+    query = query.eq('unidade', unidadeId);
+  }
+
+  const { data, error } = await query.order('numero_instalacao', { ascending: true });
 
   if (error) {
-    console.error('Erro ao buscar aviários por empresa:', error);
+    console.error('Erro ao buscar aviários por empresa/unidade:', error);
     throw error;
   }
   return (data || []) as Aviario[];
 }
 
-export async function fetchAviariosByProdutor(produtorId: string, empresaId?: string): Promise<Aviario[]> {
+export async function fetchAviariosByProdutor(produtorId: string, empresaId?: string, unidadeId?: string): Promise<Aviario[]> {
   let query = supabase.from('cadastro_aviarios').select(`
     *,
     produtor:produtores(*),
@@ -114,6 +129,9 @@ export async function fetchAviariosByProdutor(produtorId: string, empresaId?: st
 
   if (empresaId) {
     query = query.eq('empresa_id', empresaId);
+  }
+  if (unidadeId) {
+    query = query.eq('unidade', unidadeId);
   }
   const { data, error } = await query.order('numero_instalacao', { ascending: true });
 
@@ -232,7 +250,8 @@ export async function saveSetupData(
   userProfile?: UserProfile | null,
   tipoAcaoOverride?: 'CRIACAO' | 'EDICAO' | 'RESTAURACAO',
   resumoCustomizado?: string,
-  empresaId?: string
+  empresaId?: string,
+  unidadeId?: string | null
 ): Promise<SetupAviario> {
   // 1. Obter registro atual completo antes de alterar
   const { data: existing } = await supabase
@@ -335,6 +354,10 @@ export async function saveSetupData(
 
   if (empresaId) {
     cleanPayload.empresa_id = empresaId;
+  }
+
+  if (unidadeId) {
+    cleanPayload.unidade = unidadeId;
   }
 
   if (isInitial || !existing?.created_by_name) {
@@ -596,7 +619,8 @@ export async function applyDefaultSetupValues(
   aviarioId: string,
   userProfile?: UserProfile | null,
   empresaId?: string,
-  companyName?: string
+  companyName?: string,
+  unidadeId?: string | null
 ): Promise<SetupAviario> {
   const padraoNome = companyName || 'Bello Alimentos';
   const customValues: Partial<SetupAviario> = {
@@ -609,7 +633,8 @@ export async function applyDefaultSetupValues(
     userProfile,
     'EDICAO',
     `Atribuição dos parâmetros técnicos padrão da ${padraoNome}`,
-    empresaId
+    empresaId,
+    unidadeId
   );
 }
 
@@ -633,6 +658,7 @@ export async function createProdutor(payload: {
   email?: string | null;
   aviariosIniciais?: Array<{ numero: string; tecnico_id?: string | null }>;
   empresa_id?: string;
+  unidade?: string | null;
 }): Promise<Produtor> {
   const rowData: any = {
     nome: payload.nome.trim(),
@@ -647,6 +673,10 @@ export async function createProdutor(payload: {
     rowData.empresa_id = payload.empresa_id;
   } else {
     throw new Error('empresa_id é obrigatório para cadastrar um produtor.');
+  }
+
+  if (payload.unidade) {
+    rowData.unidade = payload.unidade;
   }
 
   const { data: produtor, error: prodError } = await supabase
@@ -664,6 +694,7 @@ export async function createProdutor(payload: {
       numero_instalacao: a.numero.trim(),
       tecnico_id: a.tecnico_id || null,
       empresa_id: payload.empresa_id,
+      unidade: payload.unidade || null,
       status: 'Ativo'
     }));
 
@@ -732,7 +763,8 @@ export async function createAviario(
   produtorId: string, 
   numeroInstalacao: string, 
   tecnicoId?: string | null,
-  empresaId?: string
+  empresaId?: string,
+  unidade?: string | null
 ): Promise<Aviario> {
   if (!empresaId) {
     throw new Error('empresaId é obrigatório para cadastrar um aviário.');
@@ -742,7 +774,8 @@ export async function createAviario(
     produtor_id: produtorId,
     numero_instalacao: numeroInstalacao.trim(),
     tecnico_id: tecnicoId || null,
-    empresa_id: empresaId
+    empresa_id: empresaId,
+    unidade: unidade || null
   };
 
   const { data, error } = await supabase

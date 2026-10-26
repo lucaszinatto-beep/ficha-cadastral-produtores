@@ -136,11 +136,12 @@ export async function parseExcelFile(file: File, selectedSheet?: string): Promis
     throw new Error('A planilha fornecida não possui nenhuma aba legível.');
   }
 
-  // Prioridade para a aba "Tbl_txt", caso exista
+  // Prioridade para a aba oficial "IMPORTAR" e fallback para "Tbl_txt" (legado)
   let activeSheet = selectedSheet;
   if (!activeSheet || !sheets.includes(activeSheet)) {
+    const importarFound = sheets.find((s: string) => s.trim().toUpperCase() === 'IMPORTAR');
     const tblTxtFound = sheets.find((s: string) => s.trim().toLowerCase() === 'tbl_txt');
-    activeSheet = tblTxtFound || sheets[0];
+    activeSheet = importarFound || tblTxtFound || sheets[0];
   }
 
   const worksheet = workbook.Sheets[activeSheet];
@@ -151,7 +152,7 @@ export async function parseExcelFile(file: File, selectedSheet?: string): Promis
   }
 
   // Encontrar a linha de cabeçalho
-  let headerRowIndex = 0;
+  let headerRowIndex = -1;
   for (let i = 0; i < Math.min(rawRows.length, 10); i++) {
     const row = rawRows[i];
     const rowStr = row.map(c => normalizeHeaderKey(String(c))).join(' ');
@@ -159,6 +160,10 @@ export async function parseExcelFile(file: File, selectedSheet?: string): Promis
       headerRowIndex = i;
       break;
     }
+  }
+
+  if (headerRowIndex === -1) {
+    throw new Error("Modelo de planilha incompatível. Utilize o modelo oficial disponível em 'Baixar Planilha Padrão'.");
   }
 
   const headers = rawRows[headerRowIndex].map(h => String(h).trim());
@@ -172,6 +177,12 @@ export async function parseExcelFile(file: File, selectedSheet?: string): Promis
       }
     }
   });
+
+  // Validar se as colunas essenciais 'avicultor' e 'instalacao' foram identificadas
+  const mappedFields = Object.values(headerMap);
+  if (!mappedFields.includes('avicultor') || !mappedFields.includes('instalacao')) {
+    throw new Error("Modelo de planilha incompatível. Utilize o modelo oficial disponível em 'Baixar Planilha Padrão'.");
+  }
 
   const parsedRows: ParsedRowValidation[] = [];
   const uniqueProdutores = new Set<string>();
@@ -286,7 +297,8 @@ export async function executeImport(
   sheetName: string,
   userEmail: string = 'Administrador',
   onProgress?: ImportProgressCallback,
-  empresaId?: string
+  empresaId?: string,
+  unidadeId?: string | null
 ): Promise<ImportacaoLog> {
   const stats = {
     produtoresCriados: 0,
@@ -316,6 +328,7 @@ export async function executeImport(
   const tecnicosMap = new Map<string, string>(); // nomeUpper -> id
   let tecQuery = supabase.from('tecnicos').select('id, nome');
   if (empresaId) tecQuery = tecQuery.eq('empresa_id', empresaId);
+  if (unidadeId) tecQuery = tecQuery.eq('unidade', unidadeId);
   const { data: existingTecnicos } = await tecQuery;
   (existingTecnicos || []).forEach((t: any) => {
     tecnicosMap.set(cleanText(t.nome).toUpperCase(), t.id);
@@ -329,7 +342,8 @@ export async function executeImport(
   if (missingTecnicos.length > 0) {
     const tecRows = missingTecnicos.map(nome => ({
       nome,
-      empresa_id: empresaId
+      empresa_id: empresaId,
+      unidade: unidadeId || null
     }));
 
     const { data: insertedTecs, error: insertTecErr } = await supabase
@@ -360,6 +374,7 @@ export async function executeImport(
   const produtoresMap = new Map<string, string>(); // nomeUpper -> id
   let prodQuery = supabase.from('produtores').select('id, nome');
   if (empresaId) prodQuery = prodQuery.eq('empresa_id', empresaId);
+  if (unidadeId) prodQuery = prodQuery.eq('unidade', unidadeId);
   const { data: existingProdutores } = await prodQuery;
   (existingProdutores || []).forEach((p: any) => {
     produtoresMap.set(cleanText(p.nome).toUpperCase(), p.id);
@@ -373,7 +388,8 @@ export async function executeImport(
   if (missingProdutores.length > 0) {
     const prodRows = missingProdutores.map(nome => ({
       nome,
-      empresa_id: empresaId
+      empresa_id: empresaId,
+      unidade: unidadeId || null
     }));
 
     const { data: insertedProds, error: insertProdErr } = await supabase
@@ -404,6 +420,7 @@ export async function executeImport(
   const aviariosMap = new Map<string, string>(); // produtorId###numeroInstalacao -> aviarioId
   let avQuery = supabase.from('cadastro_aviarios').select('id, produtor_id, numero_instalacao');
   if (empresaId) avQuery = avQuery.eq('empresa_id', empresaId);
+  if (unidadeId) avQuery = avQuery.eq('unidade', unidadeId);
   const { data: existingAviarios } = await avQuery;
   
   (existingAviarios || []).forEach((a: any) => {
@@ -431,6 +448,7 @@ export async function executeImport(
       updated_at: new Date().toISOString()
     };
     if (empresaId) avRow.empresa_id = empresaId;
+    if (unidadeId) avRow.unidade = unidadeId;
     aviariosToUpsert.push(avRow);
   }
 
@@ -450,6 +468,7 @@ export async function executeImport(
   // Recarregar mapa completo de aviários da empresa
   let allAvQuery = supabase.from('cadastro_aviarios').select('id, produtor_id, numero_instalacao');
   if (empresaId) allAvQuery = allAvQuery.eq('empresa_id', empresaId);
+  if (unidadeId) allAvQuery = allAvQuery.eq('unidade', unidadeId);
   const { data: allAviariosUpdated } = await allAvQuery;
   
   (allAviariosUpdated || []).forEach((a: any) => {
@@ -467,6 +486,7 @@ export async function executeImport(
   // Identificar setups existentes para contagem de criados vs atualizados
   let setupQuery = supabase.from('setups_aviarios').select('aviario_id');
   if (empresaId) setupQuery = setupQuery.eq('empresa_id', empresaId);
+  if (unidadeId) setupQuery = setupQuery.eq('unidade', unidadeId);
   const { data: existingSetups } = await setupQuery;
   const existingSetupsSet = new Set((existingSetups || []).map((s: any) => s.aviario_id));
 
@@ -510,6 +530,7 @@ export async function executeImport(
       alarme_caixas_func: parseNullableBoolean(d.alarme_caixas_func),
       lux_100: parseNullableNumber(d.lux_100),
       empresa_id: empresaId,
+      unidade: unidadeId || null,
       updated_at: new Date().toISOString()
     };
     setupsToUpsert.push(sRow);
@@ -561,7 +582,8 @@ export async function executeImport(
     registros_com_erro: stats.erros,
     erros_json: logsErros.length > 0 ? logsErros : null,
     importado_por: userEmail,
-    empresa_id: empresaId
+    empresa_id: empresaId,
+    unidade: unidadeId || null
   };
 
   const { data: savedLog, error: logErr } = await supabase
@@ -579,11 +601,12 @@ export async function executeImport(
 }
 
 /**
- * Carrega a lista do histórico de importações (filtrado por empresa)
+ * Carrega a lista do histórico de importações (filtrado por empresa e unidade)
  */
-export async function loadImportacoesHistory(empresaId?: string): Promise<ImportacaoLog[]> {
+export async function loadImportacoesHistory(empresaId?: string, unidadeId?: string): Promise<ImportacaoLog[]> {
   let query = supabase.from('importacoes').select('*');
   if (empresaId) query = query.eq('empresa_id', empresaId);
+  if (unidadeId) query = query.eq('unidade', unidadeId);
   const { data, error } = await query.order('created_at', { ascending: false });
 
   if (error) {
@@ -596,3 +619,4 @@ export async function loadImportacoesHistory(empresaId?: string): Promise<Import
   }
   return data || [];
 }
+

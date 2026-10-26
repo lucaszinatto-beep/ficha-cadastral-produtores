@@ -10,10 +10,19 @@ export interface Empresa {
   created_at?: string;
 }
 
+export interface CompanyUnitConfig {
+  id: string; // 'LEVO_UMUARAMA' | 'LEVO_CAPANEMA'
+  nome: string; // 'Umuarama' | 'Capanema'
+  empresaNome: string; // 'Levo Alimentos'
+  slug: string; // 'umuarama' | 'capanema'
+  empresaId: string;
+}
+
 export interface UsuarioEmpresa {
   id: string;
   user_id: string;
   empresa_id: string;
+  unidade?: string | null;
   role: 'super_admin' | 'admin' | 'extensionista' | 'viewer';
   level: number;
   ativo?: boolean;
@@ -24,6 +33,7 @@ export interface UsuarioEmpresa {
 export interface Produtor {
   id: string;
   empresa_id?: string;
+  unidade?: string | null;
   nome: string;
   codigo_avicultor?: string | null;
   municipio?: string | null;
@@ -49,6 +59,7 @@ export interface Tecnico {
 export interface Aviario {
   id: string;
   empresa_id?: string;
+  unidade?: string | null;
   produtor_id: string;
   tecnico_id?: string | null;
   numero_instalacao: string;
@@ -68,6 +79,7 @@ export interface Aviario {
 export interface SetupAviario {
   id: string;
   empresa_id?: string;
+  unidade?: string | null;
   aviario_id: string;
   
   // Pressao de Vedacao
@@ -155,6 +167,7 @@ export interface SetupCampoAlterado {
 export interface SetupHistorico {
   id: string;
   empresa_id?: string;
+  unidade?: string | null;
   aviario_id: string;
   setup_id?: string | null;
   versao: number;
@@ -171,6 +184,7 @@ export interface SetupHistorico {
 export interface ImportacaoLog {
   id: string;
   empresa_id?: string;
+  unidade?: string | null;
   nome_arquivo: string;
   aba_origem: string;
   total_registros: number;

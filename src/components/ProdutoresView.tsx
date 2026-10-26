@@ -43,7 +43,7 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
   onRefresh,
   userLevel = 10
 }) => {
-  const { currentCompany } = useCompany();
+  const { currentCompany, currentUnit } = useCompany();
   const [filter, setFilter] = useState('');
 
   // Modal de Produtor (Cadastro / Edição)
@@ -149,7 +149,8 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
           telefone: produtorForm.telefone.trim() || null,
           email: produtorForm.email.trim() || null,
           aviariosIniciais: initialAviarios,
-          empresa_id: currentCompany.id
+          empresa_id: currentCompany.id,
+          unidade: currentCompany.slug === 'levo' ? currentUnit?.id : null
         });
         showToast(`Produtor "${produtorForm.nome.trim()}" cadastrado com sucesso!`);
       }
@@ -181,7 +182,8 @@ export const ProdutoresView: React.FC<ProdutoresViewProps> = ({
         targetProdutorForAviario.id,
         newAviarioNumero.trim(),
         newAviarioTecnicoId || null,
-        currentCompany.id
+        currentCompany.id,
+        currentCompany.slug === 'levo' ? currentUnit?.id : null
       );
       showToast(`Aviário ${newAviarioNumero.trim()} cadastrado para ${targetProdutorForAviario.nome}!`);
       setIsAddAviarioModalOpen(false);

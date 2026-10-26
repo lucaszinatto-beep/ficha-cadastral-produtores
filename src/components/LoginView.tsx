@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2, AlertCircle, Sparkles, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2, AlertCircle, Sparkles, CheckCircle2, ArrowLeft, MapPin } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { Session } from '@supabase/supabase-js';
 import { CompanyThemeConfig, DEFAULT_COMPANY } from '../config/companies';
+import { CompanyUnitConfig } from '../types/database';
 
 interface LoginViewProps {
   company?: CompanyThemeConfig;
-  onLoginSuccess?: (company?: CompanyThemeConfig) => void;
+  unit?: CompanyUnitConfig | null;
+  onLoginSuccess?: (company?: CompanyThemeConfig, unit?: CompanyUnitConfig | null) => void;
   onBackToCompanySelect?: () => void;
   initialSession?: Session | null;
   isRecovering?: boolean;
@@ -14,6 +16,7 @@ interface LoginViewProps {
 
 export const LoginView: React.FC<LoginViewProps> = ({ 
   company,
+  unit,
   onLoginSuccess, 
   onBackToCompanySelect,
   initialSession, 
@@ -109,17 +112,20 @@ export const LoginView: React.FC<LoginViewProps> = ({
 
         if (!isSuperAdmin) {
           // 3. Buscar todos os vínculos do usuário para o painel ficha_cadastral
-          const { data: painelVinculos } = await supabase
+          const { data: painelVinculosRaw } = await supabase
             .from('usuario_empresa_painel')
-            .select('empresa_id, ativo, painel_id')
+            .select('empresa_id, ativo, painel_id, unidade')
             .eq('user_id', data.user.id)
             .eq('painel_id', 'ficha_cadastral');
 
           // Fallback retroativo em usuarios_empresas caso usuario_empresa_painel ainda não esteja populado
-          const { data: legadoVinculos } = await supabase
+          const { data: legadoVinculosRaw } = await supabase
             .from('usuarios_empresas')
-            .select('empresa_id, ativo')
+            .select('empresa_id, ativo, unidade')
             .eq('user_id', data.user.id);
+
+          const painelVinculos = (painelVinculosRaw || []) as Array<{ empresa_id: string; ativo: boolean; painel_id?: string; unidade?: string | null }>;
+          const legadoVinculos = (legadoVinculosRaw || []) as Array<{ empresa_id: string; ativo: boolean; unidade?: string | null }>;
 
           const hasAnyPanelRecord = (painelVinculos && painelVinculos.length > 0) || (legadoVinculos && legadoVinculos.length > 0);
 
@@ -168,12 +174,49 @@ export const LoginView: React.FC<LoginViewProps> = ({
             setIsLoading(false);
             return;
           }
+
+          // 4. VERIFICAÇÃO DE UNIDADE ESPECÍFICA (Ex: Levo Alimentos Umuarama vs Capanema)
+          if (unit) {
+            const hasUnitAccess = 
+              (painelVinculos || []).some(v => 
+                v.empresa_id === targetCompany.id && 
+                v.ativo && 
+                (!v.unidade || v.unidade === unit.id)
+              ) ||
+              (legadoVinculos || []).some(v => 
+                v.empresa_id === targetCompany.id && 
+                v.ativo && 
+                (!v.unidade || v.unidade === unit.id)
+              );
+
+            if (!hasUnitAccess) {
+              const otherUnitsRaw = [
+                ...(painelVinculos || []).filter(v => v.empresa_id === targetCompany.id && v.ativo && v.unidade).map(v => v.unidade),
+                ...(legadoVinculos || []).filter(v => v.empresa_id === targetCompany.id && v.ativo && v.unidade).map(v => v.unidade)
+              ];
+
+              const friendlyUnits = otherUnitsRaw.map(u => {
+                if (u === 'LEVO_UMUARAMA') return 'Umuarama';
+                if (u === 'LEVO_CAPANEMA') return 'Capanema';
+                return u;
+              });
+
+              await supabase.auth.signOut();
+              if (friendlyUnits.length > 0) {
+                setErrorMessage(`Você não possui acesso à unidade ${unit.nome} da ${targetCompany.nome}. Sua unidade autorizada é: ${friendlyUnits.join(', ')}.`);
+              } else {
+                setErrorMessage(`Você não possui acesso à unidade ${unit.nome} da ${targetCompany.nome}.`);
+              }
+              setIsLoading(false);
+              return;
+            }
+          }
         }
 
         if (data.user?.user_metadata?.force_password_change) {
           setView('force_update');
         } else {
-          if (onLoginSuccess) onLoginSuccess(targetCompany);
+          if (onLoginSuccess) onLoginSuccess(targetCompany, unit);
         }
       }
     } catch (err: any) {
@@ -259,12 +302,12 @@ export const LoginView: React.FC<LoginViewProps> = ({
       if (view === 'reset_password') {
         setSuccessMessage('Senha redefinida com sucesso! Redirecionando...');
         setTimeout(() => {
-          if (onLoginSuccess) onLoginSuccess(targetCompany);
+          if (onLoginSuccess) onLoginSuccess(targetCompany, unit);
         }, 1200);
       } else {
         // force_update concluído com sucesso
         setSuccessMessage('Senha atualizada com sucesso! Acessando...');
-        if (onLoginSuccess) onLoginSuccess(targetCompany);
+        if (onLoginSuccess) onLoginSuccess(targetCompany, unit);
       }
     } catch (err: any) {
       console.error('Erro inesperado ao atualizar senha:', err);
@@ -330,13 +373,22 @@ export const LoginView: React.FC<LoginViewProps> = ({
           <div>
             <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-bold uppercase tracking-wider mb-1.5 ${targetCompany.badgeBg} ${targetCompany.badgeBorder} ${targetCompany.badgeText}`}>
               <Sparkles className="w-3 h-3" />
-              <span>{targetCompany.nome}</span>
+              <span>{unit ? `${targetCompany.nome} • ${unit.nome}` : targetCompany.nome}</span>
             </div>
+            
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase leading-none mt-1">
-              {targetCompany.nome}
+              {unit ? `LOGIN — ${targetCompany.nome.toUpperCase()}` : `LOGIN — ${targetCompany.nome.toUpperCase()}`}
             </h1>
+
+            {unit && (
+              <div className="mt-2.5 inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-bold shadow-sm">
+                <MapPin className="w-3.5 h-3.5 text-purple-400" />
+                <span>Unidade: <strong className="text-white font-extrabold">{unit.nome}</strong></span>
+              </div>
+            )}
+
             <p className="text-xs text-slate-400 mt-2">
-              {view === 'login' && "Acesso exclusivo para colaboradores e extensionistas"}
+              {view === 'login' && (unit ? `Ambiente de acesso: Unidade ${unit.nome}` : "Acesso exclusivo para colaboradores e extensionistas")}
               {view === 'forgot_password' && "Informe seu e-mail para receber um link de redefinição"}
               {view === 'force_update' && "Primeiro acesso: Atualização de senha obrigatória"}
               {view === 'reset_password' && "Crie uma nova senha para sua conta"}

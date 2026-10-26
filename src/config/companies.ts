@@ -1,4 +1,4 @@
-import { Empresa } from '../types/database';
+import { Empresa, CompanyUnitConfig } from '../types/database';
 
 export interface CompanyThemeConfig extends Empresa {
   badgeBg: string;
@@ -10,7 +10,26 @@ export interface CompanyThemeConfig extends Empresa {
   accentHex: string;
   padraoTecnicoNome: string;
   logoBoxBg: string;
+  hasUnits?: boolean;
+  units?: CompanyUnitConfig[];
 }
+
+export const LEVO_UNITS: CompanyUnitConfig[] = [
+  {
+    id: 'LEVO_UMUARAMA',
+    nome: 'Umuarama',
+    empresaNome: 'Levo Alimentos',
+    slug: 'umuarama',
+    empresaId: 'e1100000-0000-0000-0000-000000000002'
+  },
+  {
+    id: 'LEVO_CAPANEMA',
+    nome: 'Capanema',
+    empresaNome: 'Levo Alimentos',
+    slug: 'capanema',
+    empresaId: 'e1100000-0000-0000-0000-000000000002'
+  }
+];
 
 export const COMPANIES_CONFIG: Record<string, CompanyThemeConfig> = {
   bello: {
@@ -50,6 +69,8 @@ export const COMPANIES_CONFIG: Record<string, CompanyThemeConfig> = {
     padraoTecnicoNome: 'Levo Alimentos',
     logoBoxBg: '#ffffff',
     ativo: true,
+    hasUnits: true,
+    units: LEVO_UNITS,
   },
   ouro: {
     id: 'e1100000-0000-0000-0000-000000000003',
@@ -104,4 +125,9 @@ export function getCompanyById(id?: string | null): CompanyThemeConfig {
 export function getCompanyBySlug(slug?: string | null): CompanyThemeConfig {
   if (!slug) return DEFAULT_COMPANY;
   return COMPANIES_CONFIG[slug] || DEFAULT_COMPANY;
+}
+
+export function getUnitById(unitId?: string | null): CompanyUnitConfig | null {
+  if (!unitId) return null;
+  return LEVO_UNITS.find(u => u.id === unitId) || null;
 }

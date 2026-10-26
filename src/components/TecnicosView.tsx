@@ -34,15 +34,17 @@ export const TecnicosView: React.FC<TecnicosViewProps> = ({
   onRefresh,
   userLevel = 10
 }) => {
-  const { currentCompany } = useCompany();
+  const { currentCompany, currentUnit } = useCompany();
   const [filter, setFilter] = useState('');
   
+  const defaultUnidade = currentCompany.slug === 'levo' && currentUnit ? currentUnit.id : currentCompany.nome;
+
   // Modal de Cadastro / Edição
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingTecnico, setEditingTecnico] = useState<Tecnico | null>(null);
   const [formData, setFormData] = useState({
     nome: '',
-    unidade: currentCompany.nome,
+    unidade: defaultUnidade,
     telefone: '',
     email: '',
     status: 'Ativo'
@@ -67,7 +69,7 @@ export const TecnicosView: React.FC<TecnicosViewProps> = ({
     setEditingTecnico(null);
     setFormData({
       nome: '',
-      unidade: currentCompany.nome,
+      unidade: defaultUnidade,
       telefone: '',
       email: '',
       status: 'Ativo'
@@ -80,7 +82,7 @@ export const TecnicosView: React.FC<TecnicosViewProps> = ({
     setEditingTecnico(tecnico);
     setFormData({
       nome: tecnico.nome || '',
-      unidade: tecnico.unidade || currentCompany.nome,
+      unidade: tecnico.unidade || defaultUnidade,
       telefone: tecnico.telefone || '',
       email: tecnico.email || '',
       status: tecnico.status || 'Ativo'

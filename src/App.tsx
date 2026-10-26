@@ -17,7 +17,7 @@ import { fetchMyProfile, UserProfile, ACCESS_LEVELS, KNOWN_SUPER_ADMIN_EMAILS } 
 import { Session } from '@supabase/supabase-js';
 import { supabase } from './services/supabase';
 import { LoginView } from './components/LoginView';
-import { Produtor, Aviario, Tecnico, ImportacaoLog } from './types/database';
+import { Produtor, Aviario, Tecnico, ImportacaoLog, CompanyUnitConfig } from './types/database';
 import { RefreshCw, ShieldCheck, Home, AlertCircle, BookOpen } from 'lucide-react';
 
 /**
@@ -30,6 +30,7 @@ const AppMain: React.FC<{
 }> = ({ session, userProfile, onLogout }) => {
   const { 
     currentCompany, 
+    currentUnit,
     userCompanies, 
     allCompanies, 
     isSuperAdmin, 
@@ -47,7 +48,7 @@ const AppMain: React.FC<{
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Data States escopados por empresa
+  // Data States escopados por empresa e unidade
   const [produtores, setProdutores] = useState<Produtor[]>([]);
   const [aviarios, setAviarios] = useState<Aviario[]>([]);
   const [tecnicos, setTecnicos] = useState<Tecnico[]>([]);
@@ -57,16 +58,20 @@ const AppMain: React.FC<{
   const [selectedProdutorId, setSelectedProdutorId] = useState<string>('');
   const [selectedAviarioId, setSelectedAviarioId] = useState<string>('');
 
-  const loadData = useCallback(async (companyId?: string) => {
+  const loadData = useCallback(async (companyId?: string, unitId?: string | null) => {
     const targetCompanyId = companyId || currentCompany.id;
+    const targetUnitId = unitId !== undefined 
+      ? (unitId || undefined) 
+      : (currentCompany.slug === 'levo' ? (currentUnit?.id || undefined) : undefined);
+
     setIsLoading(true);
     setLoadError(null);
     try {
       const [prodData, avData, tecData, logsData] = await Promise.all([
-        fetchProdutores(targetCompanyId),
-        fetchAviarios(targetCompanyId),
-        fetchTecnicos(targetCompanyId),
-        loadImportacoesHistory(targetCompanyId)
+        fetchProdutores(targetCompanyId, targetUnitId),
+        fetchAviarios(targetCompanyId, targetUnitId),
+        fetchTecnicos(targetCompanyId, targetUnitId),
+        loadImportacoesHistory(targetCompanyId, targetUnitId)
       ]);
 
       setProdutores(prodData);
@@ -74,7 +79,7 @@ const AppMain: React.FC<{
       setTecnicos(tecData);
       setImportLogs(logsData);
 
-      // Auto-seleciona o primeiro produtor e aviário da empresa ativa caso necessário
+      // Auto-seleciona o primeiro produtor e aviário da empresa/unidade ativa caso necessário
       if (prodData.length > 0) {
         setSelectedProdutorId(prev => {
           const exists = prodData.some(p => p.id === prev);
@@ -102,14 +107,14 @@ const AppMain: React.FC<{
     } finally {
       setIsLoading(false);
     }
-  }, [currentCompany.id]);
+  }, [currentCompany.id, currentCompany.slug, currentUnit?.id]);
 
-  // Recarrega os dados sempre que a empresa ativa for alterada ou o seletor for fechado
+  // Recarrega os dados sempre que a empresa ou unidade ativa for alterada ou o seletor for fechado
   useEffect(() => {
     if (!isSelectorViewActive && currentCompany?.id) {
-      loadData(currentCompany.id);
+      loadData(currentCompany.id, currentCompany.slug === 'levo' ? currentUnit?.id : null);
     }
-  }, [currentCompany?.id, isSelectorViewActive, loadData]);
+  }, [currentCompany?.id, currentCompany?.slug, currentUnit?.id, isSelectorViewActive, loadData]);
 
   // Nível de acesso do usuário (Super Admin sempre tem acesso total)
   const userEmailNormalized = (session?.user?.email || '').toLowerCase().trim();
@@ -118,8 +123,8 @@ const AppMain: React.FC<{
   const userLevel = effectiveSuperAdmin ? ACCESS_LEVELS.SUPER_ADMIN : (userProfile?.level ?? ACCESS_LEVELS.VIEWER);
 
   // Manipulador de Seleção de Empresa no CompanySelectorView dentro do painel
-  const handleSelectCompany = (company: CompanyThemeConfig) => {
-    switchCompany(company.id);
+  const handleSelectCompany = (company: CompanyThemeConfig, unit?: CompanyUnitConfig | null) => {
+    switchCompany(company.id, unit?.id);
     sessionStorage.setItem('company_selected_session', 'true');
     setIsSelectorViewActive(false);
   };
@@ -216,7 +221,7 @@ const AppMain: React.FC<{
               </div>
             </div>
             <button
-              onClick={() => loadData(currentCompany.id)}
+              onClick={() => loadData(currentCompany.id, currentCompany.slug === 'levo' ? currentUnit?.id : null)}
               className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Tentar Novamente
@@ -228,23 +233,33 @@ const AppMain: React.FC<{
           <div className="py-24 text-center space-y-4">
             <RefreshCw className="w-10 h-10 text-sky-400 animate-spin mx-auto" />
             <p className="text-sm font-semibold text-slate-300">
-              Carregando dados da {currentCompany.nome}...
+              Carregando dados da {currentCompany.nome}{currentUnit ? ` (${currentUnit.nome})` : ''}...
             </p>
           </div>
         ) : produtores.length === 0 ? (
           /* Estado Vazio Limpo Escopado à Empresa Ativa */
           <div className="py-16 text-center space-y-3 max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
             <Home className="w-12 h-12 text-slate-600 mx-auto" />
-            <h2 className="text-lg font-bold text-white">Nenhum produtor cadastrado em {currentCompany.nome}</h2>
+            <h2 className="text-lg font-bold text-white">
+              Nenhum produtor cadastrado em {currentCompany.nome}
+              {currentUnit ? ` — Unidade ${currentUnit.nome}` : ''}
+            </h2>
             <p className="text-xs text-slate-400">
-              Utilize o botão <strong className="text-sky-400">IMPORTAR BASE DE DADOS</strong> no topo da página ou cadastre novos produtores na aba <strong className="text-slate-200">Produtores</strong>.
+              Baixe a planilha padrão oficial, preencha os dados e utilize o botão <strong className="text-sky-400">IMPORTAR PLANILHA</strong>.
             </p>
-            <div className="pt-2 flex items-center justify-center gap-3">
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="/MODELO_IMPORTACAO_FICHAS_SETUP.xlsx"
+                download="MODELO_IMPORTACAO_FICHAS_SETUP.xlsx"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 hover:text-white border border-sky-500/30 text-xs font-bold transition-all shadow-sm cursor-pointer"
+              >
+                <span>Baixar Planilha Padrão (.xlsx)</span>
+              </a>
               <button
                 onClick={() => setIsTutorialOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 border border-slate-700 text-xs font-semibold transition-all shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold transition-all shadow-sm cursor-pointer"
               >
-                <BookOpen className="w-4 h-4" />
+                <BookOpen className="w-4 h-4 text-sky-400" />
                 <span>Ver Tutorial da Plataforma</span>
               </button>
             </div>
@@ -274,7 +289,7 @@ const AppMain: React.FC<{
                     aviario={currentAviario}
                     allTecnicos={tecnicos}
                     allAviariosOfProdutor={aviariosOfSelectedProdutor}
-                    onSetupUpdated={() => loadData(currentCompany.id)}
+                    onSetupUpdated={() => loadData(currentCompany.id, currentCompany.slug === 'levo' ? currentUnit?.id : null)}
                     userProfile={userProfile}
                   />
                 ) : (
@@ -294,7 +309,7 @@ const AppMain: React.FC<{
                 aviarios={aviarios}
                 tecnicos={tecnicos}
                 onSelectProdutorAndAviario={handleSelectProdutorAndAviario}
-                onRefresh={() => loadData(currentCompany.id)}
+                onRefresh={() => loadData(currentCompany.id, currentCompany.slug === 'levo' ? currentUnit?.id : null)}
                 userLevel={userLevel}
               />
             )}
@@ -306,7 +321,7 @@ const AppMain: React.FC<{
                 aviarios={aviarios}
                 produtores={produtores}
                 onSelectProdutorAndAviario={handleSelectProdutorAndAviario}
-                onRefresh={() => loadData(currentCompany.id)}
+                onRefresh={() => loadData(currentCompany.id, currentCompany.slug === 'levo' ? currentUnit?.id : null)}
                 userLevel={userLevel}
               />
             )}
@@ -316,7 +331,7 @@ const AppMain: React.FC<{
               <ImportHistoryView
                 logs={importLogs}
                 isLoading={isLoading}
-                onRefresh={() => loadData(currentCompany.id)}
+                onRefresh={() => loadData(currentCompany.id, currentCompany.slug === 'levo' ? currentUnit?.id : null)}
                 onOpenImportModal={() => setIsImportModalOpen(true)}
               />
             )}
@@ -329,7 +344,7 @@ const AppMain: React.FC<{
       {/* Rodapé Dinâmico com Indicador da Empresa Ativa */}
       <footer className="no-print bg-slate-900/80 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
-          <span>{currentCompany.nome} © 2026 • Ficha Cadastral e Setup de Granjas</span>
+          <span>{currentCompany.nome}{currentUnit ? ` • Unidade ${currentUnit.nome}` : ''} © 2026 • Ficha Cadastral e Setup de Granjas</span>
           <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Supabase Conectado ({produtores.length} produtores / {aviarios.length} aviários sincronizados)</span>
@@ -341,9 +356,9 @@ const AppMain: React.FC<{
       <ImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        onImportSuccess={() => loadData(currentCompany.id)}
+        onImportSuccess={() => loadData(currentCompany.id, currentCompany.slug === 'levo' ? currentUnit?.id : null)}
         onViewHistory={() => {
-          loadData(currentCompany.id);
+          loadData(currentCompany.id, currentCompany.slug === 'levo' ? currentUnit?.id : null);
           setActiveTab('historico');
         }}
       />
@@ -384,8 +399,9 @@ export const App: React.FC = () => {
   const [userCompanies, setUserCompanies] = useState<CompanyThemeConfig[]>(INITIAL_COMPANIES_LIST);
   const [allCompanies, setAllCompanies] = useState<CompanyThemeConfig[]>(INITIAL_COMPANIES_LIST);
 
-  // Empresa selecionada antes do login pelo usuário
+  // Empresa e Unidade selecionadas antes do login pelo usuário
   const [selectedCompanyForLogin, setSelectedCompanyForLogin] = useState<CompanyThemeConfig | null>(null);
+  const [selectedUnitForLogin, setSelectedUnitForLogin] = useState<CompanyUnitConfig | null>(null);
 
   const loadUserProfile = async () => {
     const profile = await fetchMyProfile();
@@ -499,6 +515,8 @@ export const App: React.FC = () => {
       } else {
         setUserProfile(null);
         setSelectedCompanyForLogin(null);
+        setSelectedUnitForLogin(null);
+        localStorage.removeItem('active_unit_id');
         sessionStorage.removeItem('company_selected_session');
         if (isMounted) {
           await loadUserCompaniesForSession(null);
@@ -518,7 +536,9 @@ export const App: React.FC = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     sessionStorage.removeItem('company_selected_session');
+    localStorage.removeItem('active_unit_id');
     setSelectedCompanyForLogin(null);
+    setSelectedUnitForLogin(null);
     setSession(null);
     setUserProfile(null);
   };
@@ -559,21 +579,36 @@ export const App: React.FC = () => {
           allCompanies={allCompanies}
           isSuperAdmin={isSuper}
           userEmail={session?.user?.email}
-          onSelectCompany={(company) => {
+          onSelectCompany={(company, unit) => {
             setSelectedCompanyForLogin(company);
+            setSelectedUnitForLogin(unit || null);
             localStorage.setItem('active_company_id', company.id);
+            if (unit) {
+              localStorage.setItem('active_unit_id', unit.id);
+            } else {
+              localStorage.removeItem('active_unit_id');
+            }
           }}
           onLogout={handleLogout}
         />
       );
     }
 
-    // 2.2 Após selecionar a empresa, abre a tela de LOGIN / PRIMEIRO ACESSO DA EMPRESA ESCOLHIDA
+    // 2.2 Após selecionar a empresa (e unidade, caso Levo), abre a tela de LOGIN / PRIMEIRO ACESSO DA EMPRESA ESCOLHIDA
     return (
       <LoginView 
         company={selectedCompanyForLogin || DEFAULT_COMPANY}
-        onBackToCompanySelect={() => setSelectedCompanyForLogin(null)}
-        onLoginSuccess={() => {
+        unit={selectedUnitForLogin}
+        onBackToCompanySelect={() => {
+          setSelectedCompanyForLogin(null);
+          setSelectedUnitForLogin(null);
+          localStorage.removeItem('active_unit_id');
+        }}
+        onLoginSuccess={(_company, unit) => {
+          if (unit) {
+            setSelectedUnitForLogin(unit);
+            localStorage.setItem('active_unit_id', unit.id);
+          }
           setIsRecoveringPassword(false);
           loadUserProfile();
         }} 
