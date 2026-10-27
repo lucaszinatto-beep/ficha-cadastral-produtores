@@ -9,7 +9,7 @@ import {
   saveSetupData, updateAviarioTecnico, fetchSetupHistorico, restoreSetupVersion,
   deleteSetupHistoricoItem, clearAllSetupHistorico, applyDefaultSetupValues 
 } from '../services/dataService';
-import { CompanyLogo } from './CompanyLogo';
+
 import { useCompany } from '../context/CompanyContext';
 import { PrintSetupModal } from './PrintSetupModal';
 import { FichaHistoryModal } from './FichaHistoryModal';
@@ -403,10 +403,17 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
           <div className="md:col-span-4 flex justify-start md:justify-end items-center w-full mt-2 md:mt-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-800">
             <div className="flex flex-col items-end">
               <div 
-                className="h-10 md:h-12 bg-white rounded-xl px-3 py-1.5 flex items-center shadow-md border"
-                style={{ borderColor: currentCompany.cor_destaque }}
+                className="h-10 md:h-12 rounded-xl px-3 py-1.5 flex items-center justify-center shadow-md border overflow-hidden"
+                style={{ 
+                  backgroundColor: currentCompany.logoBoxBg || '#ffffff',
+                  borderColor: currentCompany.cor_destaque 
+                }}
               >
-                <CompanyLogo company={currentCompany} className="h-8 md:h-9" />
+                <img
+                  src={currentCompany.logo_path || '/logos/bello.png'}
+                  alt={currentCompany.nome || 'Bello Alimentos'}
+                  className="h-7 md:h-8 w-auto max-h-full max-w-full object-contain select-none"
+                />
               </div>
               <div className="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1.5">
                 {currentCompany.nome} • Setup
