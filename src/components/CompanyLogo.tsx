@@ -1,25 +1,57 @@
 import React from 'react';
 import { Empresa } from '../types/database';
-import { DEFAULT_COMPANY, getCompanyById, getCompanyBySlug } from '../config/companies';
+import { CompanyThemeConfig, DEFAULT_COMPANY, getCompanyById, getCompanyBySlug } from '../config/companies';
 
-interface CompanyLogoProps {
-  company?: Empresa | null;
+export interface CompanyLogoProps {
+  company?: Empresa | CompanyThemeConfig | string | null;
   companyId?: string;
   slug?: string;
   className?: string;
+  containerClassName?: string;
   height?: number | string;
   alt?: string;
+  variant?: 'image' | 'card';
+  withBorder?: boolean;
+  style?: React.CSSProperties;
 }
 
+/**
+ * Componente Centralizado e Reutilizável de Logo Corporativa Multiempresa
+ * 
+ * Reutiliza exatamente o asset oficial de cada empresa:
+ * - Bello Alimentos: /logos/bello.png (fundo institucional azul #2D57A3)
+ * - Frango Ouro: /logos/frango_ouro.png (fundo branco #ffffff)
+ * - Levo Alimentos: /logos/levo.png (fundo branco #ffffff)
+ * - Pluma Agroavícola: /logos/pluma.png (fundo institucional verde #18433A)
+ * 
+ * Suporta busca por objeto da empresa, slug string ('bello', 'frango-ouro', 'levo', 'pluma') ou id.
+ * O variant="card" renderiza o contêiner institucional com o fundo padronizado da empresa.
+ */
 export const CompanyLogo: React.FC<CompanyLogoProps> = ({
   company,
   companyId,
   slug,
-  className = 'h-10 w-auto',
+  className = 'h-9 w-auto',
+  containerClassName = '',
   height,
-  alt
+  alt,
+  variant = 'image',
+  withBorder = false,
+  style
 }) => {
-  let target = company;
+  let target: CompanyThemeConfig | undefined;
+
+  if (typeof company === 'string') {
+    const normalized = company.toLowerCase().trim();
+    if (normalized === 'frango-ouro' || normalized === 'frango_ouro') {
+      target = getCompanyBySlug('ouro');
+    } else {
+      const bySlug = getCompanyBySlug(normalized);
+      target = bySlug && bySlug.slug === normalized ? bySlug : getCompanyById(normalized);
+    }
+  } else if (company && typeof company === 'object') {
+    target = (company as any).logoBoxBg ? (company as CompanyThemeConfig) : getCompanyById(company.id);
+  }
 
   if (!target && companyId) {
     target = getCompanyById(companyId);
@@ -35,9 +67,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
   const logoAlt = alt || target.nome || 'Logo da Empresa';
   const companySlug = target.slug;
 
-  // Equalização proporcional da área visual interna das 4 logos dentro do container idêntico
-  // Referência visual aprovada: Levo Alimentos e Frango Ouro (escala 100%)
-  // Bello e Pluma possuem margens internas em seus arquivos originais e são equalizadas sem distorção nem corte
+  // Equalização proporcional aprovada no menu principal
   let scaleClass = 'scale-100';
   if (companySlug === 'bello') {
     scaleClass = 'scale-[1.20]';
@@ -45,7 +75,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
     scaleClass = 'scale-[1.22]';
   }
 
-  return (
+  const imgElement = (
     <div className={`flex items-center justify-center overflow-hidden ${className}`} style={{ height: height || undefined }}>
       <img
         src={logoSrc}
@@ -54,4 +84,21 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
       />
     </div>
   );
+
+  if (variant === 'card') {
+    return (
+      <div
+        className={`flex items-center justify-center rounded-xl overflow-hidden shadow-md transition-all ${containerClassName}`}
+        style={{
+          backgroundColor: target.logoBoxBg || '#ffffff',
+          borderColor: withBorder ? (target.cor_destaque || '#38bdf8') : undefined,
+          ...style
+        }}
+      >
+        {imgElement}
+      </div>
+    );
+  }
+
+  return imgElement;
 };

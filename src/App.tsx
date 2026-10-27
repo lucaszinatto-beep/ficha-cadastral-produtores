@@ -10,6 +10,7 @@ import { TecnicosView } from './components/TecnicosView';
 import { TutorialModal } from './components/TutorialModal';
 import { CompanySelectorView } from './components/CompanySelectorView';
 import { CompanyProvider, useCompany } from './context/CompanyContext';
+import { CompanyLogo } from './components/CompanyLogo';
 import { CompanyThemeConfig, DEFAULT_COMPANY, INITIAL_COMPANIES_LIST, getCompanyById } from './config/companies';
 import { fetchProdutores, fetchAviarios, fetchTecnicos } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
@@ -626,13 +627,12 @@ export const App: React.FC = () => {
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl"></div>
         
-        <div className="bg-white rounded-3xl p-6 shadow-[0_0_80px_rgba(56,189,248,0.8)] border border-sky-400 z-10 animate-logo-transition">
-          <img
-            src={selectedCompanyForLogin?.logo_path || '/logos/bello.png'}
-            alt="Portal de Acesso"
-            className="h-20 w-auto object-contain"
-          />
-        </div>
+        <CompanyLogo
+          company={selectedCompanyForLogin}
+          variant="card"
+          className="h-20 w-auto"
+          containerClassName="rounded-3xl p-6 shadow-[0_0_80px_rgba(56,189,248,0.8)] border border-sky-400 z-10 animate-logo-transition"
+        />
       </div>
     );
   }

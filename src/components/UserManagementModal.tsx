@@ -36,6 +36,7 @@ import {
 } from '../services/profileService';
 import { supabase } from '../services/supabase';
 import { useCompany } from '../context/CompanyContext';
+import { CompanyLogo } from './CompanyLogo';
 
 interface UserManagementModalProps {
   isOpen: boolean;
@@ -611,9 +612,12 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-white p-1 flex items-center justify-center shrink-0">
-                          <img src={comp.logo_path} alt={comp.nome} className="max-h-full max-w-full object-contain" />
-                        </div>
+                        <CompanyLogo
+                          company={comp}
+                          variant="card"
+                          className="h-5 w-auto"
+                          containerClassName="w-8 h-8 rounded-xl p-1 shrink-0"
+                        />
                         <div>
                           <p className="text-xs font-bold text-white">{comp.nome}</p>
                           <p className="text-[10px] text-slate-400">{comp.slug.toUpperCase()}</p>

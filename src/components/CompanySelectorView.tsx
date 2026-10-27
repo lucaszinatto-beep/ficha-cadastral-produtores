@@ -127,13 +127,13 @@ export const CompanySelectorView: React.FC<CompanySelectorViewProps> = ({
                     className="absolute top-0 right-0 w-36 h-36 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity pointer-events-none bg-purple-500"
                   />
 
-                  {/* Card Top: Logo Container & Badge */}
                   <div className="flex items-start justify-between w-full">
-                    <div 
-                      className="w-36 sm:w-40 h-16 rounded-2xl p-2.5 flex items-center justify-center shadow-md border border-white/10 overflow-hidden shrink-0 bg-white"
-                    >
-                      <CompanyLogo company={levoCompany} className="h-full w-full" />
-                    </div>
+                    <CompanyLogo
+                      company={levoCompany}
+                      variant="card"
+                      className="h-full w-full"
+                      containerClassName="w-36 sm:w-40 h-16 rounded-2xl p-2.5 border border-white/10 shrink-0"
+                    />
 
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border bg-purple-500/10 text-purple-300 border-purple-500/20">
                       Unidade Ativa
@@ -313,12 +313,12 @@ export const CompanySelectorView: React.FC<CompanySelectorViewProps> = ({
 
                 {/* Card Top: Logo Container Padronizado com Background Específico por Empresa */}
                 <div className="flex items-start justify-between w-full">
-                  <div 
-                    className="w-40 sm:w-44 h-20 rounded-2xl p-2.5 flex items-center justify-center shadow-md border border-white/10 group-hover:shadow-lg transition-all overflow-hidden shrink-0"
-                    style={{ backgroundColor: company.logoBoxBg || '#ffffff' }}
-                  >
-                    <CompanyLogo company={company} className="h-full w-full" />
-                  </div>
+                  <CompanyLogo
+                    company={company}
+                    variant="card"
+                    className="h-full w-full"
+                    containerClassName="w-40 sm:w-44 h-20 rounded-2xl p-2.5 border border-white/10 group-hover:shadow-lg transition-all shrink-0"
+                  />
 
                   {/* Status Badge */}
                   <div>

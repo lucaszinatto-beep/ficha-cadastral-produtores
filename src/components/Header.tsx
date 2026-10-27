@@ -87,12 +87,13 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logo & Marca da Empresa Ativa */}
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-3">
-              <div 
-                className="h-12 w-auto min-w-[90px] max-w-[150px] bg-white rounded-xl px-2.5 py-1 flex items-center justify-center shadow-lg shadow-black/20 border transition-all"
-                style={{ borderColor: currentCompany.cor_destaque }}
-              >
-                <CompanyLogo company={currentCompany} className="h-9 w-auto" />
-              </div>
+              <CompanyLogo
+                company={currentCompany}
+                variant="card"
+                className="h-9 w-auto"
+                containerClassName="h-12 w-auto min-w-[90px] max-w-[150px] px-2.5 py-1 shadow-lg shadow-black/20 border transition-all"
+                withBorder
+              />
               <div>
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-bold tracking-wider uppercase border ${currentCompany.badgeBg} ${currentCompany.badgeText} ${currentCompany.badgeBorder}`}>
@@ -249,9 +250,12 @@ export const Header: React.FC<HeaderProps> = ({
                           }`}
                         >
                           <div className="flex items-center gap-2.5 truncate">
-                            <div className="w-6 h-6 rounded-lg bg-white p-0.5 flex items-center justify-center shrink-0">
-                              <img src={comp.logo_path} alt={comp.nome} className="max-h-full max-w-full object-contain" />
-                            </div>
+                            <CompanyLogo
+                              company={comp}
+                              variant="card"
+                              className="h-4 w-auto"
+                              containerClassName="w-7 h-7 rounded-lg p-0.5 shrink-0 shadow-sm"
+                            />
                             <span className="truncate">{comp.nome}</span>
                           </div>
                           {isSelected && (

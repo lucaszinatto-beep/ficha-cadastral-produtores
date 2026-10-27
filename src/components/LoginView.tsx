@@ -4,6 +4,7 @@ import { supabase } from '../services/supabase';
 import { Session } from '@supabase/supabase-js';
 import { CompanyThemeConfig, DEFAULT_COMPANY } from '../config/companies';
 import { CompanyUnitConfig } from '../types/database';
+import { CompanyLogo } from './CompanyLogo';
 
 interface LoginViewProps {
   company?: CompanyThemeConfig;
@@ -359,16 +360,12 @@ export const LoginView: React.FC<LoginViewProps> = ({
 
         {/* Cabeçalho Dinâmico com Logo Oficial da Empresa */}
         <div className="flex flex-col items-center text-center space-y-3">
-          <div 
-            className="rounded-2xl p-3 shadow-lg border border-slate-700/50 flex items-center justify-center relative z-10 transition-all duration-500 max-w-[220px] mx-auto overflow-hidden"
-            style={{ backgroundColor: targetCompany.logoBoxBg || '#ffffff' }}
-          >
-            <img
-              src={targetCompany.logo_path || '/logos/bello.png'}
-              alt={targetCompany.nome}
-              className="h-12 max-w-[190px] w-auto object-contain select-none"
-            />
-          </div>
+          <CompanyLogo
+            company={targetCompany}
+            variant="card"
+            className="h-12 max-w-[190px] w-auto"
+            containerClassName="rounded-2xl p-3 shadow-lg border border-slate-700/50 max-w-[220px] mx-auto overflow-hidden relative z-10 transition-all duration-500"
+          />
           
           <div>
             <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-bold uppercase tracking-wider mb-1.5 ${targetCompany.badgeBg} ${targetCompany.badgeBorder} ${targetCompany.badgeText}`}>

@@ -403,12 +403,13 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
 
           <div className="md:col-span-4 flex justify-start md:justify-end items-center w-full mt-2 md:mt-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-800">
             <div className="flex flex-col items-end">
-              <div 
-                className="h-12 w-auto min-w-[90px] max-w-[150px] bg-white rounded-xl px-2.5 py-1 flex items-center justify-center shadow-lg shadow-black/20 border transition-all"
-                style={{ borderColor: currentCompany.cor_destaque }}
-              >
-                <CompanyLogo company={currentCompany} className="h-9 w-auto" />
-              </div>
+              <CompanyLogo
+                company={currentCompany}
+                variant="card"
+                className="h-9 w-auto"
+                containerClassName="h-12 w-auto min-w-[90px] max-w-[150px] px-2.5 py-1 shadow-lg shadow-black/20 border transition-all"
+                withBorder
+              />
               <div className="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1.5">
                 {currentCompany.nome} • Setup
               </div>
