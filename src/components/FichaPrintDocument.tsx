@@ -1,6 +1,7 @@
 import React from 'react';
 import { Aviario, SetupAviario, Empresa } from '../types/database';
 import { CompanyThemeConfig } from '../config/companies';
+import { getAviarioFotos } from '../services/dataService';
 
 interface FichaPrintDocumentProps {
   aviariosToPrint: Aviario[];
@@ -32,13 +33,21 @@ export const FichaPrintDocument: React.FC<FichaPrintDocumentProps> = ({ aviarios
     <div className="print-pages-wrapper bg-white text-slate-950 font-sans">
       {aviariosToPrint.map((aviario, index) => {
         const setup: Partial<SetupAviario> = aviario.setup || {};
-        const isLast = index === aviariosToPrint.length - 1;
+        const fotos = getAviarioFotos(aviario.id, setup);
+        const isLastAviario = index === aviariosToPrint.length - 1;
+
+        // Chunks de até 4 fotos por página para diagramação limpa
+        const fotosChunks: typeof fotos[] = [];
+        for (let i = 0; i < fotos.length; i += 4) {
+          fotosChunks.push(fotos.slice(i, i + 4));
+        }
+        const hasFotosPages = fotosChunks.length > 0;
 
         return (
-          <div
-            key={aviario.id || index}
-            className={`a4-clean-sheet ${!isLast ? 'page-break-always' : ''}`}
-          >
+          <React.Fragment key={aviario.id || index}>
+            <div
+              className={`a4-clean-sheet ${(!isLastAviario || hasFotosPages) ? 'page-break-always' : ''}`}
+            >
             {/* 1. CABEÇALHO INSTITUCIONAL LIMPO (ECONOMIA DE TINTA) */}
             <div className="border border-slate-400 rounded p-2 mb-2 bg-white flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -379,7 +388,7 @@ export const FichaPrintDocument: React.FC<FichaPrintDocumentProps> = ({ aviarios
             <div className="mt-2 border border-slate-400 rounded p-1.5 bg-white text-[8.5px]">
               <div className="mb-1 text-slate-700">
                 <strong>Observações Técnicas:</strong>{' '}
-                <span>{setup.observacoes || 'Parâmetros de setup e ambiência verificados em conformidade com as diretrizes técnicas da Bello Alimentos.'}</span>
+                <span>{setup.observacoes || `Parâmetros de setup e ambiência verificados em conformidade com as diretrizes técnicas da ${companyName}.`}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-8 pt-3 pb-0.5 text-center">
@@ -400,12 +409,95 @@ export const FichaPrintDocument: React.FC<FichaPrintDocumentProps> = ({ aviarios
 
             {/* 5. RODAPÉ DO DOCUMENTO */}
             <div className="mt-1 pt-1 border-t border-slate-200 flex justify-between items-center text-[8px] text-slate-500 font-mono">
-              <span>Bello Alimentos S.A. • Gestão de Ambiência e Setup</span>
+              <span>{companyName} • Gestão de Ambiência e Setup</span>
               <span>Página {index + 1} de {aviariosToPrint.length} • 1 Aviário por Folha A4</span>
             </div>
 
           </div>
-        );
+
+          {/* ANEXO DE EVIDÊNCIAS FOTOGRÁFICAS (SE HOUVER FOTOS CADASTRADAS) */}
+          {fotosChunks.map((chunk, chunkIdx) => {
+            const isLastChunk = chunkIdx === fotosChunks.length - 1;
+            const isVeryLast = isLastAviario && isLastChunk;
+            return (
+              <div
+                key={`fotos_${aviario.id || index}_${chunkIdx}`}
+                className={`a4-clean-sheet ${!isVeryLast ? 'page-break-always' : ''}`}
+              >
+                {/* Cabeçalho da Página de Evidências */}
+                <div className="border border-slate-400 rounded p-2 mb-2 bg-white flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={logoSrc}
+                      alt={companyName}
+                      className="h-9 w-auto object-contain"
+                    />
+                    <div className="border-l border-slate-300 pl-3">
+                      <span className="text-[9px] font-bold text-sky-800 tracking-wider uppercase block">
+                        Set Up Granja • Evidências Fotográficas
+                      </span>
+                      <h1 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-tight">
+                        Evidências Fotográficas do Setup
+                      </h1>
+                    </div>
+                  </div>
+
+                  <div className="text-right text-[9px] text-slate-600 font-mono">
+                    <div>Data: <strong>{todayStr}</strong></div>
+                    <div>Documento Oficial • {companyName}</div>
+                  </div>
+                </div>
+
+                {/* Identificação do Produtor e Aviário */}
+                <div className="border border-slate-400 rounded p-2 mb-3 bg-slate-50/70 grid grid-cols-12 gap-2 text-xs">
+                  <div className="col-span-6 border-r border-slate-300 pr-2">
+                    <span className="text-[9px] font-bold text-slate-500 uppercase block">Produtor / Avicultor</span>
+                    <span className="text-xs font-black text-slate-950 uppercase block truncate">
+                      {aviario.produtor?.nome || 'Não Informado'}
+                    </span>
+                  </div>
+                  <div className="col-span-3 border-r border-slate-300 px-2 text-center">
+                    <span className="text-[9px] font-bold text-slate-500 uppercase block">Instalação</span>
+                    <span className="text-sm font-black text-sky-900 font-mono block">
+                      AVIÁRIO {aviario.numero_instalacao}
+                    </span>
+                  </div>
+                  <div className="col-span-3 pl-2">
+                    <span className="text-[9px] font-bold text-slate-500 uppercase block">Extensionista / Técnico</span>
+                    <span className="text-xs font-bold text-slate-900 uppercase block truncate">
+                      {aviario.tecnico?.nome || 'Não Vinculado'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Grade de Fotos (Sem Distorção) */}
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  {chunk.map((foto, fIdx) => (
+                    <div key={foto.id || fIdx} className="border border-slate-300 rounded p-1.5 bg-slate-50">
+                      <div className="w-full h-56 bg-slate-100 rounded overflow-hidden flex items-center justify-center">
+                        <img
+                          src={foto.url}
+                          alt={foto.nome || `Foto ${fIdx + 1}`}
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      </div>
+                      <div className="mt-1 text-[8.5px] font-bold text-slate-800 truncate text-center">
+                        {foto.nome || `Evidência ${chunkIdx * 4 + fIdx + 1}`}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Rodapé da Página de Evidências */}
+                <div className="mt-auto pt-2 border-t border-slate-200 flex justify-between items-center text-[8px] text-slate-500 font-mono">
+                  <span>{companyName} • Gestão de Ambiência e Setup</span>
+                  <span>Anexo Fotográfico (Pág. {chunkIdx + 1} de {fotosChunks.length}) • Aviário {aviario.numero_instalacao}</span>
+                </div>
+              </div>
+            );
+          })}
+        </React.Fragment>
+      );
       })}
     </div>
   );

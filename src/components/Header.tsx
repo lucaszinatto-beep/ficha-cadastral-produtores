@@ -42,6 +42,11 @@ interface HeaderProps {
   onOpenUserManagement?: () => void;
   userLevel?: number;
   userRole?: string;
+  produtoresComSetup?: number;
+  produtoresPendentes?: number;
+  percentualComSetup?: number;
+  percentualPendente?: number;
+  onOpenSetupStatusModal?: (tab?: 'concluidos' | 'pendentes') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -58,7 +63,12 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   onOpenUserManagement,
   userLevel = 10,
-  userRole = 'viewer'
+  userRole = 'viewer',
+  produtoresComSetup = 0,
+  produtoresPendentes = 0,
+  percentualComSetup = 0,
+  percentualPendente = 0,
+  onOpenSetupStatusModal
 }) => {
   const { currentCompany, currentUnit, userCompanies, isSuperAdmin, switchCompany } = useCompany();
   const [isCompanyMenuOpen, setIsCompanyMenuOpen] = useState(false);
@@ -111,15 +121,61 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             </div>
 
-            {/* Badges de Contagem Real do Banco */}
+            {/* Badges de Contagem Real do Banco e Status dos Setups */}
             <div className="hidden xl:flex items-center gap-2 ml-4 pl-4 border-l border-slate-800">
+              {/* Contadores Existentes Mantidos Intactos */}
               <div className="text-xs px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center gap-2 shadow-inner">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span className="h-2 w-2 rounded-full bg-sky-400"></span>
                 <span>Produtores: <strong className="font-mono text-sm" style={{ color: currentCompany.cor_destaque }}>{totalProdutores}</strong></span>
               </div>
               <div className="text-xs px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center gap-2 shadow-inner">
                 <span>Aviários: <strong className="font-mono text-sm" style={{ color: currentCompany.cor_destaque }}>{totalAviarios}</strong></span>
               </div>
+
+              {/* Indicadores Dinâmicos de Status de Setups (Totalmente Clicáveis) */}
+              <button
+                type="button"
+                onClick={() => onOpenSetupStatusModal && onOpenSetupStatusModal('concluidos')}
+                className="text-xs px-3 py-1.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/30 hover:border-emerald-400/60 text-slate-200 flex items-center gap-2 shadow-inner transition-all cursor-pointer group text-left transform active:scale-95"
+                title="Clique para ver detalhamento dos Produtores com Setup Concluído"
+              >
+                <span className="h-2 w-2 rounded-full bg-emerald-400 group-hover:animate-pulse"></span>
+                <div className="leading-tight">
+                  <div className="text-[9.5px] uppercase font-bold text-emerald-400/90 tracking-wider">
+                    Produtores com Setup
+                  </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <strong className="font-mono text-sm text-white">
+                      {produtoresComSetup} <span className="text-[11px] text-slate-400 font-normal">/ {totalProdutores}</span>
+                    </strong>
+                    <span className="text-[10px] font-bold text-emerald-300 font-mono bg-emerald-500/20 px-1.5 py-0.2 rounded border border-emerald-500/30">
+                      {percentualComSetup.toFixed(2)}%
+                    </span>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onOpenSetupStatusModal && onOpenSetupStatusModal('pendentes')}
+                className="text-xs px-3 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/30 hover:border-amber-400/60 text-slate-200 flex items-center gap-2 shadow-inner transition-all cursor-pointer group text-left transform active:scale-95"
+                title="Clique para ver detalhamento dos Produtores Pendentes de Setup"
+              >
+                <span className="h-2 w-2 rounded-full bg-amber-400 group-hover:animate-pulse"></span>
+                <div className="leading-tight">
+                  <div className="text-[9.5px] uppercase font-bold text-amber-400/90 tracking-wider">
+                    Faltam cadastrar
+                  </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <strong className="font-mono text-sm text-white">
+                      {produtoresPendentes}
+                    </strong>
+                    <span className="text-[10px] font-bold text-amber-300 font-mono bg-amber-500/20 px-1.5 py-0.2 rounded border border-amber-500/30">
+                      {percentualPendente.toFixed(2)}%
+                    </span>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
 
@@ -392,6 +448,20 @@ export const Header: React.FC<HeaderProps> = ({
             <History className="w-3.5 h-3.5" />
             <span>Histórico de Importações</span>
           </button>
+
+          {/* Atalho Mobile para o Status de Setups */}
+          {onOpenSetupStatusModal && (
+            <button
+              type="button"
+              onClick={() => onOpenSetupStatusModal('concluidos')}
+              className="xl:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 transition-all whitespace-nowrap cursor-pointer"
+              title="Status dos Setups (Clique para detalhar)"
+            >
+              <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+              <span>Setups: <strong className="text-emerald-400 font-mono">{produtoresComSetup}/{totalProdutores}</strong></span>
+              <span className="text-[10px] text-amber-400 font-bold ml-0.5">({produtoresPendentes} pendentes)</span>
+            </button>
+          )}
 
           {onOpenTutorial && (
             <button

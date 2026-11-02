@@ -147,6 +147,7 @@ export interface SetupAviario {
   alarme_caixas_func?: boolean | null;
   
   observacoes?: string | null;
+  fotos?: SetupFoto[] | string[] | null;
   created_at: string;
   updated_at: string;
 
@@ -155,6 +156,48 @@ export interface SetupAviario {
   created_by_name?: string | null;
   updated_by_id?: string | null;
   updated_by_name?: string | null;
+}
+
+export interface SetupFoto {
+  id: string;
+  url: string; // Base64 data URL ou URL Supabase Storage
+  nome?: string;
+  tamanho?: number;
+  created_at?: string;
+}
+
+export interface AviarioSetupStatus {
+  aviario: Aviario;
+  isConcluido: boolean;
+  status: 'CONCLUÍDO' | 'PENDENTE';
+  motivoPendente?: string;
+  hasSetupRecord: boolean;
+  hasCamposObrigatorios: boolean;
+  hasFotos: boolean;
+  fotosCount: number;
+}
+
+export interface ProdutorSetupStatus {
+  produtor: Produtor;
+  totalAviarios: number;
+  aviariosConcluidos: number;
+  aviariosPendentes: number;
+  isConcluido: boolean;
+  status: 'CONCLUÍDO' | 'PENDENTE';
+  tecnicoNome?: string;
+  aviariosStatus: AviarioSetupStatus[];
+  aviariosPendentesList: Aviario[];
+  aviariosConcluidosList: Aviario[];
+}
+
+export interface SetupStatusResumo {
+  totalProdutores: number;
+  produtoresComSetup: number;
+  produtoresPendentes: number;
+  percentualComSetup: number;
+  percentualPendente: number;
+  concluidosList: ProdutorSetupStatus[];
+  pendentesList: ProdutorSetupStatus[];
 }
 
 export interface SetupCampoAlterado {

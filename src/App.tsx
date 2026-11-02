@@ -8,11 +8,12 @@ import { ImportHistoryView } from './components/ImportHistoryView';
 import { ProdutoresView } from './components/ProdutoresView';
 import { TecnicosView } from './components/TecnicosView';
 import { TutorialModal } from './components/TutorialModal';
+import { SetupStatusModal } from './components/SetupStatusModal';
 import { CompanySelectorView } from './components/CompanySelectorView';
 import { CompanyProvider, useCompany } from './context/CompanyContext';
 import { CompanyLogo } from './components/CompanyLogo';
 import { CompanyThemeConfig, DEFAULT_COMPANY, INITIAL_COMPANIES_LIST, getCompanyById } from './config/companies';
-import { fetchProdutores, fetchAviarios, fetchTecnicos } from './services/dataService';
+import { fetchProdutores, fetchAviarios, fetchTecnicos, calculateProdutoresSetupStats } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
 import { fetchMyProfile, UserProfile, ACCESS_LEVELS, KNOWN_SUPER_ADMIN_EMAILS } from './services/profileService';
 import { Session } from '@supabase/supabase-js';
@@ -45,6 +46,8 @@ const AppMain: React.FC<{
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [isSetupStatusModalOpen, setIsSetupStatusModalOpen] = useState(false);
+  const [setupStatusInitialTab, setSetupStatusInitialTab] = useState<'concluidos' | 'pendentes'>('concluidos');
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -187,6 +190,11 @@ const AppMain: React.FC<{
     );
   }
 
+  // Estatísticas consolidadas de status dos setups dos produtores
+  const setupStats = useMemo(() => {
+    return calculateProdutoresSetupStats(produtores, aviarios);
+  }, [produtores, aviarios]);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
       
@@ -201,6 +209,14 @@ const AppMain: React.FC<{
         setSearchQuery={setSearchQuery}
         totalProdutores={produtores.length}
         totalAviarios={aviarios.length}
+        produtoresComSetup={setupStats.produtoresComSetup}
+        produtoresPendentes={setupStats.produtoresPendentes}
+        percentualComSetup={setupStats.percentualComSetup}
+        percentualPendente={setupStats.percentualPendente}
+        onOpenSetupStatusModal={(tab) => {
+          setSetupStatusInitialTab(tab || 'concluidos');
+          setIsSetupStatusModalOpen(true);
+        }}
         userEmail={session.user.email}
         onLogout={onLogout}
         onOpenUserManagement={() => setIsUserManagementOpen(true)}
@@ -380,6 +396,17 @@ const AppMain: React.FC<{
           setActiveTab(tab);
           setIsTutorialOpen(false);
         }}
+      />
+
+      {/* Modal de Detalhamento do Status de Setups */}
+      <SetupStatusModal
+        isOpen={isSetupStatusModalOpen}
+        onClose={() => setIsSetupStatusModalOpen(false)}
+        initialTab={setupStatusInitialTab}
+        produtores={produtores}
+        aviarios={aviarios}
+        tecnicos={tecnicos}
+        onSelectProdutorAndAviario={handleSelectProdutorAndAviario}
       />
 
     </div>

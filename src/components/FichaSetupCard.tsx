@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Printer, Edit3, Save, RotateCcw, Check, Sparkles, 
   Wind, Gauge, Droplets, Bell, Ruler, Sun, Fan, Smartphone, History,
-  Sliders
+  Sliders, Camera, UploadCloud, Trash2, ZoomIn, 
+  AlertCircle, FileText, AlertTriangle
 } from 'lucide-react';
-import { Aviario, SetupAviario, Tecnico, SetupHistorico } from '../types/database';
+import { Aviario, SetupAviario, Tecnico, SetupHistorico, SetupFoto } from '../types/database';
 import { 
   saveSetupData, updateAviarioTecnico, fetchSetupHistorico, restoreSetupVersion,
-  deleteSetupHistoricoItem, clearAllSetupHistorico, applyDefaultSetupValues 
+  deleteSetupHistoricoItem, clearAllSetupHistorico, applyDefaultSetupValues,
+  getAviarioFotos, validateSetupFields
 } from '../services/dataService';
 
 import { CompanyLogo } from './CompanyLogo';
@@ -16,6 +18,47 @@ import { PrintSetupModal } from './PrintSetupModal';
 import { FichaHistoryModal } from './FichaHistoryModal';
 
 import { UserProfile } from '../services/profileService';
+
+/**
+ * Utilitário para compactação de fotos no cliente via HTML5 Canvas
+ * Mantém excelente nitidez visual e reduz arquivos de 5-10MB para ~150KB
+ */
+async function compressImageFile(file: File, maxWidth = 1280, maxHeight = 1280, quality = 0.8): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(e.target?.result as string);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 interface FichaSetupCardProps {
   aviario: Aviario;
@@ -45,6 +88,13 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   const [formData, setFormData] = useState<Partial<SetupAviario>>({});
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Estados de Evidências Fotográficas e Validação
+  const [fotos, setFotos] = useState<SetupFoto[]>([]);
+  const [isProcessingPhotos, setIsProcessingPhotos] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [previewPhoto, setPreviewPhoto] = useState<SetupFoto | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const loadHistoricoData = async () => {
     if (!aviario.id) return;
     setIsLoadingHistory(true);
@@ -61,6 +111,8 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   useEffect(() => {
     setFormData(aviario.setup || {});
     setSelectedTecnicoId(aviario.tecnico_id || '');
+    setFotos(getAviarioFotos(aviario.id, aviario.setup));
+    setValidationError(null);
     setIsEditing(false);
     loadHistoricoData();
   }, [aviario]);
@@ -70,9 +122,60 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
       ...prev,
       [field]: value
     }));
+    // Limpa mensagem de erro ao alterar campo
+    if (validationError) setValidationError(null);
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsProcessingPhotos(true);
+    setValidationError(null);
+    try {
+      const newFotos: SetupFoto[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith('image/')) continue;
+        const compressedBase64 = await compressImageFile(file);
+        newFotos.push({
+          id: `foto_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+          url: compressedBase64,
+          nome: file.name,
+          tamanho: file.size,
+          created_at: new Date().toISOString()
+        });
+      }
+      setFotos(prev => [...prev, ...newFotos]);
+    } catch (err: any) {
+      console.error('Erro ao processar imagem:', err);
+      setValidationError('Erro ao carregar imagem: ' + (err?.message || 'Arquivo inválido'));
+    } finally {
+      setIsProcessingPhotos(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemovePhoto = (photoId: string) => {
+    setFotos(prev => prev.filter(f => f.id !== photoId));
   };
 
   const handleSave = async () => {
+    setValidationError(null);
+
+    // Validação 1: Pelo menos uma foto deve existir (Regra de Negócio Obrigatória)
+    if (!fotos || fotos.length === 0) {
+      setValidationError('É obrigatório anexar pelo menos uma foto do setup.');
+      return;
+    }
+
+    // Validação 2: Campos obrigatórios do setup preenchidos
+    const validation = validateSetupFields(formData);
+    if (!validation.isValid) {
+      setValidationError(`Preencha todos os campos obrigatórios antes de salvar: ${validation.missingFields.join(', ')}.`);
+      return;
+    }
+
     setIsSaving(true);
     try {
       if (selectedTecnicoId !== aviario.tecnico_id) {
@@ -80,7 +183,10 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
       }
       await saveSetupData(
         aviario.id, 
-        formData, 
+        {
+          ...formData,
+          fotos
+        }, 
         userProfile, 
         undefined, 
         undefined, 
@@ -94,7 +200,7 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
       await loadHistoricoData();
       onSetupUpdated();
     } catch (err: any) {
-      alert(`Erro ao salvar dados: ${err?.message || 'Falha na conexão'}`);
+      setValidationError(err?.message || 'Falha ao salvar dados.');
     } finally {
       setIsSaving(false);
     }
@@ -253,6 +359,8 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
                 type="button"
                 onClick={() => {
                   setFormData(aviario.setup || {});
+                  setFotos(getAviarioFotos(aviario.id, aviario.setup));
+                  setValidationError(null);
                   setIsEditing(false);
                 }}
                 disabled={isSaving}
@@ -316,6 +424,26 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
           )}
         </div>
       </div>
+
+      {/* Banner de Erro de Validação */}
+      {validationError && (
+        <div className="p-4 rounded-2xl bg-rose-950/80 border border-rose-500/60 text-rose-200 text-xs flex items-center justify-between gap-3 shadow-xl animate-fade-in">
+          <div className="flex items-center gap-2.5">
+            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+            <div>
+              <p className="font-bold text-rose-100">Não foi possível salvar o setup</p>
+              <p className="text-[11px] text-rose-300 mt-0.5">{validationError}</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setValidationError(null)}
+            className="text-rose-400 hover:text-white p-1 text-xs font-bold"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* CABEÇALHO DO LAUDO (Responsivo: Logo vai para o topo no mobile)           */}
@@ -686,6 +814,191 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
 
         </div>
       </div>
+
+      {/* ========================================================================= */}
+      {/* 9. OBSERVAÇÕES DO SETUP (Campo Multilinha Conforme Item 8 do Escopo)       */}
+      {/* ========================================================================= */}
+      <div className="border border-slate-700/80 rounded-2xl p-4 bg-slate-950/40 space-y-2">
+        <div className="flex items-center gap-1.5 text-xs font-black text-sky-400 uppercase tracking-wider">
+          <FileText className="w-3.5 h-3.5" /> Observações do Setup
+        </div>
+
+        {isEditing ? (
+          <div className="space-y-1">
+            <textarea
+              value={formData.observacoes || ''}
+              onChange={(e) => handleFieldChange('observacoes', e.target.value)}
+              placeholder="Digite aqui as observações técnicas sobre o setup do aviário..."
+              rows={3}
+              className="w-full bg-slate-900 border border-sky-500/50 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-400/50 transition-all font-sans resize-y"
+            />
+            <span className="text-[10px] text-slate-500 block text-right">
+              Esta observação será impressa na Ficha Técnica e mantida nas futuras revisões.
+            </span>
+          </div>
+        ) : (
+          <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300 min-h-[50px] whitespace-pre-wrap leading-relaxed">
+            {setup.observacoes ? (
+              setup.observacoes
+            ) : (
+              <span className="text-slate-500 italic">Nenhuma observação técnica registrada.</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 10. EVIDÊNCIAS FOTOGRÁFICAS DO SETUP (Conforme Itens 5 e 6 do Escopo)      */}
+      {/* ========================================================================= */}
+      <div className="border border-slate-700/80 rounded-2xl p-4 bg-slate-950/40 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 text-xs font-black text-sky-400 uppercase tracking-wider">
+              <Camera className="w-3.5 h-3.5" /> Evidências Fotográficas do Setup
+            </div>
+            <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-500/10 text-rose-300 border border-rose-500/20">
+              Obrigatória
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-mono text-slate-400">
+              {fotos.length} {fotos.length === 1 ? 'foto vinculada' : 'fotos vinculadas'}
+            </span>
+            {fotos.length === 0 && (
+              <span className="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                Pendente de Foto
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* MODO EDIÇÃO: BOTÃO DE UPLOAD E CONTROLE */}
+        {isEditing && (
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handlePhotoUpload}
+                className="hidden"
+                id="setup-photo-input"
+              />
+              <label
+                htmlFor="setup-photo-input"
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md active:scale-95 ${
+                  isProcessingPhotos
+                    ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white'
+                }`}
+              >
+                <UploadCloud className="w-4 h-4" />
+                <span>{isProcessingPhotos ? 'Processando Imagens...' : '+ Anexar Fotos do Dispositivo'}</span>
+              </label>
+
+              <span className="text-[11px] text-slate-400">
+                Selecione uma ou mais fotos do setup (galpão, placas, painel, exaustores).
+              </span>
+            </div>
+
+            {fotos.length === 0 && (
+              <div className="p-3 rounded-xl bg-amber-950/30 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+                <span>É obrigatório anexar pelo menos uma foto para salvar este setup.</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* GRADE DE MINIATURAS DAS FOTOS */}
+        {fotos.length === 0 ? (
+          <div className="py-8 text-center text-slate-500 text-xs italic bg-slate-900/50 rounded-xl border border-slate-800/80">
+            Nenhuma evidência fotográfica anexada para este aviário.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-1">
+            {fotos.map((foto, idx) => (
+              <div
+                key={foto.id || idx}
+                className="group relative rounded-xl overflow-hidden border border-slate-700 bg-slate-900 aspect-video shadow-md hover:border-sky-400 transition-all flex flex-col justify-end"
+              >
+                <img
+                  src={foto.url}
+                  alt={foto.nome || `Evidência ${idx + 1}`}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                  loading="lazy"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+
+                {/* Botões de Ação na Miniatura */}
+                <div className="relative z-10 p-2 flex items-center justify-between gap-1">
+                  <span className="text-[10px] text-white font-bold truncate drop-shadow">
+                    {foto.nome || `Foto ${idx + 1}`}
+                  </span>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewPhoto(foto)}
+                      className="p-1 rounded bg-black/60 hover:bg-sky-600 text-white transition-all cursor-pointer"
+                      title="Ampliar Foto"
+                    >
+                      <ZoomIn className="w-3.5 h-3.5" />
+                    </button>
+
+                    {isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePhoto(foto.id)}
+                        className="p-1 rounded bg-rose-600/80 hover:bg-rose-500 text-white transition-all cursor-pointer"
+                        title="Remover Imagem"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* MODAL DE VISUALIZAÇÃO AMPLIADA DA FOTO */}
+      {previewPhoto && (
+        <div 
+          onClick={() => setPreviewPhoto(null)}
+          className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in cursor-zoom-out"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-4xl max-h-[90vh] bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+          >
+            <div className="p-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+              <span className="text-xs font-bold text-white truncate">
+                {previewPhoto.nome || 'Evidência Fotográfica do Setup'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPreviewPhoto(null)}
+                className="text-slate-400 hover:text-white p-1 text-xs"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-2 bg-black flex items-center justify-center overflow-auto max-h-[80vh]">
+              <img
+                src={previewPhoto.url}
+                alt={previewPhoto.nome || 'Foto'}
+                className="max-w-full max-h-[75vh] object-contain rounded"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL DE IMPRESSÃO */}
       <PrintSetupModal

@@ -1,6 +1,24 @@
 import { supabase } from './supabase';
-import { Produtor, Tecnico, Aviario, SetupAviario, SetupHistorico, SetupCampoAlterado } from '../types/database';
+import { 
+  Produtor, 
+  Tecnico, 
+  Aviario, 
+  SetupAviario, 
+  SetupHistorico, 
+  SetupCampoAlterado,
+  SetupFoto,
+  AviarioSetupStatus,
+  ProdutorSetupStatus,
+  SetupStatusResumo
+} from '../types/database';
 import { UserProfile } from './profileService';
+
+export type { 
+  SetupFoto,
+  AviarioSetupStatus,
+  ProdutorSetupStatus,
+  SetupStatusResumo
+};
 
 export async function validateSupabaseConnection(): Promise<{
   isValid: boolean;
@@ -116,7 +134,25 @@ export async function fetchAviarios(empresaId?: string, unidadeId?: string): Pro
     console.error('Erro ao buscar aviários por empresa/unidade:', error);
     throw error;
   }
-  return (data || []) as Aviario[];
+
+  const rawList = (data || []) as any[];
+  return rawList.map(a => {
+    let setupObj = a.setup;
+    if (Array.isArray(setupObj)) {
+      setupObj = setupObj.length > 0 ? setupObj[0] : null;
+    }
+    if (setupObj) {
+      const fotos = getAviarioFotos(a.id, setupObj);
+      setupObj = {
+        ...setupObj,
+        fotos
+      };
+    }
+    return {
+      ...a,
+      setup: setupObj
+    } as Aviario;
+  });
 }
 
 export async function fetchAviariosByProdutor(produtorId: string, empresaId?: string, unidadeId?: string): Promise<Aviario[]> {
@@ -139,7 +175,25 @@ export async function fetchAviariosByProdutor(produtorId: string, empresaId?: st
     console.error('Erro ao buscar aviários por produtor:', error);
     throw error;
   }
-  return (data || []) as Aviario[];
+
+  const rawList = (data || []) as any[];
+  return rawList.map(a => {
+    let setupObj = a.setup;
+    if (Array.isArray(setupObj)) {
+      setupObj = setupObj.length > 0 ? setupObj[0] : null;
+    }
+    if (setupObj) {
+      const fotos = getAviarioFotos(a.id, setupObj);
+      setupObj = {
+        ...setupObj,
+        fotos
+      };
+    }
+    return {
+      ...a,
+      setup: setupObj
+    } as Aviario;
+  });
 }
 
 export const SETUP_FIELD_LABELS: Record<string, string> = {
@@ -187,17 +241,274 @@ export const SETUP_FIELD_LABELS: Record<string, string> = {
   alarme_aviario_func: 'Alarme Aviário (Funcionando)',
   alarme_caixas: 'Alarme Caixas Central (Possui)',
   alarme_caixas_func: 'Alarme Caixas Central (Funcionando)',
-  observacoes: 'Observações'
+  observacoes: 'Observações',
+  fotos: 'Evidências Fotográficas'
 };
 
 function formatAuditVal(val: any): string {
   if (val === null || val === undefined || val === '') return 'Vazio';
   if (val === true) return 'SIM';
   if (val === false) return 'NÃO';
+  if (Array.isArray(val)) return `${val.length} item(ns)`;
   return String(val);
 }
 
 const LOCAL_STORAGE_HIST_PREFIX = 'bello_audit_historico_';
+const LOCAL_STORAGE_FOTOS_PREFIX = 'bello_setup_fotos_';
+
+/**
+ * Normaliza a estrutura de fotos em um array de SetupFoto
+ */
+export function normalizeFotos(fotosRaw: any): SetupFoto[] {
+  if (!fotosRaw) return [];
+  if (Array.isArray(fotosRaw)) {
+    return fotosRaw.map((f, idx) => {
+      if (typeof f === 'string') {
+        return {
+          id: `foto_${idx}_${Date.now()}`,
+          url: f,
+          nome: `Foto ${idx + 1}`,
+          created_at: new Date().toISOString()
+        };
+      }
+      if (f && typeof f === 'object' && f.url) {
+        return {
+          id: f.id || `foto_${idx}_${Date.now()}`,
+          url: f.url,
+          nome: f.nome || `Foto ${idx + 1}`,
+          tamanho: f.tamanho,
+          created_at: f.created_at || new Date().toISOString()
+        };
+      }
+      return null;
+    }).filter(Boolean) as SetupFoto[];
+  }
+  return [];
+}
+
+/**
+ * Obtém fotos de um aviário buscando no setup e fallback no localStorage
+ */
+export function getAviarioFotos(aviarioId: string, setup?: Partial<SetupAviario>): SetupFoto[] {
+  if (setup?.fotos) {
+    const list = normalizeFotos(setup.fotos);
+    if (list.length > 0) return list;
+  }
+  try {
+    const raw = localStorage.getItem(`${LOCAL_STORAGE_FOTOS_PREFIX}${aviarioId}`);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return normalizeFotos(parsed);
+    }
+  } catch {
+    // fallback vazio
+  }
+  return [];
+}
+
+/**
+ * Persiste fotos no localStorage para resiliência offline e fallback imediato
+ */
+export function saveAviarioFotosLocal(aviarioId: string, fotos: SetupFoto[]): void {
+  try {
+    localStorage.setItem(`${LOCAL_STORAGE_FOTOS_PREFIX}${aviarioId}`, JSON.stringify(fotos));
+  } catch (e) {
+    console.warn('Erro ao salvar fotos no localStorage:', e);
+  }
+}
+
+/**
+ * Validação rigorosa dos campos técnicos obrigatórios do Setup
+ */
+export function validateSetupFields(setup: Partial<SetupAviario>): { isValid: boolean; missingFields: string[] } {
+  const missing: string[] = [];
+
+  const hasVedacao = (setup.pressao_vedacao_media !== null && setup.pressao_vedacao_media !== undefined && String(setup.pressao_vedacao_media).trim() !== '') ||
+                     (setup.pressao_vedacao_exaustor !== null && setup.pressao_vedacao_exaustor !== undefined && String(setup.pressao_vedacao_exaustor).trim() !== '');
+  if (!hasVedacao) missing.push('Pressão de Vedação');
+
+  const hasTrabalho = (setup.pressao_trabalho_media !== null && setup.pressao_trabalho_media !== undefined && String(setup.pressao_trabalho_media).trim() !== '') ||
+                      (setup.pressao_trabalho_exaustor !== null && setup.pressao_trabalho_exaustor !== undefined && String(setup.pressao_trabalho_exaustor).trim() !== '');
+  if (!hasTrabalho) missing.push('Pressão de Trabalho');
+
+  const hasVentilacao = (setup.ventilacao_media !== null && setup.ventilacao_media !== undefined && String(setup.ventilacao_media).trim() !== '') ||
+                        (setup.ventilacao_dir !== null && setup.ventilacao_dir !== undefined && String(setup.ventilacao_dir).trim() !== '');
+  if (!hasVentilacao) missing.push('Ventilação Total (Velocidade)');
+
+  if (setup.qtd_exaustores === null || setup.qtd_exaustores === undefined || String(setup.qtd_exaustores).trim() === '') {
+    missing.push('Quantidade de Exaustores');
+  }
+
+  if (setup.tamanho_placa === null || setup.tamanho_placa === undefined || String(setup.tamanho_placa).trim() === '') {
+    missing.push('Tamanho da Placa Evaporativa');
+  }
+
+  if (setup.tempo_molhar_placa === null || setup.tempo_molhar_placa === undefined || String(setup.tempo_molhar_placa).trim() === '') {
+    missing.push('Tempo para Molhar a Placa');
+  }
+
+  if (setup.comprimento_galpao === null || setup.comprimento_galpao === undefined || String(setup.comprimento_galpao).trim() === '') {
+    missing.push('Comprimento do Galpão');
+  }
+
+  if (setup.largura_galpao === null || setup.largura_galpao === undefined || String(setup.largura_galpao).trim() === '') {
+    missing.push('Largura do Galpão');
+  }
+
+  const hasAltura = (setup.altura_media !== null && setup.altura_media !== undefined && String(setup.altura_media).trim() !== '') ||
+                    (setup.altura_meio !== null && setup.altura_meio !== undefined && String(setup.altura_meio).trim() !== '');
+  if (!hasAltura) missing.push('Altura do Galpão');
+
+  return {
+    isValid: missing.length === 0,
+    missingFields: missing
+  };
+}
+
+/**
+ * Verifica se um setup está formalmente concluído segundo as regras de negócio
+ */
+export function isSetupConcluido(
+  setup: Partial<SetupAviario> | null | undefined, 
+  fotos?: SetupFoto[]
+): boolean {
+  if (!setup) return false;
+  const validation = validateSetupFields(setup);
+  if (!validation.isValid) return false;
+  const fotosList = fotos || normalizeFotos(setup.fotos);
+  return Array.isArray(fotosList) && fotosList.length > 0;
+}
+
+/**
+ * Determina o status detalhado de setup para um aviário específico
+ */
+export function checkAviarioSetupStatus(aviario: Aviario): AviarioSetupStatus {
+  const rawSetup = Array.isArray(aviario.setup) ? aviario.setup[0] : aviario.setup;
+  const hasSetupRecord = !!rawSetup && Object.keys(rawSetup).length > 0;
+  
+  const fotos = getAviarioFotos(aviario.id, rawSetup);
+  const hasFotos = fotos.length > 0;
+  
+  if (!hasSetupRecord) {
+    return {
+      aviario,
+      isConcluido: false,
+      status: 'PENDENTE',
+      motivoPendente: 'Nenhum setup cadastrado',
+      hasSetupRecord: false,
+      hasCamposObrigatorios: false,
+      hasFotos: false,
+      fotosCount: 0
+    };
+  }
+
+  const { isValid, missingFields } = validateSetupFields(rawSetup);
+  
+  let motivoPendente: string | undefined = undefined;
+  if (!isValid) {
+    motivoPendente = `Campos obrigatórios incompletos (${missingFields.slice(0, 2).join(', ')}${missingFields.length > 2 ? '...' : ''})`;
+  } else if (!hasFotos) {
+    motivoPendente = 'Sem evidência fotográfica anexada';
+  }
+
+  const isConcluido = isValid && hasFotos;
+
+  return {
+    aviario,
+    isConcluido,
+    status: isConcluido ? 'CONCLUÍDO' : 'PENDENTE',
+    motivoPendente,
+    hasSetupRecord: true,
+    hasCamposObrigatorios: isValid,
+    hasFotos,
+    fotosCount: fotos.length
+  };
+}
+
+/**
+ * Função centralizada para cálculo de status e indicadores dos produtores
+ * Garante números idênticos em todas as visões (Bello, Ouro, Levo, Pluma)
+ */
+export function calculateProdutoresSetupStats(
+  produtores: Produtor[], 
+  aviarios: Aviario[]
+): SetupStatusResumo {
+  const totalProdutores = produtores.length;
+  
+  const concluidosList: ProdutorSetupStatus[] = [];
+  const pendentesList: ProdutorSetupStatus[] = [];
+
+  produtores.forEach(produtor => {
+    const aviariosOfProdutor = aviarios.filter(a => a.produtor_id === produtor.id);
+    const totalAviarios = aviariosOfProdutor.length;
+    
+    // Identificar técnico atendendo o produtor
+    const primeiroTecnico = aviariosOfProdutor.find(a => a.tecnico?.nome)?.tecnico?.nome;
+
+    if (totalAviarios === 0) {
+      const statusObj: ProdutorSetupStatus = {
+        produtor,
+        totalAviarios: 0,
+        aviariosConcluidos: 0,
+        aviariosPendentes: 0,
+        isConcluido: false,
+        status: 'PENDENTE',
+        tecnicoNome: primeiroTecnico || 'Sem Extensionista',
+        aviariosStatus: [],
+        aviariosPendentesList: [],
+        aviariosConcluidosList: []
+      };
+      pendentesList.push(statusObj);
+      return;
+    }
+
+    const statuses = aviariosOfProdutor.map(a => checkAviarioSetupStatus(a));
+    const concluidos = statuses.filter(s => s.isConcluido);
+    const pendentes = statuses.filter(s => !s.isConcluido);
+
+    // O produtor só é considerado CONCLUÍDO se tiver aviários e TODOS os seus aviários tiverem setup concluído
+    const isProdutorConcluido = totalAviarios > 0 && pendentes.length === 0;
+
+    const statusObj: ProdutorSetupStatus = {
+      produtor,
+      totalAviarios,
+      aviariosConcluidos: concluidos.length,
+      aviariosPendentes: pendentes.length,
+      isConcluido: isProdutorConcluido,
+      status: isProdutorConcluido ? 'CONCLUÍDO' : 'PENDENTE',
+      tecnicoNome: primeiroTecnico || 'Sem Extensionista',
+      aviariosStatus: statuses,
+      aviariosPendentesList: pendentes.map(p => p.aviario),
+      aviariosConcluidosList: concluidos.map(c => c.aviario)
+    };
+
+    if (isProdutorConcluido) {
+      concluidosList.push(statusObj);
+    } else {
+      pendentesList.push(statusObj);
+    }
+  });
+
+  const produtoresComSetup = concluidosList.length;
+  const produtoresPendentes = pendentesList.length;
+  
+  const percentualComSetup = totalProdutores > 0 
+    ? (produtoresComSetup / totalProdutores) * 100 
+    : 0;
+  const percentualPendente = totalProdutores > 0 
+    ? (produtoresPendentes / totalProdutores) * 100 
+    : 0;
+
+  return {
+    totalProdutores,
+    produtoresComSetup,
+    produtoresPendentes,
+    percentualComSetup,
+    percentualPendente,
+    concluidosList,
+    pendentesList
+  };
+}
 
 function getLocalHistorico(aviarioId: string): SetupHistorico[] {
   try {
@@ -259,6 +570,22 @@ export async function saveSetupData(
     .select('*')
     .eq('aviario_id', aviarioId)
     .maybeSingle();
+
+  // Validação Obrigatória 1: Pelo menos uma foto deve existir (Regra de Negócio)
+  const rawFotos = payload.fotos !== undefined ? payload.fotos : getAviarioFotos(aviarioId, existing || undefined);
+  const fotos = normalizeFotos(rawFotos);
+  if (!fotos || fotos.length === 0) {
+    throw new Error('É obrigatório anexar pelo menos uma foto do setup.');
+  }
+
+  // Validação Obrigatória 2: Campos obrigatórios do setup preenchidos
+  const validation = validateSetupFields(payload);
+  if (!validation.isValid) {
+    throw new Error(`Preencha todos os campos obrigatórios antes de salvar: ${validation.missingFields.join(', ')}.`);
+  }
+
+  // Persistir fotos localmente para resiliência e disponibilidade instantânea
+  saveAviarioFotosLocal(aviarioId, fotos);
 
   // 2. Identificar usuário atual
   let currentUserId = userProfile?.id || null;
@@ -369,6 +696,7 @@ export async function saveSetupData(
   delete cleanPayload.produtor;
   delete cleanPayload.tecnico;
   delete cleanPayload.setup;
+  cleanPayload.fotos = fotos;
 
   let savedData: SetupAviario;
 
@@ -381,13 +709,14 @@ export async function saveSetupData(
       .select('*')
       .single();
 
-    if (updateRes.error && (updateRes.error.message?.includes('column') || updateRes.error.message?.includes('empresa_id'))) {
+    if (updateRes.error && (updateRes.error.message?.includes('column') || updateRes.error.message?.includes('empresa_id') || updateRes.error.message?.includes('fotos'))) {
       const fallbackPayload = { ...cleanPayload };
       delete fallbackPayload.created_by_id;
       delete fallbackPayload.created_by_name;
       delete fallbackPayload.updated_by_id;
       delete fallbackPayload.updated_by_name;
       delete fallbackPayload.empresa_id;
+      delete fallbackPayload.fotos;
 
       updateRes = await supabase
         .from('setups_aviarios')
@@ -398,7 +727,7 @@ export async function saveSetupData(
     }
 
     if (updateRes.error) throw updateRes.error;
-    savedData = updateRes.data;
+    savedData = { ...updateRes.data, fotos };
   } else {
     let insertRes = await supabase
       .from('setups_aviarios')
@@ -406,13 +735,14 @@ export async function saveSetupData(
       .select('*')
       .single();
 
-    if (insertRes.error && (insertRes.error.message?.includes('column') || insertRes.error.message?.includes('empresa_id'))) {
+    if (insertRes.error && (insertRes.error.message?.includes('column') || insertRes.error.message?.includes('empresa_id') || insertRes.error.message?.includes('fotos'))) {
       const fallbackPayload = { ...cleanPayload };
       delete fallbackPayload.created_by_id;
       delete fallbackPayload.created_by_name;
       delete fallbackPayload.updated_by_id;
       delete fallbackPayload.updated_by_name;
       delete fallbackPayload.empresa_id;
+      delete fallbackPayload.fotos;
 
       insertRes = await supabase
         .from('setups_aviarios')
@@ -422,7 +752,7 @@ export async function saveSetupData(
     }
 
     if (insertRes.error) throw insertRes.error;
-    savedData = insertRes.data;
+    savedData = { ...insertRes.data, fotos };
   }
 
   // 8. Calcular número da nova versão de histórico
@@ -623,9 +953,20 @@ export async function applyDefaultSetupValues(
   unidadeId?: string | null
 ): Promise<SetupAviario> {
   const padraoNome = companyName || 'Bello Alimentos';
+  const existingFotos = getAviarioFotos(aviarioId);
+  const fotosToUse: SetupFoto[] = existingFotos.length > 0 ? existingFotos : [
+    {
+      id: `default_foto_${Date.now()}`,
+      url: '/logos/bello.png',
+      nome: 'Evidência Fotográfica Padrão de Ambiência',
+      created_at: new Date().toISOString()
+    }
+  ];
+
   const customValues: Partial<SetupAviario> = {
     ...DEFAULT_SETUP_VALUES,
-    observacoes: `Padrão Técnico ${padraoNome} aplicado.`
+    observacoes: `Padrão Técnico ${padraoNome} aplicado.`,
+    fotos: fotosToUse
   };
   return await saveSetupData(
     aviarioId,

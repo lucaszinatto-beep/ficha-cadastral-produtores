@@ -1,5 +1,6 @@
 import { Aviario, SetupAviario, Empresa } from '../types/database';
 import { CompanyThemeConfig } from '../config/companies';
+import { getAviarioFotos } from './dataService';
 
 function formatNum(val: number | null | undefined, unit: string = ''): string {
   if (val === null || val === undefined || isNaN(Number(val))) return '-';
@@ -27,10 +28,18 @@ export function generateFichaHtml(aviarios: Aviario[], company?: Empresa | Compa
 
   const pagesHtml = aviarios.map((aviario, index) => {
     const setup: Partial<SetupAviario> = aviario.setup || {};
-    const isLast = index === aviarios.length - 1;
+    const fotos = getAviarioFotos(aviario.id, setup);
+    const isLastAviario = index === aviarios.length - 1;
+
+    // Chunks de até 4 fotos por folha para manter diagramação limpa
+    const fotosChunks: typeof fotos[] = [];
+    for (let i = 0; i < fotos.length; i += 4) {
+      fotosChunks.push(fotos.slice(i, i + 4));
+    }
+    const hasFotosPages = fotosChunks.length > 0;
 
     return `
-      <div class="a4-page ${!isLast ? 'page-break' : ''}">
+      <div class="a4-page ${(!isLastAviario || hasFotosPages) ? 'page-break' : ''}">
         
         <!-- CABEÇALHO -->
         <div class="header-box">
@@ -301,7 +310,7 @@ export function generateFichaHtml(aviarios: Aviario[], company?: Empresa | Compa
         <!-- 4. OBSERVAÇÕES & ASSINATURAS -->
         <div class="obs-box">
           <div class="obs-text">
-            <strong>Observações Técnicas:</strong> ${setup.observacoes || 'Parâmetros de setup e ambiência verificados em conformidade com as diretrizes técnicas da Bello Alimentos.'}
+            <strong>Observações Técnicas:</strong> ${setup.observacoes || `Parâmetros de setup e ambiência verificados em conformidade com as diretrizes técnicas da ${companyName}.`}
           </div>
           <div class="signatures-grid">
             <div class="signature-line">
@@ -322,6 +331,65 @@ export function generateFichaHtml(aviarios: Aviario[], company?: Empresa | Compa
         </div>
 
       </div>
+
+      ${fotosChunks.map((chunk, chunkIdx) => {
+        const isLastChunk = chunkIdx === fotosChunks.length - 1;
+        const isVeryLast = isLastAviario && isLastChunk;
+        const cardsHtml = chunk.map((foto, fIdx) => `
+          <div class="photo-card">
+            <div class="photo-img-wrap">
+              <img src="${foto.url}" alt="${foto.nome || `Foto ${fIdx + 1}`}" class="photo-img" />
+            </div>
+            <div class="photo-caption">${foto.nome || `Evidência ${chunkIdx * 4 + fIdx + 1}`}</div>
+          </div>
+        `).join('');
+
+        return `
+          <div class="a4-page ${!isVeryLast ? 'page-break' : ''}">
+            <!-- CABEÇALHO DA PÁGINA DE EVIDÊNCIAS -->
+            <div class="header-box">
+              <div class="header-left">
+                <img src="${logoUrl}" alt="${companyName}" class="logo-img" />
+                <div class="header-title">
+                  <span class="sub-badge">Set Up Granja • Evidências Fotográficas</span>
+                  <h1 class="main-title">Evidências Fotográficas do Setup</h1>
+                </div>
+              </div>
+              <div class="header-right">
+                <div>Data: <strong>${todayStr}</strong></div>
+                <div>Documento Oficial • ${companyName}</div>
+              </div>
+            </div>
+
+            <!-- IDENTIFICAÇÃO DO PRODUTOR E AVIÁRIO -->
+            <div class="info-box">
+              <div class="info-col info-col-6">
+                <span class="info-label">Produtor / Avicultor</span>
+                <span class="info-value-main">${aviario.produtor?.nome || 'Não Informado'}</span>
+              </div>
+              <div class="info-col info-col-3 text-center">
+                <span class="info-label">Instalação</span>
+                <span class="info-value-highlight">AVIÁRIO ${aviario.numero_instalacao}</span>
+              </div>
+              <div class="info-col info-col-3">
+                <span class="info-label">Extensionista / Técnico</span>
+                <span class="info-value-tech">${aviario.tecnico?.nome || 'Não Vinculado'}</span>
+              </div>
+            </div>
+
+            <!-- GRADE DE FOTOS (SEM DISTORÇÃO) -->
+            <div class="photo-grid">
+              ${cardsHtml}
+            </div>
+
+            <!-- RODAPÉ -->
+            <div class="footer-row" style="margin-top: 14px;">
+              <span>${companyName} • Gestão de Ambiência e Setup</span>
+              <span>Anexo Fotográfico (Pág. ${chunkIdx + 1} de ${fotosChunks.length}) • Aviário ${aviario.numero_instalacao}</span>
+            </div>
+          </div>
+        `;
+      }).join('')}
     `;
   }).join('');
 
@@ -656,6 +724,51 @@ export function generateFichaHtml(aviarios: Aviario[], company?: Empresa | Compa
           font-size: 7.5px;
           color: #64748b;
           font-family: monospace;
+        }
+
+        /* EVIDÊNCIAS FOTOGRÁFICAS (ANEXO) */
+        .photo-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          margin-top: 8px;
+        }
+        .photo-card {
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          overflow: hidden;
+          background: #f8fafc;
+          display: flex;
+          flex-direction: column;
+        }
+        .photo-img-wrap {
+          width: 100%;
+          height: 94mm;
+          background: #0f172a;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .photo-img {
+          max-width: 100%;
+          max-height: 100%;
+          width: auto;
+          height: auto;
+          object-fit: contain;
+          display: block;
+        }
+        .photo-caption {
+          padding: 5px 8px;
+          font-size: 8.5px;
+          font-weight: bold;
+          color: #334155;
+          background: #ffffff;
+          border-top: 1px solid #e2e8f0;
+          text-align: center;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       </style>
     </head>
