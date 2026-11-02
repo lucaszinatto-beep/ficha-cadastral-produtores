@@ -495,7 +495,7 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
                 <div className="flex items-center gap-1.5 text-slate-400">
                   <span className="text-slate-500 font-bold text-[10px] uppercase">1º Cadastro:</span>
                   <span className="text-emerald-400 font-semibold">
-                    {primeiroRegistro?.usuario_nome || setup.created_by_name || 'Bello Alimentos'}
+                    {primeiroRegistro?.usuario_nome || setup.created_by_name || currentCompany.nome}
                   </span>
                   {(primeiroRegistro?.created_at || setup.created_at) && (
                     <span className="text-slate-500 font-mono text-[10px]">

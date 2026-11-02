@@ -116,18 +116,59 @@ export const INITIAL_COMPANIES_LIST: CompanyThemeConfig[] = Object.values(COMPAN
 
 export const DEFAULT_COMPANY = COMPANIES_CONFIG.bello;
 
+/**
+ * Busca flexível de empresa por UUID, slug ('bello', 'levo', 'ouro', 'pluma'), 
+ * variações com hífen/underline ('frango_ouro', 'frango-ouro') ou nome institucional.
+ * Retorna null se não encontrar (permitindo tratar estados de carregamento neutro sem fallback forçado).
+ */
+export function findCompany(term?: string | null): CompanyThemeConfig | null {
+  if (!term || typeof term !== 'string') return null;
+  const t = term.toLowerCase().trim();
+
+  // 1. Busca por ID exato
+  const byId = INITIAL_COMPANIES_LIST.find(c => c.id.toLowerCase() === t);
+  if (byId) return byId;
+
+  // 2. Busca por slug exato no COMPANIES_CONFIG
+  if (COMPANIES_CONFIG[t]) return COMPANIES_CONFIG[t];
+
+  // 3. Normalização de aliases conhecidos
+  if (t === 'frango_ouro' || t === 'frango-ouro' || t === 'ouro' || t.includes('ouro')) {
+    return COMPANIES_CONFIG.ouro;
+  }
+  if (t === 'levo' || t === 'levo-alimentos' || t === 'levo_alimentos' || t.includes('levo')) {
+    return COMPANIES_CONFIG.levo;
+  }
+  if (t === 'pluma' || t === 'pluma-agroavicola' || t === 'pluma_agroavicola' || t.includes('pluma')) {
+    return COMPANIES_CONFIG.pluma;
+  }
+  if (t === 'bello' || t === 'bello-alimentos' || t === 'bello_alimentos' || t.includes('bello')) {
+    return COMPANIES_CONFIG.bello;
+  }
+
+  // 4. Busca por nome da empresa
+  const byName = INITIAL_COMPANIES_LIST.find(c => c.nome.toLowerCase() === t);
+  if (byName) return byName;
+
+  return null;
+}
+
 export function getCompanyById(id?: string | null): CompanyThemeConfig {
-  if (!id) return DEFAULT_COMPANY;
-  const found = INITIAL_COMPANIES_LIST.find(c => c.id === id);
-  return found || DEFAULT_COMPANY;
+  return findCompany(id) || DEFAULT_COMPANY;
 }
 
 export function getCompanyBySlug(slug?: string | null): CompanyThemeConfig {
-  if (!slug) return DEFAULT_COMPANY;
-  return COMPANIES_CONFIG[slug] || DEFAULT_COMPANY;
+  return findCompany(slug) || DEFAULT_COMPANY;
 }
 
 export function getUnitById(unitId?: string | null): CompanyUnitConfig | null {
-  if (!unitId) return null;
-  return LEVO_UNITS.find(u => u.id === unitId) || null;
+  if (!unitId || typeof unitId !== 'string') return null;
+  const normalized = unitId.toUpperCase().trim();
+  if (normalized.includes('UMUARAMA') || normalized === 'LEVO_UMUARAMA') {
+    return LEVO_UNITS[0];
+  }
+  if (normalized.includes('CAPANEMA') || normalized === 'LEVO_CAPANEMA') {
+    return LEVO_UNITS[1];
+  }
+  return LEVO_UNITS.find(u => u.id === unitId || u.slug.toUpperCase() === normalized) || null;
 }

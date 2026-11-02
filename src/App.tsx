@@ -12,7 +12,7 @@ import { SetupStatusModal } from './components/SetupStatusModal';
 import { CompanySelectorView } from './components/CompanySelectorView';
 import { CompanyProvider, useCompany } from './context/CompanyContext';
 import { CompanyLogo } from './components/CompanyLogo';
-import { CompanyThemeConfig, DEFAULT_COMPANY, INITIAL_COMPANIES_LIST, getCompanyById } from './config/companies';
+import { CompanyThemeConfig, DEFAULT_COMPANY, INITIAL_COMPANIES_LIST, findCompany, getUnitById } from './config/companies';
 import { fetchProdutores, fetchAviarios, fetchTecnicos, calculateProdutoresSetupStats } from './services/dataService';
 import { loadImportacoesHistory } from './services/importService';
 import { fetchMyProfile, UserProfile, ACCESS_LEVELS, KNOWN_SUPER_ADMIN_EMAILS } from './services/profileService';
@@ -427,9 +427,16 @@ export const App: React.FC = () => {
   const [userCompanies, setUserCompanies] = useState<CompanyThemeConfig[]>(INITIAL_COMPANIES_LIST);
   const [allCompanies, setAllCompanies] = useState<CompanyThemeConfig[]>(INITIAL_COMPANIES_LIST);
 
-  // Empresa e Unidade selecionadas antes do login pelo usuário
-  const [selectedCompanyForLogin, setSelectedCompanyForLogin] = useState<CompanyThemeConfig | null>(null);
-  const [selectedUnitForLogin, setSelectedUnitForLogin] = useState<CompanyUnitConfig | null>(null);
+  // Empresa e Unidade selecionadas antes do login pelo usuário ou restauradas da sessão persistida
+  const [selectedCompanyForLogin, setSelectedCompanyForLogin] = useState<CompanyThemeConfig | null>(() => {
+    const savedSlug = typeof window !== 'undefined' ? localStorage.getItem('active_company_slug') : null;
+    const savedId = typeof window !== 'undefined' ? localStorage.getItem('active_company_id') : null;
+    return findCompany(savedSlug) || findCompany(savedId) || null;
+  });
+  const [selectedUnitForLogin, setSelectedUnitForLogin] = useState<CompanyUnitConfig | null>(() => {
+    const savedUnitId = typeof window !== 'undefined' ? localStorage.getItem('active_unit_id') : null;
+    return getUnitById(savedUnitId);
+  });
 
   const loadUserProfile = async () => {
     const profile = await fetchMyProfile();
@@ -446,7 +453,7 @@ export const App: React.FC = () => {
         .order('nome', { ascending: true });
 
       const available = dbEmpresas && dbEmpresas.length > 0
-        ? dbEmpresas.map(d => ({ ...getCompanyById(d.id), ...d }))
+        ? dbEmpresas.map(d => ({ ...(findCompany(d.slug) || findCompany(d.id) || DEFAULT_COMPANY), ...d }))
         : INITIAL_COMPANIES_LIST;
 
       setAllCompanies(available);
@@ -531,10 +538,15 @@ export const App: React.FC = () => {
           setIsRecoveringPassword(true);
         }
         if (event === 'SIGNED_IN' && !currentSession.user?.user_metadata?.force_password_change) {
-          setShowSplash(true);
-          setTimeout(() => {
-            if (isMounted) setShowSplash(false);
-          }, 1500);
+          // Só exibe splash de transição se for um login recém-executado
+          const isFreshLogin = sessionStorage.getItem('is_fresh_login') === 'true';
+          if (isFreshLogin) {
+            sessionStorage.removeItem('is_fresh_login');
+            setShowSplash(true);
+            setTimeout(() => {
+              if (isMounted) setShowSplash(false);
+            }, 1200);
+          }
         }
         const prof = await loadUserProfile();
         if (isMounted) {
@@ -544,8 +556,11 @@ export const App: React.FC = () => {
         setUserProfile(null);
         setSelectedCompanyForLogin(null);
         setSelectedUnitForLogin(null);
+        localStorage.removeItem('active_company_id');
+        localStorage.removeItem('active_company_slug');
         localStorage.removeItem('active_unit_id');
         sessionStorage.removeItem('company_selected_session');
+        sessionStorage.removeItem('is_fresh_login');
         if (isMounted) {
           await loadUserCompaniesForSession(null);
         }
@@ -564,6 +579,9 @@ export const App: React.FC = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     sessionStorage.removeItem('company_selected_session');
+    sessionStorage.removeItem('is_fresh_login');
+    localStorage.removeItem('active_company_id');
+    localStorage.removeItem('active_company_slug');
     localStorage.removeItem('active_unit_id');
     setSelectedCompanyForLogin(null);
     setSelectedUnitForLogin(null);
@@ -611,6 +629,7 @@ export const App: React.FC = () => {
             setSelectedCompanyForLogin(company);
             setSelectedUnitForLogin(unit || null);
             localStorage.setItem('active_company_id', company.id);
+            localStorage.setItem('active_company_slug', company.slug);
             if (unit) {
               localStorage.setItem('active_unit_id', unit.id);
             } else {
@@ -630,12 +649,23 @@ export const App: React.FC = () => {
         onBackToCompanySelect={() => {
           setSelectedCompanyForLogin(null);
           setSelectedUnitForLogin(null);
+          localStorage.removeItem('active_company_id');
+          localStorage.removeItem('active_company_slug');
           localStorage.removeItem('active_unit_id');
         }}
-        onLoginSuccess={(_company, unit) => {
+        onLoginSuccess={(company, unit) => {
+          sessionStorage.setItem('is_fresh_login', 'true');
+          const comp = company || selectedCompanyForLogin;
+          if (comp) {
+            setSelectedCompanyForLogin(comp);
+            localStorage.setItem('active_company_id', comp.id);
+            localStorage.setItem('active_company_slug', comp.slug);
+          }
           if (unit) {
             setSelectedUnitForLogin(unit);
             localStorage.setItem('active_unit_id', unit.id);
+          } else {
+            localStorage.removeItem('active_unit_id');
           }
           setIsRecoveringPassword(false);
           loadUserProfile();
@@ -648,18 +678,28 @@ export const App: React.FC = () => {
 
   // 3. Splash de Transição (Pós-login)
   if (showSplash) {
+    const splashCompany = selectedCompanyForLogin || 
+                          findCompany(localStorage.getItem('active_company_slug')) ||
+                          findCompany(localStorage.getItem('active_company_id'));
+
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden z-[100]">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"></div>
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl"></div>
         
-        <CompanyLogo
-          company={selectedCompanyForLogin}
-          variant="card"
-          className="h-20 w-auto"
-          containerClassName="rounded-3xl p-6 shadow-[0_0_80px_rgba(56,189,248,0.8)] border border-sky-400 z-10 animate-logo-transition"
-        />
+        {splashCompany ? (
+          <CompanyLogo
+            company={splashCompany}
+            variant="card"
+            className="h-20 w-auto"
+            containerClassName="rounded-3xl p-6 shadow-[0_0_80px_rgba(56,189,248,0.8)] border border-sky-400 z-10 animate-logo-transition"
+          />
+        ) : (
+          <div className="w-24 h-24 rounded-3xl bg-slate-900/80 border border-slate-700/80 animate-pulse flex items-center justify-center">
+            <RefreshCw className="w-8 h-8 text-sky-400 animate-spin" />
+          </div>
+        )}
       </div>
     );
   }

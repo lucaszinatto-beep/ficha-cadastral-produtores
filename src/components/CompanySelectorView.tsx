@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CompanyThemeConfig, INITIAL_COMPANIES_LIST, DEFAULT_COMPANY, LEVO_UNITS } from '../config/companies';
+import { CompanyThemeConfig, INITIAL_COMPANIES_LIST, DEFAULT_COMPANY, LEVO_UNITS, findCompany } from '../config/companies';
 import { CompanyUnitConfig } from '../types/database';
 import { CompanyLogo } from './CompanyLogo';
 import { ArrowRight, ArrowLeft, Lock, LogOut, ShieldCheck, User, Sparkles, MapPin, CheckCircle2 } from 'lucide-react';
@@ -27,17 +27,24 @@ export const CompanySelectorView: React.FC<CompanySelectorViewProps> = ({
 }) => {
   const authorizedIds = new Set(userCompanies.map(c => c.id));
   
-  // Empresa selecionada inicialmente (prioriza localStorage ou primeira disponível)
+  // Empresa selecionada inicialmente (prioriza persistência do active_company_slug / active_company_id ou primeira disponível)
   const [selectedCompanyId, setSelectedCompanyId] = useState<string>(() => {
-    const saved = localStorage.getItem('active_company_id');
-    if (saved && allCompanies.some(c => c.id === saved)) return saved;
+    const savedSlug = typeof window !== 'undefined' ? localStorage.getItem('active_company_slug') : null;
+    const savedId = typeof window !== 'undefined' ? localStorage.getItem('active_company_id') : null;
+    const resolved = findCompany(savedSlug) || findCompany(savedId);
+    if (resolved && allCompanies.some(c => c.id === resolved.id || c.slug === resolved.slug)) {
+      return resolved.id;
+    }
     return allCompanies[0]?.id || DEFAULT_COMPANY.id;
   });
 
   // Estado que controla se o submenu de unidades de uma empresa específica (Levo Alimentos) está aberto
   const [viewingUnitsForCompany, setViewingUnitsForCompany] = useState<CompanyThemeConfig | null>(initialViewingCompany);
 
-  const activeSelectedCompany = allCompanies.find(c => c.id === selectedCompanyId) || allCompanies[0] || DEFAULT_COMPANY;
+  const activeSelectedCompany = allCompanies.find(c => c.id === selectedCompanyId) || 
+                                findCompany(selectedCompanyId) || 
+                                allCompanies[0] || 
+                                DEFAULT_COMPANY;
 
   // Renderiza o submenu de unidades da Levo Alimentos
   if (viewingUnitsForCompany && viewingUnitsForCompany.slug === 'levo') {

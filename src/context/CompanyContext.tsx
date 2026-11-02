@@ -4,7 +4,7 @@ import {
   CompanyThemeConfig, 
   INITIAL_COMPANIES_LIST, 
   DEFAULT_COMPANY, 
-  getCompanyById,
+  findCompany,
   getUnitById,
   LEVO_UNITS
 } from '../config/companies';
@@ -28,6 +28,7 @@ interface CompanyContextType {
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'active_company_id';
+const STORAGE_SLUG_KEY = 'active_company_slug';
 const STORAGE_UNIT_KEY = 'active_unit_id';
 
 const KNOWN_SUPER_ADMIN_EMAILS = [
@@ -40,22 +41,27 @@ export const CompanyProvider: React.FC<{
   children: React.ReactNode;
   userProfile: UserProfile | null;
 }> = ({ children, userProfile }) => {
+  // Inicialização síncrona e resiliente a partir do localStorage
+  // Garante que logo no primeiro frame o ambiente selecionado (Levo, Ouro, Pluma ou Bello) seja renderizado
   const [currentCompany, setCurrentCompanyState] = useState<CompanyThemeConfig>(() => {
-    const savedId = localStorage.getItem(STORAGE_KEY);
-    return getCompanyById(savedId);
+    const savedSlug = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_SLUG_KEY) : null;
+    const savedId = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+    const resolved = findCompany(savedSlug) || findCompany(savedId);
+    return resolved || DEFAULT_COMPANY;
   });
 
   const [currentUnit, setCurrentUnitState] = useState<CompanyUnitConfig | null>(() => {
-    const savedId = localStorage.getItem(STORAGE_KEY);
-    const company = getCompanyById(savedId);
+    const savedSlug = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_SLUG_KEY) : null;
+    const savedId = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+    const company = findCompany(savedSlug) || findCompany(savedId) || DEFAULT_COMPANY;
     if (company.slug === 'levo') {
-      const savedUnitId = localStorage.getItem(STORAGE_UNIT_KEY);
+      const savedUnitId = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_UNIT_KEY) : null;
       return getUnitById(savedUnitId) || LEVO_UNITS[0];
     }
     return null;
   });
 
-  const [userCompanies, setUserCompanies] = useState<CompanyThemeConfig[]>([DEFAULT_COMPANY]);
+  const [userCompanies, setUserCompanies] = useState<CompanyThemeConfig[]>(INITIAL_COMPANIES_LIST);
   const [allCompanies, setAllCompanies] = useState<CompanyThemeConfig[]>(INITIAL_COMPANIES_LIST);
   const [isLoadingCompanies, setIsLoadingCompanies] = useState<boolean>(true);
   const [userAllowedUnits, setUserAllowedUnits] = useState<string[]>(['*']);
@@ -71,7 +77,7 @@ export const CompanyProvider: React.FC<{
 
       if (!error && data && data.length > 0) {
         const mapped = data.map(dbEmpresa => {
-          const base = getCompanyById(dbEmpresa.id);
+          const base = findCompany(dbEmpresa.slug) || findCompany(dbEmpresa.id) || DEFAULT_COMPANY;
           return {
             ...base,
             ...dbEmpresa,
@@ -89,6 +95,7 @@ export const CompanyProvider: React.FC<{
   const setCurrentCompany = useCallback((company: CompanyThemeConfig, unit?: CompanyUnitConfig | null) => {
     setCurrentCompanyState(company);
     localStorage.setItem(STORAGE_KEY, company.id);
+    localStorage.setItem(STORAGE_SLUG_KEY, company.slug);
 
     if (company.slug === 'levo') {
       const targetUnit = unit || getUnitById(localStorage.getItem(STORAGE_UNIT_KEY)) || LEVO_UNITS[0];
@@ -110,10 +117,12 @@ export const CompanyProvider: React.FC<{
   }, []);
 
   const switchCompany = useCallback((companyId: string, unitId?: string | null) => {
-    const target = getCompanyById(companyId);
+    const target = allCompanies.find(c => c.id === companyId || c.slug === companyId) ||
+                   findCompany(companyId) ||
+                   DEFAULT_COMPANY;
     const targetUnit = unitId ? getUnitById(unitId) : (target.slug === 'levo' ? LEVO_UNITS[0] : null);
     setCurrentCompany(target, targetUnit);
-  }, [setCurrentCompany]);
+  }, [allCompanies, setCurrentCompany]);
 
   const refreshUserCompanies = useCallback(async () => {
     setIsLoadingCompanies(true);
@@ -158,8 +167,8 @@ export const CompanyProvider: React.FC<{
         
         // Se houver algum registro para Levo sem unidade definida, o usuário tem acesso a todas as unidades
         const hasFullLevoAccess = panelData.some(d => {
-          const c = getCompanyById(d.empresa_id);
-          return c.slug === 'levo' && !d.unidade;
+          const c = findCompany(d.empresa_id);
+          return c?.slug === 'levo' && !d.unidade;
         });
         if (hasFullLevoAccess) {
           allowedUnitsList.push('LEVO_UMUARAMA', 'LEVO_CAPANEMA');
@@ -187,8 +196,12 @@ export const CompanyProvider: React.FC<{
         const matched = availableCompanies.filter(c => allowedIds.has(c.id));
         if (matched.length > 0) {
           setUserCompanies(matched);
-          // Se a empresa ativa atual não estiver na lista autorizada, seleciona a primeira autorizada
-          if (!allowedIds.has(currentCompany.id)) {
+
+          // Preservação do ambiente ativo: só altera se o atual NÃO for autorizado
+          const isCurrentAuthorized = allowedIds.has(currentCompany.id) ||
+                                      matched.some(c => c.slug === currentCompany.slug);
+
+          if (!isCurrentAuthorized) {
             const first = matched[0];
             const firstUnit = first.slug === 'levo' 
               ? (allowedUnitsList.includes('LEVO_CAPANEMA') && !allowedUnitsList.includes('LEVO_UMUARAMA') ? LEVO_UNITS[1] : LEVO_UNITS[0])
