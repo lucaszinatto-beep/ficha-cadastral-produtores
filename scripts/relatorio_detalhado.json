@@ -1,0 +1,2096 @@
+[
+  {
+    "id": "27a53615-2954-4f18-a038-85bda33b4452",
+    "nome": "Ademir Zago",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Bruno faganello"
+      }
+    ]
+  },
+  {
+    "id": "78978727-3717-4145-8c74-1ad3d9e23281",
+    "nome": "Ademir Zancanaro",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "0983ae36-9661-451b-bfba-dc1092698f61",
+    "nome": "Adilson Garcia/Vanderleia A S Garcia",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "2647addf-c5be-4688-a279-10546abce3ca",
+    "nome": "Adimilson Dos Santos",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "56cb2daf-6ddb-4829-b5d4-babe9fcceb8e",
+    "nome": "Adriano Maximino Paludo",
+    "totalAviarios": 8,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 8,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "11",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "12",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "13",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "14",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "15",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "16",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "17",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "18",
+        "tecnico": "vinicius"
+      }
+    ]
+  },
+  {
+    "id": "ee305c70-db64-4696-970e-1c9152ea1af5",
+    "nome": "Agostinho Anselmi",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "ca381b21-5157-43cd-88b9-6c24ccf27311",
+    "nome": "Alceu Hernani Kleinschmitt",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando Marcos"
+      }
+    ]
+  },
+  {
+    "id": "5ce34dd9-affe-47a8-82ea-89d9f6bee52e",
+    "nome": "Altemar Schulter",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "60164f51-83bb-49af-9107-70426cf00b08",
+    "nome": "Alvaro Carlos Salvadori",
+    "totalAviarios": 8,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 8,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "10",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "11",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "12",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "5",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "6",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "7",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "8",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "9",
+        "tecnico": "Iarbas"
+      }
+    ]
+  },
+  {
+    "id": "3c723409-b335-4f60-bdf3-1b7b89b40c5b",
+    "nome": "Alvaro Mario Burin Junior",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Iarbas"
+      }
+    ]
+  },
+  {
+    "id": "fb74a447-9e80-450b-9c24-ea627e431f1e",
+    "nome": "Amarildo Felix Pereira",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "eder"
+      }
+    ]
+  },
+  {
+    "id": "2f844c4a-1c8c-43c0-b7d5-e9a63da14385",
+    "nome": "Antonio H. Martins E/Ou Elisio H. Martins",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Fernando Marcos"
+      }
+    ]
+  },
+  {
+    "id": "50861652-1519-4426-924e-a46fe26cc12c",
+    "nome": "Bruno Bertol Delamura",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "eder"
+      }
+    ]
+  },
+  {
+    "id": "9dbf448c-d0c9-4ec8-9289-12b53ac3d77b",
+    "nome": "Carlos Alexandre Tarniove",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "3",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "03cde4db-1195-42e9-b402-1a2c327facb1",
+    "nome": "Carlos Cesar Polla",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "vinicius"
+      }
+    ]
+  },
+  {
+    "id": "f844c232-21fb-4747-9390-4bd3d01fb2a0",
+    "nome": "Claudemir Kuhnen",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "8b123084-91bd-4ee0-b0a0-e072f6f48b92",
+    "nome": "Claudio Joares Mohr",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Bruno faganello"
+      }
+    ]
+  },
+  {
+    "id": "6a08d7bb-cecf-440f-bb04-8bf73b64df31",
+    "nome": "Claudio Junior Machado Posser",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Jovane"
+      }
+    ]
+  },
+  {
+    "id": "8b192f0b-8cbd-4187-a94f-724fc2cf457e",
+    "nome": "Cosme Luciano Brioli",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "44366adf-f665-45bd-bf43-58a964b32b98",
+    "nome": "Cristina Terezinha Do Carmo",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "83de46d9-5ef9-4aa0-88d6-a0259e872d4c",
+    "nome": "Damiao Luciano Brioli",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "def41f41-9387-4f70-b7dd-d663769dc20a",
+    "nome": "Devanir Kuhnen",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "1265e902-2d46-494b-a813-e1e7402ece56",
+    "nome": "Dion Rebert Costa",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Rafael Nakano"
+      }
+    ]
+  },
+  {
+    "id": "7e8b05bb-1f64-4973-b2e7-2be3fba3d6ff",
+    "nome": "Dirceu Bettoni",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Fernando Marcos"
+      }
+    ]
+  },
+  {
+    "id": "ec0bd0cc-2217-4361-868a-cca22f4c7218",
+    "nome": "Ederson Tutida",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Rafael Nakano"
+      }
+    ]
+  },
+  {
+    "id": "859c5a0b-4a5d-4bfb-aedf-bd760b727e9c",
+    "nome": "Edson Carlos Block",
+    "totalAviarios": 5,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 5,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "5",
+        "tecnico": "Rafael Nakano"
+      }
+    ]
+  },
+  {
+    "id": "b04bb360-c98b-4985-847e-148dd60db48e",
+    "nome": "Enio Michels",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "e538f528-0a1c-43a1-82f8-e0d0a7df22d7",
+    "nome": "Evandro Da Silva Golfeto",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "b7207e93-c9a4-4237-a9bc-45af9448c6bc",
+    "nome": "Ezequiel Rodrigo Pereira Dias",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Bruno faganello"
+      }
+    ]
+  },
+  {
+    "id": "2f39a164-dddd-4c3b-8ab0-785c91e886cb",
+    "nome": "Francisco B Damacena Reg Econ Familiar",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "88486f41-cbd6-4785-943f-cef109c1ef2d",
+    "nome": "Gilberto Luiz Fauro",
+    "totalAviarios": 3,
+    "aviariosComDadosCount": 3,
+    "aviariosSemDadosCount": 0,
+    "status": "100% PREENCHIDO",
+    "aviariosComDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando Marcos",
+        "updated_at": "2026-11-04T01:47:25.118+00:00",
+        "pressao_vedacao": 10,
+        "pressao_trabalho": 32,
+        "ventilacao": 2.96,
+        "exaustores": 14
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando Marcos",
+        "updated_at": "2026-11-04T01:52:15.845+00:00",
+        "pressao_vedacao": 10,
+        "pressao_trabalho": 30,
+        "ventilacao": 3.4,
+        "exaustores": 14
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando Marcos",
+        "updated_at": "2026-11-04T01:58:45.831+00:00",
+        "pressao_vedacao": 10,
+        "pressao_trabalho": 38,
+        "ventilacao": 3.2,
+        "exaustores": 15
+      }
+    ],
+    "aviariosSemDados": []
+  },
+  {
+    "id": "d61a30ea-ca18-4522-b9c4-21a07f928030",
+    "nome": "Giovanne Orlando Dallago",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Jovane"
+      }
+    ]
+  },
+  {
+    "id": "3366ed24-0b63-4614-9fb0-6774e77a6af5",
+    "nome": "Glaucio Colavite",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Iarbas"
+      }
+    ]
+  },
+  {
+    "id": "86446af6-8ad5-4cc5-9451-9074fa083008",
+    "nome": "Gustavo Fernandes",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Iarbas"
+      }
+    ]
+  },
+  {
+    "id": "3bffc870-912d-4ba1-b627-f1af05186082",
+    "nome": "Heber Clayton De Santana",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "8d8daaac-ece1-449a-86d9-a27824bd1cb7",
+    "nome": "Izidoro Jose De Oliveira",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Iarbas"
+      }
+    ]
+  },
+  {
+    "id": "61076347-372d-4673-a8bf-0fd2ab8cef55",
+    "nome": "Jane Maria Bertol",
+    "totalAviarios": 8,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 8,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "5",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "6",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "7",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "8",
+        "tecnico": "eder"
+      }
+    ]
+  },
+  {
+    "id": "1cea8139-7efb-4659-8b52-8c72e6b5ee83",
+    "nome": "Joao Carrenho Neto",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "029c99e4-78dc-4993-adb7-c59c254a7e92",
+    "nome": "Jose Antonio Pessuto",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "82d4ec52-0946-40a3-b520-a78706cfcf39",
+    "nome": "Jose De Moura",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "b88b2e0a-47ce-4f59-b418-ce2ea7ff16a7",
+    "nome": "Jose Ferreira Dos Santos",
+    "totalAviarios": 1,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 1,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "9f0b8add-8a77-4ad0-987b-a2e681ce4663",
+    "nome": "Jose Guilherme Passarini",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "vinicius"
+      }
+    ]
+  },
+  {
+    "id": "d44ebbfb-cc7e-47f6-a7a8-ba2a2824d1c8",
+    "nome": "Jose Luiz Linn",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando Marcos"
+      }
+    ]
+  },
+  {
+    "id": "4ec8c3d3-3625-4e91-906c-9b3f8e11866f",
+    "nome": "Jose Sidney Perego",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "42137d81-c13c-456c-b1ad-8546b1b83223",
+    "nome": "Lucio Aparecido Ferrari",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "e1c6d180-b303-4fd0-b0b5-325af37aa69d",
+    "nome": "Marcio Wanderlei Dilkin",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "vinicius"
+      }
+    ]
+  },
+  {
+    "id": "39eb82ed-c901-4103-9978-92ede2fdd536",
+    "nome": "Maria Salete De Freitas Lavarias",
+    "totalAviarios": 1,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 1,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "vinicius"
+      }
+    ]
+  },
+  {
+    "id": "1083dd9d-387f-4e97-aa58-73352cb00c95",
+    "nome": "Mauri Antonio Mazurek",
+    "totalAviarios": 29,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 29,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "20",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "21",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "22",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "23",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "24",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "25",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "26",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "27",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "28",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "29",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "30",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "31",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "32",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "33",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "34",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "35",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "36",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "37",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "38",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "39",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "40",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "41",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "42",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "43",
+        "tecnico": "Rafael Nakano"
+      },
+      {
+        "instalacao": "5",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "6",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "7",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "8",
+        "tecnico": "Bruno faganello"
+      }
+    ]
+  },
+  {
+    "id": "b73526eb-a6e6-4d10-8c44-2ddde70c5d96",
+    "nome": "Orlando Cessel Junior",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "2d2f68d4-c9a5-4812-b1de-f2da9c24b54b",
+    "nome": "Pauli Mergen",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "edd74f1a-8c16-40b0-ba41-edcefa83d728",
+    "nome": "Paulo Bloemer Regime Economia Familiar",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "b6b9ea38-56e5-4f31-9fd5-2bdcc08e53ce",
+    "nome": "Ricardo Kenji Utida",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "eder"
+      }
+    ]
+  },
+  {
+    "id": "250ed501-18ce-4642-9bc8-f9464db5db43",
+    "nome": "Roberto Bloemer",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "6b88830c-d76e-4384-83d3-fe8e35bf15af",
+    "nome": "Roberto Carlos Miotto Ferreira",
+    "totalAviarios": 90,
+    "aviariosComDadosCount": 5,
+    "aviariosSemDadosCount": 85,
+    "status": "PARCIALMENTE PREENCHIDO",
+    "aviariosComDados": [
+      {
+        "instalacao": "70",
+        "tecnico": "Bruno faganello",
+        "updated_at": "2026-11-04T20:46:26.8+00:00",
+        "pressao_vedacao": 10,
+        "pressao_trabalho": 25,
+        "ventilacao": 2.7,
+        "exaustores": 14
+      },
+      {
+        "instalacao": "71",
+        "tecnico": "Bruno faganello",
+        "updated_at": "2026-11-03T21:42:34.282+00:00",
+        "pressao_vedacao": 5,
+        "pressao_trabalho": 25,
+        "ventilacao": 2.63,
+        "exaustores": 14
+      },
+      {
+        "instalacao": "72",
+        "tecnico": "Bruno faganello",
+        "updated_at": "2026-11-04T20:37:16.104+00:00",
+        "pressao_vedacao": 5,
+        "pressao_trabalho": 27,
+        "ventilacao": 2.85,
+        "exaustores": 13
+      },
+      {
+        "instalacao": "73",
+        "tecnico": "Bruno faganello",
+        "updated_at": "2026-11-04T20:38:41.03+00:00",
+        "pressao_vedacao": 10,
+        "pressao_trabalho": 20,
+        "ventilacao": 2.7,
+        "exaustores": 13
+      },
+      {
+        "instalacao": "74",
+        "tecnico": "Bruno faganello",
+        "updated_at": "2026-11-04T20:43:34.202+00:00",
+        "pressao_vedacao": 5,
+        "pressao_trabalho": 30,
+        "ventilacao": 2.87,
+        "exaustores": 13
+      }
+    ],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "100",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "101",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "102",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "103",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "104",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "105",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "106",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "107",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "108",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "109",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "110",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "111",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "112",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "113",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "114",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "115",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "116",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "117",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "118",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "119",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "120",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "121",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "122",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "123",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "124",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "125",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "35",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "36",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "41",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "42",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "43",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "44",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "45",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "46",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "47",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "48",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "49",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "5",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "50",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "51",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "52",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "53",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "54",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "55",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "56",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "57",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "58",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "59",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "6",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "60",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "61",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "62",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "63",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "64",
+        "tecnico": "Jovane"
+      },
+      {
+        "instalacao": "7",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "75",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "76",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "77",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "78",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "79",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "8",
+        "tecnico": "Lutyeska"
+      },
+      {
+        "instalacao": "80",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "81",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "82",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "83",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "84",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "85",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "86",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "87",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "88",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "89",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "90",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "91",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "92",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "93",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "94",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "95",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "96",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "97",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "98",
+        "tecnico": "Bruno faganello"
+      },
+      {
+        "instalacao": "99",
+        "tecnico": "vinicius"
+      }
+    ]
+  },
+  {
+    "id": "1160205e-18c0-4934-b3d0-8deb9a07f288",
+    "nome": "Rogerio Luiz Delamura",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "eder"
+      }
+    ]
+  },
+  {
+    "id": "65788938-4486-4a29-b533-b09350cb5d0b",
+    "nome": "Sergio Moraes",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "eder"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "eder"
+      }
+    ]
+  },
+  {
+    "id": "c10aef05-0dd7-4f43-ad25-0249914a424c",
+    "nome": "Tiago Alves Colombo",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Iarbas"
+      }
+    ]
+  },
+  {
+    "id": "7c6f4f4c-4de7-4a13-8bb5-15529402ff1c",
+    "nome": "Valdeir Zancanaro",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando zanolla"
+      }
+    ]
+  },
+  {
+    "id": "b3823772-ceab-49fe-9c40-4c3fbb4d916c",
+    "nome": "Valdemir Chagas De Matos",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando zanolla"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "a4d147d1-2d4c-4243-98cf-d3a30e576e7f",
+    "nome": "Valdir Aparecido Mello",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "vinicius"
+      }
+    ]
+  },
+  {
+    "id": "55bc6086-6b71-43f6-b071-c3779b1cf9a6",
+    "nome": "Valdomiro Tomaz",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "vinicius"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "vinicius"
+      }
+    ]
+  },
+  {
+    "id": "2b9690bc-9f92-4bed-864f-51e5dee92291",
+    "nome": "Vanderlei Felippi",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "af23ab39-3ecf-477a-8433-13312a5f6591",
+    "nome": "Vicente Jonas De Araujo Maciel",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "3",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Fernando Marcos"
+      }
+    ]
+  },
+  {
+    "id": "25b02668-2a12-440f-a969-2600e70ea0fe",
+    "nome": "Walter Augusti Zancanaro",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Stefani"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Stefani"
+      }
+    ]
+  },
+  {
+    "id": "a5af369d-a5e1-4f73-8c86-c04cbebe8ee9",
+    "nome": "Walter De Paula Ramos Neto",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando Marcos"
+      }
+    ]
+  },
+  {
+    "id": "8e9f3209-a939-49df-b6d2-3197c0310b0d",
+    "nome": "William Luiz Ajala",
+    "totalAviarios": 4,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 4,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "3",
+        "tecnico": "Iarbas"
+      },
+      {
+        "instalacao": "4",
+        "tecnico": "Iarbas"
+      }
+    ]
+  },
+  {
+    "id": "f6acaeb0-e658-4066-858e-55f57b7c0542",
+    "nome": "Wilson Tassi",
+    "totalAviarios": 2,
+    "aviariosComDadosCount": 0,
+    "aviariosSemDadosCount": 2,
+    "status": "SEM SETUP",
+    "aviariosComDados": [],
+    "aviariosSemDados": [
+      {
+        "instalacao": "1",
+        "tecnico": "Fernando Marcos"
+      },
+      {
+        "instalacao": "2",
+        "tecnico": "Fernando Marcos"
+      }
+    ]
+  }
+]

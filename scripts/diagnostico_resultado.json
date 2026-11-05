@@ -1,0 +1,4235 @@
+{
+  "totalProdutores": 67,
+  "totalAviarios": 329,
+  "produtoresComAoMenosUmSetup": 67,
+  "produtoresComTodosSetups": 67,
+  "produtoresSemNenhumSetup": 0,
+  "totalAviariosComSetup": 329,
+  "totalAviariosPendentes": 0,
+  "listaProdutoresComSetup": [
+    {
+      "id": "27a53615-2954-4f18-a038-85bda33b4452",
+      "nome": "Ademir Zago",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "d67da945-a71a-42b5-8bad-5f89a9bb9cd6",
+          "numero": "1",
+          "tecnico": "Bruno faganello",
+          "setupId": "0cadad12-4d29-41d4-863b-add69b9d50ba",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "586c01ce-90c4-4694-af9e-35b854990466",
+          "numero": "2",
+          "tecnico": "Bruno faganello",
+          "setupId": "816c3abb-ac49-4ca1-9083-57aed97bf242",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "1f50d087-7603-4e21-8b5b-45ac4f32cff1",
+          "numero": "3",
+          "tecnico": "Bruno faganello",
+          "setupId": "80e05b65-42b4-41e1-b90d-9e43b1805d53",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3e9f169b-122b-4717-a918-3100847f5433",
+          "numero": "4",
+          "tecnico": "Bruno faganello",
+          "setupId": "f90bef5a-1dee-463d-b6ab-2c55fea362d7",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "78978727-3717-4145-8c74-1ad3d9e23281",
+      "nome": "Ademir Zancanaro",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "00176af3-6498-47ad-9a87-05092db295b3",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "64035d3f-77cc-43f4-b5ff-dbd729c56ae4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "452f9cfe-ee3c-40f3-9137-05ee07d1fa39",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "205fee36-6ebc-4fe4-8cb4-181b10c0a162",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "0983ae36-9661-451b-bfba-dc1092698f61",
+      "nome": "Adilson Garcia/Vanderleia A S Garcia",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "93bfef4f-0204-457d-b517-8d91ddc98e66",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "c47912e3-27a6-4c01-a8ed-adb0d94a8762",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "50682ca3-0f8b-4b41-9896-479ee689c664",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "f7e2ed6d-0e51-4164-ad76-17abef0bd347",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "2647addf-c5be-4688-a279-10546abce3ca",
+      "nome": "Adimilson Dos Santos",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "140017c7-946d-47fe-8701-8dfac55b272a",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "bfc85d09-73c1-4261-bc43-93df76d3511c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "500dff0c-f1c0-4d3e-aca7-dc0a9bb1c9b8",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "cced39c1-d4b3-4083-93b4-90ca93e5da44",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4db592ac-baa5-4a0a-ae22-31f6aa2d71e1",
+          "numero": "3",
+          "tecnico": "Fernando zanolla",
+          "setupId": "26bd0d18-8c6e-4445-a330-6a85d4f81f62",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c0cd6632-f0c7-497f-b17d-b3dd6739e6b1",
+          "numero": "4",
+          "tecnico": "Fernando zanolla",
+          "setupId": "22beb339-13c2-45aa-99c3-7f0782310698",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "56cb2daf-6ddb-4829-b5d4-babe9fcceb8e",
+      "nome": "Adriano Maximino Paludo",
+      "totalAviarios": 8,
+      "aviariosComSetup": [
+        {
+          "id": "ddd6ef12-8729-45c4-a600-4f1ad087050d",
+          "numero": "11",
+          "tecnico": "vinicius",
+          "setupId": "93582f85-8ded-4582-a04b-25f9b0b6db4d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "18f82910-f322-4511-9495-a33c2cfd1d6b",
+          "numero": "12",
+          "tecnico": "vinicius",
+          "setupId": "e478ca97-91c6-46e3-8250-186d4a1a2284",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8520620d-2bc5-4f24-808a-f5aec2249fc1",
+          "numero": "13",
+          "tecnico": "vinicius",
+          "setupId": "682228a5-7b33-4278-b8fe-ce4df32b7db4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c282e382-c707-4b06-88b9-0286070e0fff",
+          "numero": "14",
+          "tecnico": "vinicius",
+          "setupId": "6b49b041-2321-4ad2-bd2a-ae410cb9a5b6",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4cbd6828-d5b9-4196-b4c5-848003c964a9",
+          "numero": "15",
+          "tecnico": "vinicius",
+          "setupId": "a5cf8fe0-26a0-4fb4-9d9b-1937c3db25ec",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d98cc862-4e34-4837-98d8-0c2be10ba6d1",
+          "numero": "16",
+          "tecnico": "vinicius",
+          "setupId": "df567a7f-0cdb-404f-913e-e93cbaede437",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "ece46102-5bc2-4073-aebf-47520a783b78",
+          "numero": "17",
+          "tecnico": "vinicius",
+          "setupId": "8c3580e8-1300-4a31-8686-7b9f61f2f17f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3419fa1f-0c70-4bc3-b1a1-31d21f300170",
+          "numero": "18",
+          "tecnico": "vinicius",
+          "setupId": "52f0a94e-358d-457f-91df-f475830591e4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "ee305c70-db64-4696-970e-1c9152ea1af5",
+      "nome": "Agostinho Anselmi",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "b0f2a9be-2d16-4ad0-821b-a396c5e47c4b",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "a981cee2-0169-4376-bf07-3feeeafaca3f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "81c97b87-5cbe-4d65-9ca1-706c4c62770a",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "aa9c85d9-194e-4499-bdb6-09c9145df5d0",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d6ec9fe8-2d50-4ccf-bb0d-fcf3002939e0",
+          "numero": "3",
+          "tecnico": "Fernando zanolla",
+          "setupId": "89d03889-56f1-4166-904b-dddcbeab0fe4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b5deb8d2-1b02-4f4e-b374-baf583833d99",
+          "numero": "4",
+          "tecnico": "Fernando zanolla",
+          "setupId": "ad243b1a-6af0-4fec-8ee8-58d53ad94474",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "ca381b21-5157-43cd-88b9-6c24ccf27311",
+      "nome": "Alceu Hernani Kleinschmitt",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "a2aa95fe-dbeb-430e-9fff-c55240c745eb",
+          "numero": "1",
+          "tecnico": "Fernando Marcos",
+          "setupId": "ab5fef06-7cd3-462a-8ac0-78af20be5ede",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0b977031-560f-4b0b-9dd9-d76e8392892b",
+          "numero": "2",
+          "tecnico": "Fernando Marcos",
+          "setupId": "60f3e8d5-5e10-40b2-b548-3eef6c6e6084",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "5ce34dd9-affe-47a8-82ea-89d9f6bee52e",
+      "nome": "Altemar Schulter",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "4cd20077-2d86-425b-8fad-ece0546d110e",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "8552a651-4ca4-4ed1-bc8f-48074634c804",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "663c12f0-56e7-426e-985e-18c0d4a2c842",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "f113405b-953c-49ec-8c07-66ba45ae45ec",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "60164f51-83bb-49af-9107-70426cf00b08",
+      "nome": "Alvaro Carlos Salvadori",
+      "totalAviarios": 8,
+      "aviariosComSetup": [
+        {
+          "id": "0c40c781-b1f3-4036-b633-32da85d81cf7",
+          "numero": "10",
+          "tecnico": "Iarbas",
+          "setupId": "0e7e97fc-995f-4c2b-bdd3-ac8e561f5584",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "be05220d-9b00-4a0e-858a-a597b91c25f6",
+          "numero": "11",
+          "tecnico": "Iarbas",
+          "setupId": "d79675dd-ddf6-433e-97de-213c06ebc51c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "9bce7d67-539d-4f04-b334-14d2feb446f2",
+          "numero": "12",
+          "tecnico": "Iarbas",
+          "setupId": "513f90a8-1018-4827-9c04-5a58c141eab1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "829b3470-c0ed-4e48-b384-2f7ec7242007",
+          "numero": "5",
+          "tecnico": "Iarbas",
+          "setupId": "fe03672d-9cc1-490a-9c7c-f4ba116aad8b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "52e3b163-f79a-46bb-9696-a2dd6262c453",
+          "numero": "6",
+          "tecnico": "Iarbas",
+          "setupId": "b36092f8-2288-4546-b9a2-bcc08fda35c1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "2a42abcd-19f7-4197-8a14-d9640e86fb5e",
+          "numero": "7",
+          "tecnico": "Iarbas",
+          "setupId": "759ff92e-e106-4388-874f-a4295986ba40",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "cd07ab60-93cc-4525-bca3-efb212b20e5f",
+          "numero": "8",
+          "tecnico": "Iarbas",
+          "setupId": "efa0bd3c-457d-4666-9a76-de3b34c285ce",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f9fbe2ac-9479-40ab-acf8-1ebc8aeb32cb",
+          "numero": "9",
+          "tecnico": "Iarbas",
+          "setupId": "aee1cd12-51d4-475c-9f8c-699a85dddec5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "3c723409-b335-4f60-bdf3-1b7b89b40c5b",
+      "nome": "Alvaro Mario Burin Junior",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "4850c0d5-bc77-4efd-96ca-3809b569c3f9",
+          "numero": "1",
+          "tecnico": "Iarbas",
+          "setupId": "39119757-1307-4fa1-bde5-cb50771a77e5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4a6b3d97-c604-4881-8517-001d1317e88b",
+          "numero": "2",
+          "tecnico": "Iarbas",
+          "setupId": "33c87a64-ecdf-428a-8d1e-34f108f1e3ea",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f04ac61f-7dbf-4c3a-9410-14f5f725b598",
+          "numero": "3",
+          "tecnico": "Iarbas",
+          "setupId": "eccf0feb-bea3-4c30-8096-d3da3b3483ce",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c76ebf4f-f72e-4c45-9ff5-fd99fbc7468d",
+          "numero": "4",
+          "tecnico": "Iarbas",
+          "setupId": "5e0848fd-b7bc-4e99-b994-8ffb9ec1f8ce",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "fb74a447-9e80-450b-9c24-ea627e431f1e",
+      "nome": "Amarildo Felix Pereira",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "8cb0099f-a3bf-484d-a4a9-0a1e5f2414ca",
+          "numero": "1",
+          "tecnico": "eder",
+          "setupId": "b155f438-20cc-454a-bc64-72839799f002",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "62e77b21-1427-4336-958f-4bf338a804d5",
+          "numero": "2",
+          "tecnico": "eder",
+          "setupId": "3171cd2d-6dc1-4fe1-a541-3d4520a0dd2b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "1c8067ec-6e3f-406a-9bc6-46599bc867b8",
+          "numero": "3",
+          "tecnico": "eder",
+          "setupId": "1169ad4a-8988-4b72-b0a2-32d6795ca76d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "80963fca-5e0a-4157-b81a-3948c5334c49",
+          "numero": "4",
+          "tecnico": "eder",
+          "setupId": "118b7f81-6e2c-4d60-b088-41f87edd06c5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "2f844c4a-1c8c-43c0-b7d5-e9a63da14385",
+      "nome": "Antonio H. Martins E/Ou Elisio H. Martins",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "9df8cc1b-8ac5-411f-a875-69ffb166aed0",
+          "numero": "1",
+          "tecnico": "Fernando Marcos",
+          "setupId": "2d4f9fc6-5b65-40ac-bcea-b91bf688f29f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "fa48c377-84c8-4226-8985-6dd57df2966b",
+          "numero": "2",
+          "tecnico": "Fernando Marcos",
+          "setupId": "328ace1d-8569-4793-87b5-67c7ed5ef5d9",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "830b9f8f-87a0-4a4d-b62c-4a72927ab50b",
+          "numero": "3",
+          "tecnico": "Fernando Marcos",
+          "setupId": "63ba22ee-b6c2-4734-baa8-b443e2607242",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8b82b02a-9d32-46d3-a817-1305663bc354",
+          "numero": "4",
+          "tecnico": "Fernando Marcos",
+          "setupId": "7b8bb44c-f8e7-4e90-b5ee-965efc14eb70",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "50861652-1519-4426-924e-a46fe26cc12c",
+      "nome": "Bruno Bertol Delamura",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "22507d34-9f6f-44f4-9ed2-8f4a0fb601fd",
+          "numero": "1",
+          "tecnico": "eder",
+          "setupId": "995adef2-8d6a-45c9-bedb-c2f80631d2b5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "18e2ed88-6a77-4562-aed8-3cb6a23b9483",
+          "numero": "2",
+          "tecnico": "eder",
+          "setupId": "84d90ecb-146c-4a76-b6ba-02b36b41f57d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "93789e5a-72c6-4cac-90b9-62cb46d5d789",
+          "numero": "3",
+          "tecnico": "eder",
+          "setupId": "56bd60e8-f6ae-4667-943a-7120056040df",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "a5578203-8703-44c5-a608-da1cd9377701",
+          "numero": "4",
+          "tecnico": "eder",
+          "setupId": "2cd3b196-8d4b-47ab-b7af-b464245d153a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "9dbf448c-d0c9-4ec8-9289-12b53ac3d77b",
+      "nome": "Carlos Alexandre Tarniove",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "0501f0a0-9cbf-42b2-a1ee-8b8ab3b71b32",
+          "numero": "3",
+          "tecnico": "Stefani",
+          "setupId": "4947e677-65a0-46aa-9601-ed4ac63f8a8f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "89621115-056f-429d-b9fe-e4a885ead632",
+          "numero": "4",
+          "tecnico": "Stefani",
+          "setupId": "65e50bc2-d0a8-42a2-ae19-50200776aee6",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "03cde4db-1195-42e9-b402-1a2c327facb1",
+      "nome": "Carlos Cesar Polla",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "556be7ba-e08e-4c00-ad78-df3e29db6b08",
+          "numero": "1",
+          "tecnico": "vinicius",
+          "setupId": "475302b9-1762-4b53-bf7b-90f40bc38edc",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "bb48ef66-1e78-485a-83f4-49df55b6d08b",
+          "numero": "2",
+          "tecnico": "vinicius",
+          "setupId": "b83e0bd1-2019-4f02-9d91-524e60048ed1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "5331b245-3215-4890-b9af-4627c5d4a29a",
+          "numero": "3",
+          "tecnico": "vinicius",
+          "setupId": "68b1524c-7a97-4820-909a-327b5ec29c70",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "47887635-4c19-457b-9151-7900e07cbcac",
+          "numero": "4",
+          "tecnico": "vinicius",
+          "setupId": "97336a82-8f00-4c00-aa5d-348c93e2349d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "f844c232-21fb-4747-9390-4bd3d01fb2a0",
+      "nome": "Claudemir Kuhnen",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "c1ec8146-517e-4d31-9f11-a5370f78a2c3",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "694bf2ce-a85a-40de-b2ae-c775754f58b2",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "a35f9a8e-c0b1-4e47-9592-b94a6774d4a6",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "d11ee29e-3c12-4ea3-bb70-1508675f422d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "8b123084-91bd-4ee0-b0a0-e072f6f48b92",
+      "nome": "Claudio Joares Mohr",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "9c1f8d50-a53f-42e8-bf7b-f99fd81823da",
+          "numero": "1",
+          "tecnico": "Bruno faganello",
+          "setupId": "9b922b6b-5516-45fd-9d3a-0b4cc5d2f868",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "dfbd3a79-b540-4b36-b3ed-66ee79f8a079",
+          "numero": "2",
+          "tecnico": "Bruno faganello",
+          "setupId": "513e266c-2fe5-4325-9f0d-9d203b2e7b34",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "59777a1f-c016-4db8-ac9a-291577a8847a",
+          "numero": "3",
+          "tecnico": "Bruno faganello",
+          "setupId": "6a87c868-ab33-49b4-9104-f5f024d55159",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "fd43e093-ff00-4be3-a14c-915401bec3b5",
+          "numero": "4",
+          "tecnico": "Bruno faganello",
+          "setupId": "8654584a-17c2-4401-ae61-80a685920a3e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "6a08d7bb-cecf-440f-bb04-8bf73b64df31",
+      "nome": "Claudio Junior Machado Posser",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "5722bd78-097b-4074-85fb-f1a324186e1a",
+          "numero": "1",
+          "tecnico": "Jovane",
+          "setupId": "ac212881-ed69-4343-ab69-f171273d0cac",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "a992c65e-7f35-45ce-b569-46620634f43b",
+          "numero": "2",
+          "tecnico": "Jovane",
+          "setupId": "3a4d2704-3423-408f-b17b-9f6cdca42b84",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3ede6935-af4a-4ff1-a18e-de2cd87ba145",
+          "numero": "3",
+          "tecnico": "Jovane",
+          "setupId": "590fe8ef-cb4f-4865-b6b7-75cbd6cf77e7",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "fb773ac4-6031-412f-acbf-bec78b24129d",
+          "numero": "4",
+          "tecnico": "Jovane",
+          "setupId": "8217a52e-565d-4408-aa2c-b14d367a576e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "8b192f0b-8cbd-4187-a94f-724fc2cf457e",
+      "nome": "Cosme Luciano Brioli",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "08490f59-db8c-4194-84d7-7bde3abd9d4e",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "f3da36bd-8965-4198-9876-73806325d403",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "af40e66b-667a-4234-9f7f-193d0701fddc",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "5fac8751-9133-4a45-83a4-cdfc376debb2",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "44366adf-f665-45bd-bf43-58a964b32b98",
+      "nome": "Cristina Terezinha Do Carmo",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "d58ae37a-21a6-4194-a329-10c3c4091d27",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "5a17e2d5-6720-43b9-bec9-ee74f060b1cc",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "6d42dd21-1796-460c-8803-a45097a66728",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "2aa29518-cdac-464d-8ab4-2696ed9f08e1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b1b17fbe-3033-4c70-8632-43ecc2c85eb4",
+          "numero": "3",
+          "tecnico": "Fernando zanolla",
+          "setupId": "8c8af259-ed12-4b87-a8f5-d095f24715db",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7cf02ea3-fb15-4d69-8259-7712a4addbcb",
+          "numero": "4",
+          "tecnico": "Fernando zanolla",
+          "setupId": "29621703-f3cb-4e59-a7fc-803b6a865fed",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "83de46d9-5ef9-4aa0-88d6-a0259e872d4c",
+      "nome": "Damiao Luciano Brioli",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "821e0b85-75bf-4a20-a8f4-748387b511da",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "559e5573-732e-44a6-b3df-769c9a99d9a5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "12817cc2-6cd9-4445-ad7a-4e7901a4473a",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "91159fc3-2349-448c-952a-2274a10cda55",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "def41f41-9387-4f70-b7dd-d663769dc20a",
+      "nome": "Devanir Kuhnen",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "e7355bd5-fc5b-46f8-a359-da75f29002ae",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "df39c19f-ccd9-4d1c-ba5c-356c0c56cee3",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b80f0959-f1f6-4c7f-b360-ae8c9e700a88",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "a0838ebf-b4aa-4633-a2d2-01e3456f3472",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "1265e902-2d46-494b-a813-e1e7402ece56",
+      "nome": "Dion Rebert Costa",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "f373ae11-6775-4bac-a210-bc150e15a62f",
+          "numero": "1",
+          "tecnico": "Rafael Nakano",
+          "setupId": "02ce7b5d-e901-43e7-a563-0b7a3f904ca5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "640a77ff-c1e3-48a0-ab3c-19c1ae663112",
+          "numero": "2",
+          "tecnico": "Rafael Nakano",
+          "setupId": "8aa44e09-5a0b-43ce-b62b-761b5e542610",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "ed1bacf0-8acc-4b2f-a5b1-4d8fc7487ba5",
+          "numero": "3",
+          "tecnico": "Rafael Nakano",
+          "setupId": "f137d7b6-5f8f-4bba-8ed2-7bc47f87ad7f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "ded41b7b-7126-4438-8455-57e73377d520",
+          "numero": "4",
+          "tecnico": "Rafael Nakano",
+          "setupId": "812cc1d3-aab6-4193-906b-44df7174192e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "7e8b05bb-1f64-4973-b2e7-2be3fba3d6ff",
+      "nome": "Dirceu Bettoni",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "9251c7d7-255b-458e-9b98-ff8939237a60",
+          "numero": "1",
+          "tecnico": "Fernando Marcos",
+          "setupId": "692906b3-3b5e-493e-a5fa-4bb84c809fb2",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "be6adaff-f46f-4dd7-829b-a05518a6d951",
+          "numero": "2",
+          "tecnico": "Fernando Marcos",
+          "setupId": "f363745b-d77e-440f-bbc6-c66edfde7586",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "2527969e-78bf-4c47-8374-b0c0c3547ad0",
+          "numero": "3",
+          "tecnico": "Fernando Marcos",
+          "setupId": "e39c99f7-c303-441b-81b2-c83e22042082",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f39fa9f4-83cd-4155-bf81-7985e698e85b",
+          "numero": "4",
+          "tecnico": "Fernando Marcos",
+          "setupId": "358e12a5-dadf-4997-8472-d74304f71f90",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "ec0bd0cc-2217-4361-868a-cca22f4c7218",
+      "nome": "Ederson Tutida",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "9b819755-4cd5-4d6f-ac2b-4dc081feb538",
+          "numero": "1",
+          "tecnico": "Rafael Nakano",
+          "setupId": "813aafca-7257-435f-86ce-5b7ecf74bf1f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "2e6598e5-37a0-4907-a5b0-6b9f8ee35dab",
+          "numero": "2",
+          "tecnico": "Rafael Nakano",
+          "setupId": "a4651188-f197-4e78-b8b1-3d02dc5be3cf",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "72217836-d671-43d4-b204-6064253be885",
+          "numero": "3",
+          "tecnico": "Rafael Nakano",
+          "setupId": "7f0ef689-64e8-449a-b83b-fed41244f2cd",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7caccf31-1c21-4530-a815-90c50b537b0e",
+          "numero": "4",
+          "tecnico": "Rafael Nakano",
+          "setupId": "9f5125a0-5152-4b50-a8e2-f973a180ffea",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "859c5a0b-4a5d-4bfb-aedf-bd760b727e9c",
+      "nome": "Edson Carlos Block",
+      "totalAviarios": 5,
+      "aviariosComSetup": [
+        {
+          "id": "b110d71c-5bab-474a-8073-56908b07d4d5",
+          "numero": "1",
+          "tecnico": "Lutyeska",
+          "setupId": "71938058-d864-4611-8a02-e8466ef0a756",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "372e0ca1-dcf8-4d44-b895-d8c7b4a706b2",
+          "numero": "2",
+          "tecnico": "Rafael Nakano",
+          "setupId": "cedde9bf-d1ca-4598-9cad-5b282775f056",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "ddbe770d-35c3-4945-9b7f-5664f031ddff",
+          "numero": "3",
+          "tecnico": "Rafael Nakano",
+          "setupId": "3168ee92-85ca-4b18-8014-bacacfb8049c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3886bbbf-d9f7-4312-955e-69be6ed5fc42",
+          "numero": "4",
+          "tecnico": "Rafael Nakano",
+          "setupId": "c04dd94c-3bc7-49db-9ce9-cfc9fb571450",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f52ae692-5e5f-42bd-bad9-7a03f29caa15",
+          "numero": "5",
+          "tecnico": "Rafael Nakano",
+          "setupId": "373efa8f-d56b-4e2d-b4e4-8af2865263f9",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "b04bb360-c98b-4985-847e-148dd60db48e",
+      "nome": "Enio Michels",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "bc3d683d-6007-4753-a531-e862a5a15755",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "5c3029f2-8c1f-4888-ac54-bbff0d1bbf22",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b26a9f90-0352-4d9c-b4d8-e72ed5843739",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "595383ae-84f0-48e2-aa2d-5e935dc2a82e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "e538f528-0a1c-43a1-82f8-e0d0a7df22d7",
+      "nome": "Evandro Da Silva Golfeto",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "3154f077-2633-4e51-9265-f76b94a3aaa4",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "44716d9a-6d8b-4bbf-9735-c16eeeaf2425",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "aca661f7-ebbe-4273-aa68-9b5ea0ae2906",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "57dcf508-b750-4e10-ba2b-a00d0c4339bb",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "b7207e93-c9a4-4237-a9bc-45af9448c6bc",
+      "nome": "Ezequiel Rodrigo Pereira Dias",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "98195a47-4761-4ff5-bb62-024132d488f2",
+          "numero": "1",
+          "tecnico": "Bruno faganello",
+          "setupId": "36d80a45-7e51-4575-9cd5-94a321594a76",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "044f7401-6efb-4eff-8aed-8b1bda71d0e9",
+          "numero": "2",
+          "tecnico": "Bruno faganello",
+          "setupId": "ee81c12f-0cd7-4ac6-b810-6ad3da296114",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "6c62826e-ab79-469c-ba38-58d36884e2c8",
+          "numero": "3",
+          "tecnico": "Bruno faganello",
+          "setupId": "a7ec83c0-0f2a-4ef7-a7c6-48892fbf711d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f4bb828f-b9f8-4894-a5b5-23df994d1cf6",
+          "numero": "4",
+          "tecnico": "Bruno faganello",
+          "setupId": "e99deaf7-0239-4a91-9b59-668dfe8dc59d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "2f39a164-dddd-4c3b-8ab0-785c91e886cb",
+      "nome": "Francisco B Damacena Reg Econ Familiar",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "738c2861-c427-4e36-9df8-0b998642009b",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "3e15c810-22da-4927-b487-22a8af5b795d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "2dfe46a8-23b5-4138-a041-c45fa89fdace",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "d17848ef-dd38-4c5e-9b01-93d1229988b7",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "88486f41-cbd6-4785-943f-cef109c1ef2d",
+      "nome": "Gilberto Luiz Fauro",
+      "totalAviarios": 3,
+      "aviariosComSetup": [
+        {
+          "id": "1b7e0c5d-86df-4d42-b97f-887a5942bfaf",
+          "numero": "1",
+          "tecnico": "Fernando Marcos",
+          "setupId": "3ff94b7c-9f7b-447d-80e5-da8c41b716c6",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": 10,
+          "ventilacao": 2.96,
+          "observacoes": "Vedação de portas e portões , forração com frestas e vazão do quadro no aviário  fora do padrão."
+        },
+        {
+          "id": "d7f13499-06db-42c8-a342-c22d66a058be",
+          "numero": "2",
+          "tecnico": "Fernando Marcos",
+          "setupId": "588be5bf-426c-4c1d-bc01-9a1f7d190ded",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": 10,
+          "ventilacao": 3.4,
+          "observacoes": "Vedação de portas e portões, ajuste nos janelão e entrada do quadro de água no galpão insuficiente."
+        },
+        {
+          "id": "68d74a90-282f-4b31-868e-a6f56e0d1778",
+          "numero": "3",
+          "tecnico": "Fernando Marcos",
+          "setupId": "10d6cb69-4bd3-4225-b09a-443081941dd1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": 10,
+          "ventilacao": 3.2,
+          "observacoes": "Janelão não está vedando, portas com frestas e forro também. são 16 exaustor porém só 15 funciona. inlets do galpão não está funcionando."
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "d61a30ea-ca18-4522-b9c4-21a07f928030",
+      "nome": "Giovanne Orlando Dallago",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "2302a51b-271f-4215-94da-0804408e3b3f",
+          "numero": "1",
+          "tecnico": "Jovane",
+          "setupId": "62f48615-9464-49b8-81c4-11de8cf634d8",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d25229ec-9d25-479b-9c97-cc85498db56b",
+          "numero": "2",
+          "tecnico": "Jovane",
+          "setupId": "2ccc0e7e-8260-4359-a52d-169c5950bdc8",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "740932a7-3047-42db-9d48-3d56182985b7",
+          "numero": "3",
+          "tecnico": "Jovane",
+          "setupId": "5a5e979d-ed62-4e8d-99bf-6156908cf006",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7261c04e-fb1a-408f-9dba-0bb299ea497e",
+          "numero": "4",
+          "tecnico": "Jovane",
+          "setupId": "56569469-9210-484b-92c6-75f991dbc5d3",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "3366ed24-0b63-4614-9fb0-6774e77a6af5",
+      "nome": "Glaucio Colavite",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "34e34d56-5f1e-441b-a204-0f0750b26df9",
+          "numero": "1",
+          "tecnico": "Iarbas",
+          "setupId": "fd372997-43ec-4c64-b6b5-8e1158610d65",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7feb3b74-7eec-4aee-84c1-697b7f307a6e",
+          "numero": "2",
+          "tecnico": "Iarbas",
+          "setupId": "53e60dd1-51eb-4e17-ac6f-b6875a360b8c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7d2ec031-8f32-42ed-90b2-c212a4c677d7",
+          "numero": "3",
+          "tecnico": "Iarbas",
+          "setupId": "dc13f52e-ffe6-4797-af21-4e6d0a29d6e0",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "24e9b5ae-7a04-4b66-8d48-1030e4b21f04",
+          "numero": "4",
+          "tecnico": "Iarbas",
+          "setupId": "2fd3b6dd-fc9a-41de-954a-10c59e29da3e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "86446af6-8ad5-4cc5-9451-9074fa083008",
+      "nome": "Gustavo Fernandes",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "65857b5d-85ea-403f-aa5a-89a7376897d9",
+          "numero": "1",
+          "tecnico": "Iarbas",
+          "setupId": "6b63a258-61c0-4796-832e-afbba4c11f4a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "15ce963e-1f98-4fe8-9588-8c2c08db0c9a",
+          "numero": "2",
+          "tecnico": "Iarbas",
+          "setupId": "991adf59-3a4b-4cf8-8229-3d4b0ae94ae0",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c70aea04-24da-4f09-9762-85e2ce059a12",
+          "numero": "3",
+          "tecnico": "Iarbas",
+          "setupId": "35b50da2-4253-48c3-a07d-30383560799a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0e26abd2-21f4-40b6-86c5-e4032a40ca78",
+          "numero": "4",
+          "tecnico": "Iarbas",
+          "setupId": "121ad4f6-dff6-4cf6-9ec7-ba021b6a39eb",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "3bffc870-912d-4ba1-b627-f1af05186082",
+      "nome": "Heber Clayton De Santana",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "ead592cf-3590-4944-8ff0-bd0f5f34798c",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "0382d662-87d5-4837-8032-912dcbc3b49e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4380813f-784d-438b-9303-2a1a2248d3db",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "3cb21ddc-c5e1-4c85-bff9-4fe73da75f16",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "8d8daaac-ece1-449a-86d9-a27824bd1cb7",
+      "nome": "Izidoro Jose De Oliveira",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "fa24cfe9-8662-48ac-a43d-0345fcc0853b",
+          "numero": "1",
+          "tecnico": "Iarbas",
+          "setupId": "7e4e8026-684f-4faf-ba99-ea65337909e4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7177de1a-9553-414b-9f4f-337c9b269da2",
+          "numero": "2",
+          "tecnico": "Iarbas",
+          "setupId": "84ca2188-847b-4640-b155-aaf6c1cd64c4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4dc1a86b-cbb6-4a0f-a02e-b2aad58f5b49",
+          "numero": "3",
+          "tecnico": "Iarbas",
+          "setupId": "dece00d4-1448-4f4a-9d9e-c41820a5107d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c4792ed2-6344-4b4e-afde-14ca6f9c4e4e",
+          "numero": "4",
+          "tecnico": "Iarbas",
+          "setupId": "c3ba0879-5f13-46ff-87c5-5462793104d9",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "61076347-372d-4673-a8bf-0fd2ab8cef55",
+      "nome": "Jane Maria Bertol",
+      "totalAviarios": 8,
+      "aviariosComSetup": [
+        {
+          "id": "94598131-a12f-4a81-8452-29debe37b016",
+          "numero": "1",
+          "tecnico": "eder",
+          "setupId": "e45fd12a-60ce-470f-bb14-88686ec944da",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7487b049-8fc4-435e-bb62-e4860e94b614",
+          "numero": "2",
+          "tecnico": "eder",
+          "setupId": "445fe3b6-97ef-4719-b00b-531b21c57c27",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d0cf2b1c-c3c7-402f-b81d-d077a324916b",
+          "numero": "3",
+          "tecnico": "eder",
+          "setupId": "691e24b3-ae03-49f9-b88a-c7ffdb67c556",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d7def21c-733c-42a2-9903-c20b78b6a2fb",
+          "numero": "4",
+          "tecnico": "eder",
+          "setupId": "65257ed7-cfaf-44fe-849d-685f4e086117",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "03f075a4-b47a-4db4-935b-7cec75ca8530",
+          "numero": "5",
+          "tecnico": "eder",
+          "setupId": "b0faaa5d-a163-4e24-ac71-234002200704",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7ae9db2a-8700-456c-8a8e-bf2e49da1c5f",
+          "numero": "6",
+          "tecnico": "eder",
+          "setupId": "eded09bb-11b0-4280-9b15-2898ef770a92",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c93f04dd-194f-4057-abb0-d53401196e1b",
+          "numero": "7",
+          "tecnico": "eder",
+          "setupId": "b3c67e60-2714-4ad6-b6e4-04eeb581022e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d1161fe1-9a93-43f6-a8ab-08bc3db434f0",
+          "numero": "8",
+          "tecnico": "eder",
+          "setupId": "8c7d3e63-0b0f-4758-a17a-5c0892d570cb",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "1cea8139-7efb-4659-8b52-8c72e6b5ee83",
+      "nome": "Joao Carrenho Neto",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "63aa6e91-f9e5-43b1-8b6a-3fc01e455c97",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "b89e6d4e-538c-4e29-819e-5abcff3f6441",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f941e2d3-79c0-4148-a072-55c233081e78",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "3e801f70-7e3f-4d14-ba3e-76d108d86490",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "029c99e4-78dc-4993-adb7-c59c254a7e92",
+      "nome": "Jose Antonio Pessuto",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "176bb201-5cb7-44df-9729-c2c434a33a81",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "9547dd7c-f591-4b6a-a103-cdc8c63f14bb",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "2344fbe0-31f7-4a1d-a1cd-2c0aaa336e67",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "150a6544-25e9-4f22-be90-0cbea90c2ad1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f4605987-9fe2-4a78-ac44-66fa142ba7b9",
+          "numero": "3",
+          "tecnico": "Stefani",
+          "setupId": "9c0794d6-9f07-48d6-8eaa-e3f2d2635090",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "e4363d7e-24c6-48df-8c15-64af5a65d2d0",
+          "numero": "4",
+          "tecnico": "Stefani",
+          "setupId": "d2126f74-ec1e-4dff-983b-d4a6a12d9d2c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "82d4ec52-0946-40a3-b520-a78706cfcf39",
+      "nome": "Jose De Moura",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "6ec92319-da95-4240-bfa4-b2f2fc613c12",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "d5a82249-1f01-4bfc-9a80-6b5575c677cd",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b01616ec-3024-4855-937f-743f00028892",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "cdb0c198-2fed-4fce-b17e-1b633c6227b6",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "b88b2e0a-47ce-4f59-b418-ce2ea7ff16a7",
+      "nome": "Jose Ferreira Dos Santos",
+      "totalAviarios": 1,
+      "aviariosComSetup": [
+        {
+          "id": "9b2a854d-463e-467b-bb1b-0d65dff32d8c",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "4627fe7f-99f6-4580-bd41-a99e85092d8c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "9f0b8add-8a77-4ad0-987b-a2e681ce4663",
+      "nome": "Jose Guilherme Passarini",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "55191716-9d70-4888-88b1-0917fc69ed8c",
+          "numero": "1",
+          "tecnico": "vinicius",
+          "setupId": "d3152a67-506b-4add-8761-732007275188",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "31a2be00-3e85-4f53-b4ae-2152d55c7999",
+          "numero": "2",
+          "tecnico": "vinicius",
+          "setupId": "57de4c12-2ed1-4a9b-a7db-b556db858e92",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "31e20b21-b24d-412c-a923-3b1b7e527121",
+          "numero": "3",
+          "tecnico": "vinicius",
+          "setupId": "a6fc0d7d-835f-4803-a36d-fea8932b47c9",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "1de174e5-fd56-49ef-9b0c-57ee1cea558f",
+          "numero": "4",
+          "tecnico": "vinicius",
+          "setupId": "8d606d31-5a2f-4877-a9e3-3663dd61222c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "d44ebbfb-cc7e-47f6-a7a8-ba2a2824d1c8",
+      "nome": "Jose Luiz Linn",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "c2074f92-6819-482b-bea1-bf7be3e70e96",
+          "numero": "1",
+          "tecnico": "Fernando Marcos",
+          "setupId": "33a8d521-4bb2-4d63-8409-9267ef162e2e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3703c185-b518-42d0-948d-cee966fa5e68",
+          "numero": "2",
+          "tecnico": "Fernando Marcos",
+          "setupId": "043dfad3-9cbc-4b7d-b37b-dca6da93f4a8",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "4ec8c3d3-3625-4e91-906c-9b3f8e11866f",
+      "nome": "Jose Sidney Perego",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "4045cdf2-2cc9-42a6-a454-218e0f12e17c",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "8eb9a6a0-ecf7-4e5c-8184-ccb07b32983e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "6766f856-2c51-43e8-a3a2-430757cc45a1",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "51ac6192-6d2d-4bfb-976e-2a4f79de7590",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "42137d81-c13c-456c-b1ad-8546b1b83223",
+      "nome": "Lucio Aparecido Ferrari",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "e29985aa-2aeb-4684-9c5b-1dbfdf25685f",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "11864cc1-e968-4780-b465-0766c731ecbd",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "792ff07a-8848-49df-a856-7e02604f24f3",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "a6014513-ab95-407e-a8a7-2147644207fc",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0c84a0d6-b972-4d19-a3f6-cfce091fecad",
+          "numero": "3",
+          "tecnico": "Fernando zanolla",
+          "setupId": "53b9d71b-6f03-4f96-a774-25b7c68c9046",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b1cb5468-992f-4e96-8274-be4fae830e62",
+          "numero": "4",
+          "tecnico": "Fernando zanolla",
+          "setupId": "4c80335d-0e2b-411f-a1a7-500aa3db061f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "e1c6d180-b303-4fd0-b0b5-325af37aa69d",
+      "nome": "Marcio Wanderlei Dilkin",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "2858c5f4-1884-41b2-be35-4671da158007",
+          "numero": "1",
+          "tecnico": "vinicius",
+          "setupId": "a3b32a5f-ef94-46a7-9730-8d8041db437c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "33a4f244-c75a-4891-b910-8ac4a164fd11",
+          "numero": "2",
+          "tecnico": "vinicius",
+          "setupId": "7ed11613-c2c6-4f93-bdb3-2dbbcd8bb659",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0808c20b-e491-4df2-8b3b-7d65676b5df6",
+          "numero": "3",
+          "tecnico": "vinicius",
+          "setupId": "beaaf10f-f843-4276-bd77-eda15bbfc919",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0a94d2af-20c4-4c1b-9fda-1f884aef3ddf",
+          "numero": "4",
+          "tecnico": "vinicius",
+          "setupId": "ff484f0f-b4da-469e-bfe1-85a608d0986e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "39eb82ed-c901-4103-9978-92ede2fdd536",
+      "nome": "Maria Salete De Freitas Lavarias",
+      "totalAviarios": 1,
+      "aviariosComSetup": [
+        {
+          "id": "9db65d83-a211-4dea-a484-38f7ea52a4fa",
+          "numero": "1",
+          "tecnico": "vinicius",
+          "setupId": "7701ccc3-3d81-4964-a043-8de3fa573d0c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "1083dd9d-387f-4e97-aa58-73352cb00c95",
+      "nome": "Mauri Antonio Mazurek",
+      "totalAviarios": 29,
+      "aviariosComSetup": [
+        {
+          "id": "be419483-dd1e-407e-91a5-26731d5cc197",
+          "numero": "20",
+          "tecnico": "Rafael Nakano",
+          "setupId": "e3109ae0-0ca2-4807-9015-740291c90653",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "546009f6-96eb-4299-8f71-8d639abbee89",
+          "numero": "21",
+          "tecnico": "Rafael Nakano",
+          "setupId": "50358ec9-050f-42ec-bd32-e3e14ac73e8c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7d71f42a-c798-48fb-87e4-6ac1d8ff7bdc",
+          "numero": "22",
+          "tecnico": "Rafael Nakano",
+          "setupId": "b7fc2182-d1e8-4acc-984b-154e3c90cc23",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7c3c1fc5-57f9-4c71-91eb-004aaae0096d",
+          "numero": "23",
+          "tecnico": "Rafael Nakano",
+          "setupId": "4209e7e1-ff91-44d5-b164-d5b7631d4839",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b28b8b6d-ee60-4ba2-867f-f8633a6f41d9",
+          "numero": "24",
+          "tecnico": "Rafael Nakano",
+          "setupId": "62df6445-0394-47ad-a7a1-b7b9106e6eb3",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "1009205f-7f38-4830-bf3b-2dbbc09f231f",
+          "numero": "25",
+          "tecnico": "Rafael Nakano",
+          "setupId": "4613b141-b299-4603-8ba3-6d1ccfe9421c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "64e4440e-d055-4fb9-ba04-6cd3df442f29",
+          "numero": "26",
+          "tecnico": "Rafael Nakano",
+          "setupId": "047786a5-bc18-4df6-98c9-4b77876a58c9",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "aef24cc7-dfcd-4e90-8526-a0f835fe2949",
+          "numero": "27",
+          "tecnico": "Rafael Nakano",
+          "setupId": "6baed762-1357-4b16-bca8-e4b5610e19f8",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3d92a65f-e6e9-497f-97a9-d39d504c312c",
+          "numero": "28",
+          "tecnico": "Rafael Nakano",
+          "setupId": "bdcbcf47-6acb-4595-b0dd-cfcb5ad71b1b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "a1e9c4ac-2065-4c99-a63b-8a13d1c7ed19",
+          "numero": "29",
+          "tecnico": "Rafael Nakano",
+          "setupId": "8ff983bf-4caa-46ba-9c5b-45f45d3365fb",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0705f3a2-aa2c-4ffa-b6dc-bf71e04a7907",
+          "numero": "30",
+          "tecnico": "Rafael Nakano",
+          "setupId": "d93385fc-d2b2-4e68-aa78-579411f79d3d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "81ae3d02-b5a4-460f-b61e-5ccfb219fa83",
+          "numero": "31",
+          "tecnico": "Rafael Nakano",
+          "setupId": "3dac411c-72b7-4dbf-b6ac-0510f50922a1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3f8bb844-5f9d-4815-bdc0-25e5c1fc0d1a",
+          "numero": "32",
+          "tecnico": "Rafael Nakano",
+          "setupId": "87178301-4d9b-4e70-be26-c34d31aabcfb",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "58eacc5c-f672-4013-ad26-47d00e203070",
+          "numero": "33",
+          "tecnico": "Rafael Nakano",
+          "setupId": "e54e4d16-1f28-4c59-bbb3-5c2e6f0f005d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "2dd19589-7e89-4d19-a698-a437d1bfd80e",
+          "numero": "34",
+          "tecnico": "Rafael Nakano",
+          "setupId": "cc82e50a-9d7e-4205-a1b9-4ed8f7a32294",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "db0d51fb-6a7f-4f63-841f-0aa3088ad825",
+          "numero": "35",
+          "tecnico": "Rafael Nakano",
+          "setupId": "4c190465-74d1-4345-b96a-85285fb9f784",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "6d096a40-baf9-4960-9c52-4863a5c44722",
+          "numero": "36",
+          "tecnico": "Rafael Nakano",
+          "setupId": "b689cac7-1fb6-402d-89c3-4dfb4fb2c831",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f7917a79-7047-4214-a771-0ec1fee358c3",
+          "numero": "37",
+          "tecnico": "Rafael Nakano",
+          "setupId": "080fe15e-68e6-4a74-97ab-dcf1b51a1c5e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7fc7f353-50ef-4271-b10f-47c444b3fa7a",
+          "numero": "38",
+          "tecnico": "Rafael Nakano",
+          "setupId": "2a75271a-77cb-4711-93d4-43ce7e8a387c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "71f03d96-e2b8-48f4-bc76-9af3b68f8976",
+          "numero": "39",
+          "tecnico": "Rafael Nakano",
+          "setupId": "923c8aab-dcd6-490d-aa66-0792b80fa2d5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "e7709d8d-db24-4a22-8268-178c02ffb4ca",
+          "numero": "4",
+          "tecnico": "Bruno faganello",
+          "setupId": "d7c2d441-2a69-43d3-8b42-62093352a315",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "87ea5f24-26d2-4c36-afd7-fb6b2fb1166b",
+          "numero": "40",
+          "tecnico": "Rafael Nakano",
+          "setupId": "768a894a-4823-454b-9f84-bdb871903c2f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "eaa94e7c-2c25-424b-a79b-d5fd0174c786",
+          "numero": "41",
+          "tecnico": "Rafael Nakano",
+          "setupId": "3f6913a1-1503-4a11-9195-335e2ba26e9a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "487303d1-ec91-469e-a1fc-99a57d72e5e1",
+          "numero": "42",
+          "tecnico": "Rafael Nakano",
+          "setupId": "a0dc4d26-84b2-427f-8b54-f95efd3cbe31",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "aea786df-25f9-48e5-b439-37ae1a47ac92",
+          "numero": "43",
+          "tecnico": "Rafael Nakano",
+          "setupId": "f3b17ff5-c5ec-4323-9152-1e322b474aa9",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3a128d6c-38d1-45ca-ba09-5c65b1330d30",
+          "numero": "5",
+          "tecnico": "Bruno faganello",
+          "setupId": "4c6db530-9b29-4ffc-a6e9-b5f33b2cf4dd",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "5df60a10-dd7f-461a-ba38-545ee79d82d4",
+          "numero": "6",
+          "tecnico": "Bruno faganello",
+          "setupId": "c37cf11e-5629-49eb-95bd-e46fdf739e7b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "64fb6555-e0f8-46cd-ab66-5a5550276da4",
+          "numero": "7",
+          "tecnico": "Bruno faganello",
+          "setupId": "add04f24-237e-43df-b684-7a5052c34eab",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8110fa86-1e8f-4e00-bcee-252d6695f32b",
+          "numero": "8",
+          "tecnico": "Bruno faganello",
+          "setupId": "6b28650c-ca7d-448e-b573-51f9d690b8ab",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "b73526eb-a6e6-4d10-8c44-2ddde70c5d96",
+      "nome": "Orlando Cessel Junior",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "07355a63-d59d-4a37-9ec3-3bb62f967256",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "b77cddf4-49fe-497b-9a1a-ffa4531b0bb4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "14346707-c249-46e0-856b-f3647bcf32f4",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "1eb5208d-7c54-4f5f-99c9-2817befb910b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "2d2f68d4-c9a5-4812-b1de-f2da9c24b54b",
+      "nome": "Pauli Mergen",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "ee26f85a-f419-4530-a423-7180554819b5",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "26227f37-7546-4757-a815-40bab8110aa9",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "42d02d4d-e66d-4f0f-9d1d-9d958ef74cb3",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "f18baa2f-82b4-4fb3-8ca2-e50dd13275e1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7fa9542e-9582-41cf-805e-2b61978b2aab",
+          "numero": "3",
+          "tecnico": "Fernando zanolla",
+          "setupId": "a12956d7-01a1-4d27-afb0-cd1c893a2af6",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d0c856a4-765b-45eb-a73c-4e004da12042",
+          "numero": "4",
+          "tecnico": "Fernando zanolla",
+          "setupId": "26df960e-7445-47ea-97b7-04bac3bb0e6e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "edd74f1a-8c16-40b0-ba41-edcefa83d728",
+      "nome": "Paulo Bloemer Regime Economia Familiar",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "1276b436-95d1-434e-a516-0f31d4b3646f",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "1108dc26-f447-4b2e-90cc-c29e0a93b682",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0142abc6-8156-469e-9529-a6506aebd5fc",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "3110cebf-2c8f-48fd-ba49-d3282cddcdba",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "b6b9ea38-56e5-4f31-9fd5-2bdcc08e53ce",
+      "nome": "Ricardo Kenji Utida",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "179bdfb2-c833-4c11-a0af-d504fc1ec0fa",
+          "numero": "1",
+          "tecnico": "eder",
+          "setupId": "e83963fa-e225-4ddf-b16a-154522a8bea1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "332c7976-14f2-47cd-9734-7ebe65a7ae70",
+          "numero": "2",
+          "tecnico": "eder",
+          "setupId": "b4efaf48-0073-4890-b71c-196e5e836b33",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "892d54c4-7bf6-4cdc-8886-ea6247d6b663",
+          "numero": "3",
+          "tecnico": "eder",
+          "setupId": "6efcc67b-c24e-4118-bff4-c050389ad175",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "3ea850bb-d742-4572-ac2f-191952ad4263",
+          "numero": "4",
+          "tecnico": "eder",
+          "setupId": "ce6ae4ad-cc57-47be-a6b7-a149bf0b32ee",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "250ed501-18ce-4642-9bc8-f9464db5db43",
+      "nome": "Roberto Bloemer",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "28d3ddae-60ba-4f07-891c-5b3fecbacb2b",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "937382ac-1135-424a-a4c3-32d4c1c88a8c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "fc8ef9a2-4c96-478a-9907-73d4604a6d86",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "6e8f4172-5aa8-4900-8567-ae5337be0199",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "6b88830c-d76e-4384-83d3-fe8e35bf15af",
+      "nome": "Roberto Carlos Miotto Ferreira",
+      "totalAviarios": 90,
+      "aviariosComSetup": [
+        {
+          "id": "5972c636-5ff4-4130-9a8a-4c751384c31e",
+          "numero": "1",
+          "tecnico": "Lutyeska",
+          "setupId": "02d98cd5-dc13-4bb3-946b-1bcfdcacb65c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "dda583c1-9498-49d2-8a40-2d03074525ae",
+          "numero": "100",
+          "tecnico": "vinicius",
+          "setupId": "f7e1903d-827d-46eb-a520-9c935134d707",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8da661e3-c4de-45e4-a4fd-6e8d64172b96",
+          "numero": "101",
+          "tecnico": "vinicius",
+          "setupId": "6a3d88fa-09df-48ea-8047-bd3a0e0279f5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "a34b77a3-2a87-43ea-9a1d-3bd480da49f9",
+          "numero": "102",
+          "tecnico": "vinicius",
+          "setupId": "a22bef07-51e4-4bdc-bce1-8985b0002a03",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7193087c-0b17-4549-8bfe-9f386942f138",
+          "numero": "103",
+          "tecnico": "vinicius",
+          "setupId": "3ccb03da-5eb0-40e8-a6f2-f14ecaceeac4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "dd97a869-0fdf-4710-a259-70ab927827f0",
+          "numero": "104",
+          "tecnico": "vinicius",
+          "setupId": "eba34b7a-b947-40fb-ad2e-7608a3b7c9b5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "21de253c-8647-4fd4-99eb-5ffa36552db0",
+          "numero": "105",
+          "tecnico": "vinicius",
+          "setupId": "4adf860a-6c65-407c-a993-cf89235cf667",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "6384ef9d-38c2-446a-a8d4-1fe4c7628695",
+          "numero": "106",
+          "tecnico": "vinicius",
+          "setupId": "3564e707-2059-4aa9-a74d-85f6dd0116cf",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "696c006d-033e-4de5-8563-2eea4f977de9",
+          "numero": "107",
+          "tecnico": "Lutyeska",
+          "setupId": "ee3b1e10-1a7c-473a-8f0e-93097864ca1b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4827dde3-e267-4789-b44a-3c01e2597033",
+          "numero": "108",
+          "tecnico": "Lutyeska",
+          "setupId": "b5039f46-86f4-43d9-84c4-798043032b8f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "beddf348-470b-43cb-a940-bcc4440e0cf5",
+          "numero": "109",
+          "tecnico": "Lutyeska",
+          "setupId": "9c8309b2-fbba-4199-8da3-5125aa7ccff3",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8690aef2-72e2-4c7a-bdbd-970110b6d583",
+          "numero": "110",
+          "tecnico": "Lutyeska",
+          "setupId": "8ee65feb-bbd8-407d-a85d-985c16ccacaa",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d5678422-9562-48f5-8a97-0b8e2fbcdfe9",
+          "numero": "111",
+          "tecnico": "Lutyeska",
+          "setupId": "549fa62b-3fcd-45f3-9fc1-3b6b9064acd0",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "dd922d95-d35a-4490-9f5b-c69c09dcdea8",
+          "numero": "112",
+          "tecnico": "Lutyeska",
+          "setupId": "a326e9d7-8260-4209-88bf-40b3b8cb583d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "383cbd18-6665-491a-b5d4-98000a135102",
+          "numero": "113",
+          "tecnico": "Lutyeska",
+          "setupId": "895f6cdc-a1d7-43dd-bc54-ed4f49be2e11",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "da4ff86e-0024-45c1-9266-75d348e9c5e9",
+          "numero": "114",
+          "tecnico": "Lutyeska",
+          "setupId": "90b16ab8-69a7-4b08-a419-aaf6c934d4ef",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7b1c7093-b0ca-40e2-a366-f4c4064b9ed2",
+          "numero": "115",
+          "tecnico": "Lutyeska",
+          "setupId": "d7b67a18-0576-48db-8b23-23262c69b01a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c03e4493-8771-4120-b72e-00273fe23b12",
+          "numero": "116",
+          "tecnico": "Lutyeska",
+          "setupId": "6e89bbee-c2a0-4339-a08a-119967d2352c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7d0cf0fb-434c-4cab-a2aa-d96f0c2d955e",
+          "numero": "117",
+          "tecnico": "Lutyeska",
+          "setupId": "92e1bc1e-b7c9-433c-8ae6-75161295c7df",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "12198d3a-a203-45fa-9ae5-c8186ccd6966",
+          "numero": "118",
+          "tecnico": "Lutyeska",
+          "setupId": "9d474ab9-54de-416b-9265-3c49f3c88c2a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "9682b042-b417-4eab-95e5-93ec5cec88ab",
+          "numero": "119",
+          "tecnico": "Lutyeska",
+          "setupId": "54cfebc0-f1c4-4ba9-b130-61cd3e5f1b7f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f7848b80-5d37-4f84-bc08-108d2c2c5cc3",
+          "numero": "120",
+          "tecnico": "Lutyeska",
+          "setupId": "a9b78015-3234-4a91-a3f8-56d3eb896ec7",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "1771092c-9a4b-4725-bf63-1c93060a6e98",
+          "numero": "121",
+          "tecnico": "Lutyeska",
+          "setupId": "0ad0cd28-076c-4784-ad54-8b72f0b19160",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "a354a6e4-62d1-4159-babe-cbe683835274",
+          "numero": "122",
+          "tecnico": "Lutyeska",
+          "setupId": "c00981e3-9ea5-439e-b4e3-32a267dc2b85",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d7405d1e-c78a-4a1f-9303-c251f8031666",
+          "numero": "123",
+          "tecnico": "Lutyeska",
+          "setupId": "84e95c9c-1abb-437a-95f8-6e4162582111",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "48d7076c-c716-40f3-8a52-cbff5a9037d1",
+          "numero": "124",
+          "tecnico": "Lutyeska",
+          "setupId": "fdca3ef9-82ca-4970-8061-dad259effd96",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f6719ff5-be85-427f-acb9-76300df1849d",
+          "numero": "125",
+          "tecnico": "Lutyeska",
+          "setupId": "85ae558d-d3fe-4ffd-b9a6-2c7870358fa7",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8613354a-fe30-4252-baac-1d0d576a0906",
+          "numero": "2",
+          "tecnico": "Lutyeska",
+          "setupId": "aa68f758-2cb9-478e-9b32-8e572072e574",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0abf1592-a6bc-43b1-9f3e-7ef75a319166",
+          "numero": "3",
+          "tecnico": "Lutyeska",
+          "setupId": "9a2820f7-d800-4186-8395-d9aba9b0ccc0",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b9edf62d-2e65-4027-953b-3a6ee8b23878",
+          "numero": "35",
+          "tecnico": "Fernando Marcos",
+          "setupId": "c63a6650-74d5-4b72-8476-c480a1b671bc",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "25035bc3-3d37-4cfd-9e91-4800bce27882",
+          "numero": "36",
+          "tecnico": "Fernando Marcos",
+          "setupId": "9e439548-f3a5-44ee-a021-9886ca579227",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "40dbfcd6-fd2f-4d3c-86fb-41b24f178a63",
+          "numero": "4",
+          "tecnico": "Lutyeska",
+          "setupId": "3015e77a-26c4-4110-9867-fad3c28e387a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "de18d1c6-462e-4b08-93b6-e507cb178b83",
+          "numero": "41",
+          "tecnico": "Jovane",
+          "setupId": "61aeca18-e0ac-4631-b195-99ead18cce3e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "79275a57-0886-435f-ac38-ae41eaeaf9ca",
+          "numero": "42",
+          "tecnico": "Jovane",
+          "setupId": "b5f56c4d-2781-4604-97c4-796bccc38ae0",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "816865f1-91d7-4466-827b-22e8a9f2865d",
+          "numero": "43",
+          "tecnico": "Jovane",
+          "setupId": "7591a8c8-db64-4da2-bd86-6bb85f20e06d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "41b9eea5-5ad1-40de-8e92-ce6d220390d5",
+          "numero": "44",
+          "tecnico": "Jovane",
+          "setupId": "1362661d-4b07-4732-88d9-277a614f6b21",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "1b5115b5-ca64-466a-a424-97985a11a418",
+          "numero": "45",
+          "tecnico": "Jovane",
+          "setupId": "5288442c-c9ac-4868-893e-a73b9eb192fb",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8f550016-5f35-43a9-bdd4-50663d64c452",
+          "numero": "46",
+          "tecnico": "Jovane",
+          "setupId": "4c287be7-308f-49b8-b8ee-b29dd9aab646",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "5a729b2b-b0e4-4805-82c4-91b67c7f3378",
+          "numero": "47",
+          "tecnico": "Jovane",
+          "setupId": "4440a00d-9909-4f77-bc55-297898f89ae8",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "eceed8ac-8690-4a61-956c-43e1eb3dbcc9",
+          "numero": "48",
+          "tecnico": "Jovane",
+          "setupId": "5b54c7eb-6d66-4b30-a45a-9b7dd430a0a2",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b6772a6f-8ff4-41ed-9c82-eecd19a2c003",
+          "numero": "49",
+          "tecnico": "Jovane",
+          "setupId": "35c91168-a78e-46b0-b18d-1468038e3c23",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4e2bf80c-8054-40a1-b760-eab4e3d89bf6",
+          "numero": "5",
+          "tecnico": "Lutyeska",
+          "setupId": "7dc2e076-6e5b-4994-91d0-7e7e7c12fe31",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "04943fc3-0c3d-4249-afcc-70d947e206db",
+          "numero": "50",
+          "tecnico": "Jovane",
+          "setupId": "58148881-23b6-4ff9-9f84-6439741be51f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "46ad67a7-8548-45bd-8407-0849a0105d89",
+          "numero": "51",
+          "tecnico": "Jovane",
+          "setupId": "f05890dc-cedc-4967-b5a4-9ade085dca0c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0d9b012a-89af-449f-8642-4e4365d4da72",
+          "numero": "52",
+          "tecnico": "Jovane",
+          "setupId": "d85174e8-b5fd-44ff-a74a-e468b2646106",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "756074ea-43e4-4f74-92dd-b72e5f3a5b8e",
+          "numero": "53",
+          "tecnico": "Jovane",
+          "setupId": "75896125-050c-4293-8251-5b1c15403dfb",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8f91d89d-3027-49ca-8a70-03c7b89eb059",
+          "numero": "54",
+          "tecnico": "Jovane",
+          "setupId": "d0d180cd-eb76-42a5-906b-88459727bc9f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "5439b39c-b816-4f11-855f-74a869bb4b91",
+          "numero": "55",
+          "tecnico": "Jovane",
+          "setupId": "bf46fb67-93d3-44dd-b5d7-4d8db3c761b6",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "e1b3e825-6192-4732-b319-ed28f02d41c3",
+          "numero": "56",
+          "tecnico": "Jovane",
+          "setupId": "16688fe5-26bd-4cde-8d96-8f52ea9d6914",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "fcae359f-6932-4ef2-a309-34fff56d9eba",
+          "numero": "57",
+          "tecnico": "Jovane",
+          "setupId": "14ba176b-c4f4-4842-a362-66708eb6c5b3",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "5c19eb4e-db9f-49f6-9239-2cb1de6dfe9d",
+          "numero": "58",
+          "tecnico": "Jovane",
+          "setupId": "add1a196-10ec-4938-bc6b-79b5c5df2165",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "52bdb0d3-781e-4c23-b16c-6ff2c431265e",
+          "numero": "59",
+          "tecnico": "Jovane",
+          "setupId": "4ded4e6a-4918-4168-96d2-5bf02889f374",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "13e38931-4e38-44d2-8821-7eb7c3914492",
+          "numero": "6",
+          "tecnico": "Lutyeska",
+          "setupId": "76811047-e8b1-4c91-8db6-bb69439556fa",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "eb08d834-55ab-4ebc-8b4b-10b8027014fa",
+          "numero": "60",
+          "tecnico": "Jovane",
+          "setupId": "267bffb2-186c-45f0-ab2a-7f320c8a9c6d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "13bf18c9-753d-46f3-9b3e-3d73fe08b67e",
+          "numero": "61",
+          "tecnico": "Jovane",
+          "setupId": "7b5787b8-6e67-438f-b4a3-932afd909535",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0730a0e1-ac7f-4eae-9f83-72188fa78ca1",
+          "numero": "62",
+          "tecnico": "Jovane",
+          "setupId": "132db0cb-6b3a-40ab-a37e-5b3b2f09d072",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "197e5539-48a7-41cb-8424-2f877f8d7a37",
+          "numero": "63",
+          "tecnico": "Jovane",
+          "setupId": "ac5cce20-6560-4b86-9045-d443afa4f4f8",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "1ee3893b-3450-40d3-b63d-d91bde06e6be",
+          "numero": "64",
+          "tecnico": "Jovane",
+          "setupId": "93db6e5f-682a-4e71-97b4-ce504b6e2877",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "01fe9a86-1213-42fc-9405-9dac3a0ba6ff",
+          "numero": "7",
+          "tecnico": "Lutyeska",
+          "setupId": "7d950285-8326-45d9-90a9-bc30bde2dc2d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0b025180-7ee0-4365-a986-36ffc2259e8a",
+          "numero": "70",
+          "tecnico": "Bruno faganello",
+          "setupId": "60a21857-9067-4a7b-91e2-89be8b09540a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": 10,
+          "ventilacao": 2.7,
+          "observacoes": "Portas com vedação ineficiente,  túnel door não está fechando corretamente, forros com frestas e exaustores com problemas mecânicos polias e correias e venezianas não abre. Boia automática da caixa central não está funcionando somente no manual. Placas evaporativas com ineficiência ( sujeiras e qualidade da placa). Poço com vazão ineficiente."
+        },
+        {
+          "id": "83a77527-d7c7-4149-81f3-4cde4c63b195",
+          "numero": "71",
+          "tecnico": "Bruno faganello",
+          "setupId": "b8885948-e0a3-4ee1-9fd4-df135d4401cd",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": 5,
+          "ventilacao": 2.63,
+          "observacoes": "Portas com vedação ineficiente, túnel door não está fechando corretamente, forros com frestas, exautores com problemas mecânicos ( polias e correias). Boia automática da caixa central não está funcionando. Placas evaporativas com ineficiência ( sujeira e qualidade da placa)"
+        },
+        {
+          "id": "fdd86044-a1b1-4966-9b23-017b2f8f5316",
+          "numero": "72",
+          "tecnico": "Bruno faganello",
+          "setupId": "9ecb9916-ce87-4069-8fde-e1b0563a8652",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": 5,
+          "ventilacao": 2.85,
+          "observacoes": "Portas com vedação inadequada, exautores com problemas mecânicos ( polias, correias e persianas não abrem ), janelão e muretas com vedação ineficiente , 2 grupo de exautores não desliga.  Algumas placas evaporativas com qualidade ruim."
+        },
+        {
+          "id": "e6120677-699c-4288-9d50-5c59a92828a3",
+          "numero": "73",
+          "tecnico": "Bruno faganello",
+          "setupId": "aeaf740c-0420-4522-afd6-eca826533e53",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": 10,
+          "ventilacao": 2.7,
+          "observacoes": "Portas com vedação inadequada, exautores com problemas mecânicos ( polias, correias e persianas não abrem ), janelão e muretas com vedação ineficiente , 1 grupo de exautores não desliga.  Algumas placas evaporativas com qualidade ruim."
+        },
+        {
+          "id": "9d4a709e-e39b-4137-827f-c1491167e7eb",
+          "numero": "74",
+          "tecnico": "Bruno faganello",
+          "setupId": "c96f9d46-e80d-4dc4-a7fa-5583fb0f04ff",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": 5,
+          "ventilacao": 2.87,
+          "observacoes": "Portas com vedação inadequada, exautores com problemas mecânicos ( polias, correias e persianas não abrem ), janelão e muretas com vedação ineficiente ,  Algumas placas evaporativas com qualidade ruim."
+        },
+        {
+          "id": "adaedc7a-d602-48f9-9c79-b98f2cc0f53b",
+          "numero": "75",
+          "tecnico": "Bruno faganello",
+          "setupId": "54b58c99-42f5-4f3b-bcad-927e4cbf8ba4",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0051dfab-3a9a-47be-8de8-7ca312430731",
+          "numero": "76",
+          "tecnico": "Bruno faganello",
+          "setupId": "07626414-ba4a-4d35-beae-8e9010118925",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "2eecbe30-56b2-4ecb-83c3-2128f378801a",
+          "numero": "77",
+          "tecnico": "Bruno faganello",
+          "setupId": "b9b9106e-7d89-41d7-a2d7-f7f01f47a362",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "460cb1a4-c0b2-497c-9272-7afb9599fab2",
+          "numero": "78",
+          "tecnico": "Bruno faganello",
+          "setupId": "aa5cb6c0-0260-441b-a5a9-ebb98cb91c94",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "686c7e01-f1db-4861-a2b9-fb53575b8c77",
+          "numero": "79",
+          "tecnico": "Bruno faganello",
+          "setupId": "3af8d209-db82-4dc0-80c6-2128f599d860",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "27b966c9-eea6-4379-b1a6-5c5791cf49f0",
+          "numero": "8",
+          "tecnico": "Lutyeska",
+          "setupId": "352d64da-0599-4a92-ae5b-381897868575",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c93c4641-d9d9-4c74-ab7f-a835dfad8558",
+          "numero": "80",
+          "tecnico": "vinicius",
+          "setupId": "5d88b1e3-3f33-41bf-874a-5c8242d90e29",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "aa32ae6b-de6d-45b5-8b56-c60eae7be0f5",
+          "numero": "81",
+          "tecnico": "vinicius",
+          "setupId": "f9b6ad31-51a3-45d9-b215-c5971bb3155b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "943f7973-81cb-42a3-a7f7-49189bb228a5",
+          "numero": "82",
+          "tecnico": "vinicius",
+          "setupId": "3bf2c338-2083-40dc-9f4e-5b9a26a9e109",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "990d0595-044a-4ab8-8350-29989710e58e",
+          "numero": "83",
+          "tecnico": "vinicius",
+          "setupId": "cf55d8fd-63e4-444a-bcc7-e9568071b4ee",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f7543137-7295-4f7d-a698-16f4da88cc60",
+          "numero": "84",
+          "tecnico": "vinicius",
+          "setupId": "fc5deed4-58d5-46fe-ad05-fea3ab3cb5d7",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b103bbb5-6635-44d2-9c82-2deb17ae157a",
+          "numero": "85",
+          "tecnico": "vinicius",
+          "setupId": "25dcf863-71d4-428b-a6e7-239e6b8b8f20",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "a6b63be1-b725-4ed3-801d-8284776317f0",
+          "numero": "86",
+          "tecnico": "vinicius",
+          "setupId": "c4537ece-07e6-4d2d-bf6a-45c846cba0ea",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "40d2ae00-362b-46de-930b-397974ebff24",
+          "numero": "87",
+          "tecnico": "vinicius",
+          "setupId": "2372386b-b755-4a82-aed3-52f342193047",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f4fc1029-2ea8-4c90-b834-972f18a736bb",
+          "numero": "88",
+          "tecnico": "vinicius",
+          "setupId": "77ecc9d4-0b0d-4a23-a2c3-00d682438f19",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f9f08268-8932-43e9-97a8-fb8206e42c04",
+          "numero": "89",
+          "tecnico": "vinicius",
+          "setupId": "f0c1024c-d2b8-4e00-b622-a13fff656901",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "1deeddac-829f-4943-94ad-0d28ca01be38",
+          "numero": "90",
+          "tecnico": "Bruno faganello",
+          "setupId": "df8f3ef3-462f-4e1f-8fb0-014b2e07450e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "669358e0-9325-4040-bca7-58719e022593",
+          "numero": "91",
+          "tecnico": "Bruno faganello",
+          "setupId": "6ae2ae86-d4cb-48c2-aec9-d204e7d05d26",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "a047b017-164a-4d83-93b2-4824adf11b3b",
+          "numero": "92",
+          "tecnico": "Bruno faganello",
+          "setupId": "d3b49b88-56ea-453a-83cb-ca2db175192f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b97666fb-52a2-40fd-b971-54a2c40da4b7",
+          "numero": "93",
+          "tecnico": "Bruno faganello",
+          "setupId": "dbb08ccd-3a63-4646-80b7-a3dc1fcfb7ff",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4d9faeea-d1ff-4c96-8b85-386a4035cf1a",
+          "numero": "94",
+          "tecnico": "Bruno faganello",
+          "setupId": "70ccf5ae-7722-4816-b3bd-64fc6b3dbc80",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4a6c8fb5-6d4c-486f-a0d8-a0a59490a68b",
+          "numero": "95",
+          "tecnico": "Bruno faganello",
+          "setupId": "318e9453-bba0-48d7-bbb1-e187a2e60971",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "5b459712-79c1-4f97-92f7-94c3de574d64",
+          "numero": "96",
+          "tecnico": "Bruno faganello",
+          "setupId": "04ce3730-3cf7-4261-8a04-e486857bf346",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "6120a8e2-1f45-4ab2-afc3-a124131875c2",
+          "numero": "97",
+          "tecnico": "Bruno faganello",
+          "setupId": "0c526479-1a89-4cde-8128-33021a07662b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "334c7616-c425-42ed-868a-e5a2133c34a0",
+          "numero": "98",
+          "tecnico": "Bruno faganello",
+          "setupId": "eb77c01a-8af5-4a94-a320-eb9bc8118ef8",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "7ae88fd9-e87a-4849-bb9f-c67f985a9955",
+          "numero": "99",
+          "tecnico": "vinicius",
+          "setupId": "270ea71c-2a69-4067-aea8-5a0878d9587c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "1160205e-18c0-4934-b3d0-8deb9a07f288",
+      "nome": "Rogerio Luiz Delamura",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "b7f7c053-8f66-471c-90be-c8c3c51b048c",
+          "numero": "1",
+          "tecnico": "eder",
+          "setupId": "592d74ce-8d11-46b9-9ddd-98c649d5958a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "56bae516-7ae5-4985-a9f9-94ac67529379",
+          "numero": "2",
+          "tecnico": "eder",
+          "setupId": "c30690cd-0d42-40a3-ae6d-8bb23bfe8842",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "ce5647f7-86ba-46b2-a84e-4e5c88a81de9",
+          "numero": "3",
+          "tecnico": "eder",
+          "setupId": "32b1ccfd-42d4-4838-af7d-82fe8275f85a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "d56337f2-204f-468a-988f-6e482e1dffdf",
+          "numero": "4",
+          "tecnico": "eder",
+          "setupId": "f4104d27-5f1f-4cce-8cc6-fdf3903dd634",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "65788938-4486-4a29-b533-b09350cb5d0b",
+      "nome": "Sergio Moraes",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "4aa1ba3d-35df-484d-a5ff-0e34d60c5128",
+          "numero": "1",
+          "tecnico": "eder",
+          "setupId": "700d80cf-3a7c-4cea-a08d-781a127cd0ee",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "9f9928f4-3f17-4959-8864-d7094cf113d4",
+          "numero": "2",
+          "tecnico": "eder",
+          "setupId": "622e5113-e560-4e01-ae92-c7bdd2ddb030",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "95da7299-94a1-420a-9c2f-8a73ad9e3021",
+          "numero": "3",
+          "tecnico": "eder",
+          "setupId": "619ee0f7-828c-46bb-8ed1-65fc15a5193e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "fc0c37f8-041e-487f-9fe5-f385b0e95de3",
+          "numero": "4",
+          "tecnico": "eder",
+          "setupId": "87eae2c7-5a02-4917-9505-0bd6e4971564",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "c10aef05-0dd7-4f43-ad25-0249914a424c",
+      "nome": "Tiago Alves Colombo",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "e9bfac21-d300-404e-94c3-b0fae4d156b2",
+          "numero": "1",
+          "tecnico": "Iarbas",
+          "setupId": "67bb8e34-7961-4f3c-b2d0-81836854b1b5",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "0cd7757c-3d20-4260-836f-e48784e6f5b6",
+          "numero": "2",
+          "tecnico": "Iarbas",
+          "setupId": "a77d4257-425f-4819-a978-a52572f6f17d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "560cf230-90db-428c-94ed-d3d417ac5b51",
+          "numero": "3",
+          "tecnico": "Iarbas",
+          "setupId": "fc3a4414-c36c-4740-8bb1-86bd736c9cf2",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "68f92dcb-a824-4a3f-afbe-60c875cfe04e",
+          "numero": "4",
+          "tecnico": "Iarbas",
+          "setupId": "39d14c90-c828-4010-87d6-344f3b944c07",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "7c6f4f4c-4de7-4a13-8bb5-15529402ff1c",
+      "nome": "Valdeir Zancanaro",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "ffc171eb-e27b-4077-9fda-025cf0fa7432",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "a1a4ec39-1e73-4d16-a371-011942b99405",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "62c1fe31-015a-44ab-969b-cb4ae333ad32",
+          "numero": "2",
+          "tecnico": "Fernando zanolla",
+          "setupId": "73b665df-822a-4d0a-b7d4-c6efdc8e6593",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "b3823772-ceab-49fe-9c40-4c3fbb4d916c",
+      "nome": "Valdemir Chagas De Matos",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "784e067c-d7fd-44c6-897d-2ab29b05e067",
+          "numero": "1",
+          "tecnico": "Fernando zanolla",
+          "setupId": "cc2ee108-3138-4d6e-bf5d-e8aa7ade57bf",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "4753b2bd-71c6-432c-899c-33198bb4e7ee",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "839d8b79-3aba-4230-9396-a148cfa3f5b6",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "a4d147d1-2d4c-4243-98cf-d3a30e576e7f",
+      "nome": "Valdir Aparecido Mello",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "b75a39c0-b1f8-4b69-891a-4888123cc66a",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "9d8dd805-9422-49e9-9df5-d01aea25555b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "31498b4d-ab08-42a5-8b77-8d1d69ed5c93",
+          "numero": "2",
+          "tecnico": "vinicius",
+          "setupId": "23c2cfe4-21c8-4f64-bba2-0b3ed761e52f",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "55bc6086-6b71-43f6-b071-c3779b1cf9a6",
+      "nome": "Valdomiro Tomaz",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "32fc4d5e-8517-493c-8514-2d918713f7a9",
+          "numero": "1",
+          "tecnico": "vinicius",
+          "setupId": "8fba42af-b7f3-4f0f-8ee0-431d764dffce",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "bd833486-3ec2-40e7-9298-062019642093",
+          "numero": "2",
+          "tecnico": "vinicius",
+          "setupId": "3bdce461-6ec3-41b6-8bc9-f092d635cb73",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "27f78da9-4ef5-4c23-842b-6e49d9071ff2",
+          "numero": "3",
+          "tecnico": "vinicius",
+          "setupId": "ec96b2da-1267-4ee7-a917-0bae06e3a0e1",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "f89bf5bd-7157-4f15-899c-55354b348f27",
+          "numero": "4",
+          "tecnico": "vinicius",
+          "setupId": "bd5b56f8-883c-40c4-ad51-31fb9a752952",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "2b9690bc-9f92-4bed-864f-51e5dee92291",
+      "nome": "Vanderlei Felippi",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "5fd6cdc7-6a02-47c6-8b76-01acb9e6dfca",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "df2a1dc7-3d8d-4ad2-90f2-13e19216cf2c",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "ec6caf3f-c067-4905-ad5a-84b88582c0d0",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "dfd2adb4-24b4-431d-b06f-6fdae0f4accf",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "af23ab39-3ecf-477a-8433-13312a5f6591",
+      "nome": "Vicente Jonas De Araujo Maciel",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "9da97ba8-bc53-409d-adaf-a15880ae42df",
+          "numero": "3",
+          "tecnico": "Fernando Marcos",
+          "setupId": "eabb0a94-965b-466d-a9ee-4c5bff92bb34",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "b4a47c49-d75b-4d9e-9d93-9243356b25b8",
+          "numero": "4",
+          "tecnico": "Fernando Marcos",
+          "setupId": "9547f19a-42db-46f7-be1d-ca1df2db1214",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "25b02668-2a12-440f-a969-2600e70ea0fe",
+      "nome": "Walter Augusti Zancanaro",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "9f34d9f4-d224-4d11-9d48-0f5f456184eb",
+          "numero": "1",
+          "tecnico": "Stefani",
+          "setupId": "ab18f9fc-a8d1-49f7-a85b-77cc75ee84ae",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8ea15a99-4589-4bcf-a837-bfc15eec66d5",
+          "numero": "2",
+          "tecnico": "Stefani",
+          "setupId": "e862d30b-5f4f-45c8-b149-5dd0252072d9",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "a5af369d-a5e1-4f73-8c86-c04cbebe8ee9",
+      "nome": "Walter De Paula Ramos Neto",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "00d4b0d7-ef13-4db9-a376-2004f88477bb",
+          "numero": "1",
+          "tecnico": "Fernando Marcos",
+          "setupId": "b815a495-862a-47d9-96c2-cf5c77ca9ee7",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "c49b72aa-3489-45ea-a65d-3ecf88f08c9c",
+          "numero": "2",
+          "tecnico": "Fernando Marcos",
+          "setupId": "67bd76b6-bda5-42da-be9b-e69efebb8bd3",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "8e9f3209-a939-49df-b6d2-3197c0310b0d",
+      "nome": "William Luiz Ajala",
+      "totalAviarios": 4,
+      "aviariosComSetup": [
+        {
+          "id": "910b4f79-de3f-4328-95c4-ed873411f667",
+          "numero": "1",
+          "tecnico": "Iarbas",
+          "setupId": "50f796e0-e982-4e34-92d3-04c0700c2b1d",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "df2305e5-9aec-4d90-abd9-6d0be5af1495",
+          "numero": "2",
+          "tecnico": "Iarbas",
+          "setupId": "dd31f78a-a405-49f4-9e6c-2b5616ef726b",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "887de372-fb14-4682-bbbf-0809b57c710c",
+          "numero": "3",
+          "tecnico": "Iarbas",
+          "setupId": "cb4bd427-77fb-43c4-8877-b8a9cc55b405",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "8febe172-4d5e-4402-bde4-c4f87e5a6f33",
+          "numero": "4",
+          "tecnico": "Iarbas",
+          "setupId": "42308d6e-6475-409c-8ef3-d771c3788216",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    },
+    {
+      "id": "f6acaeb0-e658-4066-858e-55f57b7c0542",
+      "nome": "Wilson Tassi",
+      "totalAviarios": 2,
+      "aviariosComSetup": [
+        {
+          "id": "0bf42dcf-9f2a-44a1-83e3-efe1154cd1e6",
+          "numero": "1",
+          "tecnico": "Fernando Marcos",
+          "setupId": "1416b520-3e9f-412a-8ff7-ad7e55c5db8a",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        },
+        {
+          "id": "28c99f16-3065-4fd7-bb80-2e6b4cbdbb9e",
+          "numero": "2",
+          "tecnico": "Fernando Marcos",
+          "setupId": "937de294-badc-4da6-bd37-f60b4985d02e",
+          "temFotos": false,
+          "qtdFotos": 0,
+          "pressaoVedacao": null,
+          "ventilacao": null,
+          "observacoes": null
+        }
+      ],
+      "aviariosSemSetup": [],
+      "statusCompleto": true
+    }
+  ],
+  "setupsAnonCount": 0,
+  "setupsAdminCount": 329
+}

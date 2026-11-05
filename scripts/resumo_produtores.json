@@ -1,0 +1,682 @@
+[
+  {
+    "nome": "Adriano Maximino Paludo",
+    "id": "56cb2daf-6ddb-4829-b5d4-babe9fcceb8e",
+    "totalAvs": 8,
+    "setupsCount": 8,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Ademir Zago",
+    "id": "27a53615-2954-4f18-a038-85bda33b4452",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Ademir Zancanaro",
+    "id": "78978727-3717-4145-8c74-1ad3d9e23281",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Adilson Garcia/Vanderleia A S Garcia",
+    "id": "0983ae36-9661-451b-bfba-dc1092698f61",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Adimilson Dos Santos",
+    "id": "2647addf-c5be-4688-a279-10546abce3ca",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Agostinho Anselmi",
+    "id": "ee305c70-db64-4696-970e-1c9152ea1af5",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Alceu Hernani Kleinschmitt",
+    "id": "ca381b21-5157-43cd-88b9-6c24ccf27311",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Altemar Schulter",
+    "id": "5ce34dd9-affe-47a8-82ea-89d9f6bee52e",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Alvaro Carlos Salvadori",
+    "id": "60164f51-83bb-49af-9107-70426cf00b08",
+    "totalAvs": 8,
+    "setupsCount": 8,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Alvaro Mario Burin Junior",
+    "id": "3c723409-b335-4f60-bdf3-1b7b89b40c5b",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Amarildo Felix Pereira",
+    "id": "fb74a447-9e80-450b-9c24-ea627e431f1e",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Antonio H. Martins E/Ou Elisio H. Martins",
+    "id": "2f844c4a-1c8c-43c0-b7d5-e9a63da14385",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Claudemir Kuhnen",
+    "id": "f844c232-21fb-4747-9390-4bd3d01fb2a0",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Bruno Bertol Delamura",
+    "id": "50861652-1519-4426-924e-a46fe26cc12c",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Carlos Alexandre Tarniove",
+    "id": "9dbf448c-d0c9-4ec8-9289-12b53ac3d77b",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Carlos Cesar Polla",
+    "id": "03cde4db-1195-42e9-b402-1a2c327facb1",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Claudio Joares Mohr",
+    "id": "8b123084-91bd-4ee0-b0a0-e072f6f48b92",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Claudio Junior Machado Posser",
+    "id": "6a08d7bb-cecf-440f-bb04-8bf73b64df31",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Cosme Luciano Brioli",
+    "id": "8b192f0b-8cbd-4187-a94f-724fc2cf457e",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Cristina Terezinha Do Carmo",
+    "id": "44366adf-f665-45bd-bf43-58a964b32b98",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Damiao Luciano Brioli",
+    "id": "83de46d9-5ef9-4aa0-88d6-a0259e872d4c",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Devanir Kuhnen",
+    "id": "def41f41-9387-4f70-b7dd-d663769dc20a",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Dion Rebert Costa",
+    "id": "1265e902-2d46-494b-a813-e1e7402ece56",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Dirceu Bettoni",
+    "id": "7e8b05bb-1f64-4973-b2e7-2be3fba3d6ff",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Ederson Tutida",
+    "id": "ec0bd0cc-2217-4361-868a-cca22f4c7218",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Edson Carlos Block",
+    "id": "859c5a0b-4a5d-4bfb-aedf-bd760b727e9c",
+    "totalAvs": 5,
+    "setupsCount": 5,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Enio Michels",
+    "id": "b04bb360-c98b-4985-847e-148dd60db48e",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Evandro Da Silva Golfeto",
+    "id": "e538f528-0a1c-43a1-82f8-e0d0a7df22d7",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Ezequiel Rodrigo Pereira Dias",
+    "id": "b7207e93-c9a4-4237-a9bc-45af9448c6bc",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Francisco B Damacena Reg Econ Familiar",
+    "id": "2f39a164-dddd-4c3b-8ab0-785c91e886cb",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Gilberto Luiz Fauro",
+    "id": "88486f41-cbd6-4785-943f-cef109c1ef2d",
+    "totalAvs": 3,
+    "setupsCount": 3,
+    "temHist": false,
+    "temDadosReais": true,
+    "observacoes": [
+      "Vedação de portas e portões , forração com frestas e vazão do quadro no aviário  fora do padrão.",
+      "Vedação de portas e portões, ajuste nos janelão e entrada do quadro de água no galpão insuficiente.",
+      "Janelão não está vedando, portas com frestas e forro também. são 16 exaustor porém só 15 funciona. inlets do galpão não está funcionando."
+    ],
+    "createdBys": []
+  },
+  {
+    "nome": "Giovanne Orlando Dallago",
+    "id": "d61a30ea-ca18-4522-b9c4-21a07f928030",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Glaucio Colavite",
+    "id": "3366ed24-0b63-4614-9fb0-6774e77a6af5",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Gustavo Fernandes",
+    "id": "86446af6-8ad5-4cc5-9451-9074fa083008",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Heber Clayton De Santana",
+    "id": "3bffc870-912d-4ba1-b627-f1af05186082",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Izidoro Jose De Oliveira",
+    "id": "8d8daaac-ece1-449a-86d9-a27824bd1cb7",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Jane Maria Bertol",
+    "id": "61076347-372d-4673-a8bf-0fd2ab8cef55",
+    "totalAvs": 8,
+    "setupsCount": 8,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Joao Carrenho Neto",
+    "id": "1cea8139-7efb-4659-8b52-8c72e6b5ee83",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Jose Antonio Pessuto",
+    "id": "029c99e4-78dc-4993-adb7-c59c254a7e92",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Jose De Moura",
+    "id": "82d4ec52-0946-40a3-b520-a78706cfcf39",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Jose Ferreira Dos Santos",
+    "id": "b88b2e0a-47ce-4f59-b418-ce2ea7ff16a7",
+    "totalAvs": 1,
+    "setupsCount": 1,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Jose Guilherme Passarini",
+    "id": "9f0b8add-8a77-4ad0-987b-a2e681ce4663",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Jose Luiz Linn",
+    "id": "d44ebbfb-cc7e-47f6-a7a8-ba2a2824d1c8",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Jose Sidney Perego",
+    "id": "4ec8c3d3-3625-4e91-906c-9b3f8e11866f",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Lucio Aparecido Ferrari",
+    "id": "42137d81-c13c-456c-b1ad-8546b1b83223",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Marcio Wanderlei Dilkin",
+    "id": "e1c6d180-b303-4fd0-b0b5-325af37aa69d",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Maria Salete De Freitas Lavarias",
+    "id": "39eb82ed-c901-4103-9978-92ede2fdd536",
+    "totalAvs": 1,
+    "setupsCount": 1,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Mauri Antonio Mazurek",
+    "id": "1083dd9d-387f-4e97-aa58-73352cb00c95",
+    "totalAvs": 29,
+    "setupsCount": 29,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Orlando Cessel Junior",
+    "id": "b73526eb-a6e6-4d10-8c44-2ddde70c5d96",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Pauli Mergen",
+    "id": "2d2f68d4-c9a5-4812-b1de-f2da9c24b54b",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Paulo Bloemer Regime Economia Familiar",
+    "id": "edd74f1a-8c16-40b0-ba41-edcefa83d728",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Ricardo Kenji Utida",
+    "id": "b6b9ea38-56e5-4f31-9fd5-2bdcc08e53ce",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Roberto Bloemer",
+    "id": "250ed501-18ce-4642-9bc8-f9464db5db43",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Roberto Carlos Miotto Ferreira",
+    "id": "6b88830c-d76e-4384-83d3-fe8e35bf15af",
+    "totalAvs": 90,
+    "setupsCount": 90,
+    "temHist": false,
+    "temDadosReais": true,
+    "observacoes": [
+      "Portas com vedação ineficiente,  túnel door não está fechando corretamente, forros com frestas e exaustores com problemas mecânicos polias e correias e venezianas não abre. Boia automática da caixa central não está funcionando somente no manual. Placas evaporativas com ineficiência ( sujeiras e qualidade da placa). Poço com vazão ineficiente.",
+      "Portas com vedação ineficiente, túnel door não está fechando corretamente, forros com frestas, exautores com problemas mecânicos ( polias e correias). Boia automática da caixa central não está funcionando. Placas evaporativas com ineficiência ( sujeira e qualidade da placa)",
+      "Portas com vedação inadequada, exautores com problemas mecânicos ( polias, correias e persianas não abrem ), janelão e muretas com vedação ineficiente , 2 grupo de exautores não desliga.  Algumas placas evaporativas com qualidade ruim.",
+      "Portas com vedação inadequada, exautores com problemas mecânicos ( polias, correias e persianas não abrem ), janelão e muretas com vedação ineficiente , 1 grupo de exautores não desliga.  Algumas placas evaporativas com qualidade ruim.",
+      "Portas com vedação inadequada, exautores com problemas mecânicos ( polias, correias e persianas não abrem ), janelão e muretas com vedação ineficiente ,  Algumas placas evaporativas com qualidade ruim."
+    ],
+    "createdBys": []
+  },
+  {
+    "nome": "Rogerio Luiz Delamura",
+    "id": "1160205e-18c0-4934-b3d0-8deb9a07f288",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Sergio Moraes",
+    "id": "65788938-4486-4a29-b533-b09350cb5d0b",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Tiago Alves Colombo",
+    "id": "c10aef05-0dd7-4f43-ad25-0249914a424c",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Valdeir Zancanaro",
+    "id": "7c6f4f4c-4de7-4a13-8bb5-15529402ff1c",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Valdemir Chagas De Matos",
+    "id": "b3823772-ceab-49fe-9c40-4c3fbb4d916c",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Valdir Aparecido Mello",
+    "id": "a4d147d1-2d4c-4243-98cf-d3a30e576e7f",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Valdomiro Tomaz",
+    "id": "55bc6086-6b71-43f6-b071-c3779b1cf9a6",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Vanderlei Felippi",
+    "id": "2b9690bc-9f92-4bed-864f-51e5dee92291",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Vicente Jonas De Araujo Maciel",
+    "id": "af23ab39-3ecf-477a-8433-13312a5f6591",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Walter Augusti Zancanaro",
+    "id": "25b02668-2a12-440f-a969-2600e70ea0fe",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Walter De Paula Ramos Neto",
+    "id": "a5af369d-a5e1-4f73-8c86-c04cbebe8ee9",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "William Luiz Ajala",
+    "id": "8e9f3209-a939-49df-b6d2-3197c0310b0d",
+    "totalAvs": 4,
+    "setupsCount": 4,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  },
+  {
+    "nome": "Wilson Tassi",
+    "id": "f6acaeb0-e658-4066-858e-55f57b7c0542",
+    "totalAvs": 2,
+    "setupsCount": 2,
+    "temHist": false,
+    "temDadosReais": false,
+    "observacoes": [],
+    "createdBys": []
+  }
+]
