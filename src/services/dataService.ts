@@ -368,19 +368,23 @@ export function validateSetupFields(setup: Partial<SetupAviario>): { isValid: bo
 /**
  * Verifica se um setup está formalmente concluído segundo as regras de negócio
  */
+/**
+ * Verifica se um setup está formalmente concluído segundo as regras de negócio.
+ * Setups históricos com medições técnicas válidas são reconhecidos como concluídos,
+ * mantendo a exigência de fotos para novos cadastros salvos no formulário.
+ */
 export function isSetupConcluido(
   setup: Partial<SetupAviario> | null | undefined, 
-  fotos?: SetupFoto[]
+  _fotos?: SetupFoto[]
 ): boolean {
   if (!setup) return false;
   const validation = validateSetupFields(setup);
-  if (!validation.isValid) return false;
-  const fotosList = fotos || normalizeFotos(setup.fotos);
-  return Array.isArray(fotosList) && fotosList.length > 0;
+  return validation.isValid;
 }
 
 /**
- * Determina o status detalhado de setup para um aviário específico
+ * Determina o status detalhado de setup para um aviário específico.
+ * Registros históricos com dados técnicos preenchidos são reconhecidos como válidos.
  */
 export function checkAviarioSetupStatus(aviario: Aviario): AviarioSetupStatus {
   const rawSetup = Array.isArray(aviario.setup) ? aviario.setup[0] : aviario.setup;
@@ -407,11 +411,11 @@ export function checkAviarioSetupStatus(aviario: Aviario): AviarioSetupStatus {
   let motivoPendente: string | undefined = undefined;
   if (!isValid) {
     motivoPendente = `Campos obrigatórios incompletos (${missingFields.slice(0, 2).join(', ')}${missingFields.length > 2 ? '...' : ''})`;
-  } else if (!hasFotos) {
-    motivoPendente = 'Sem evidência fotográfica anexada';
   }
 
-  const isConcluido = isValid && hasFotos;
+  // Registros com medições técnicas válidas são reconhecidos como concluídos,
+  // mesmo se forem registros legados sem fotos.
+  const isConcluido = isValid;
 
   return {
     aviario,
@@ -466,23 +470,25 @@ export function calculateProdutoresSetupStats(
     const concluidos = statuses.filter(s => s.isConcluido);
     const pendentes = statuses.filter(s => !s.isConcluido);
 
-    // O produtor só é considerado CONCLUÍDO se tiver aviários e TODOS os seus aviários tiverem setup concluído
-    const isProdutorConcluido = totalAviarios > 0 && pendentes.length === 0;
+    // O produtor é considerado COM SETUP quando possui ficha técnica efetivamente cadastrada
+    // (pelo menos 1 aviário concluído com medições técnicas válidas).
+    // Produtores sem nenhuma ficha técnica preenchida são contabilizados como PENDENTES.
+    const hasSetupEfetivo = concluidos.length > 0;
 
     const statusObj: ProdutorSetupStatus = {
       produtor,
       totalAviarios,
       aviariosConcluidos: concluidos.length,
       aviariosPendentes: pendentes.length,
-      isConcluido: isProdutorConcluido,
-      status: isProdutorConcluido ? 'CONCLUÍDO' : 'PENDENTE',
+      isConcluido: hasSetupEfetivo,
+      status: hasSetupEfetivo ? 'CONCLUÍDO' : 'PENDENTE',
       tecnicoNome: primeiroTecnico || 'Sem Extensionista',
       aviariosStatus: statuses,
       aviariosPendentesList: pendentes.map(p => p.aviario),
       aviariosConcluidosList: concluidos.map(c => c.aviario)
     };
 
-    if (isProdutorConcluido) {
+    if (hasSetupEfetivo) {
       concluidosList.push(statusObj);
     } else {
       pendentesList.push(statusObj);
@@ -989,6 +995,70 @@ export async function updateAviarioTecnico(aviarioId: string, tecnicoId: string 
     .eq('id', aviarioId);
 
   if (error) throw error;
+}
+
+/**
+ * Atualiza o extensionista responsável por todos os aviários de um determinado produtor.
+ * Preserva integralmente os aviários, fichas técnicas, fotos e históricos existentes.
+ */
+export async function updateProdutorTecnico(
+  produtorId: string,
+  novoTecnicoId: string,
+  empresaId: string,
+  usuarioNome: string = 'Sistema'
+): Promise<{ aviariosAfetados: number }> {
+  // 1. Obter aviários atuais do produtor para fins de contagem e auditoria
+  const { data: currentAviarios, error: fetchErr } = await supabase
+    .from('cadastro_aviarios')
+    .select('id, numero_instalacao, tecnico_id')
+    .eq('produtor_id', produtorId)
+    .eq('empresa_id', empresaId);
+
+  if (fetchErr) {
+    console.error('Erro ao consultar aviários do produtor para transferência:', fetchErr);
+    throw fetchErr;
+  }
+
+  if (!currentAviarios || currentAviarios.length === 0) {
+    return { aviariosAfetados: 0 };
+  }
+
+  // 2. Atualizar em lote todos os aviários desse produtor com o novo tecnico_id
+  const { error: updateErr } = await supabase
+    .from('cadastro_aviarios')
+    .update({
+      tecnico_id: novoTecnicoId,
+      updated_at: new Date().toISOString()
+    })
+    .eq('produtor_id', produtorId)
+    .eq('empresa_id', empresaId);
+
+  if (updateErr) {
+    console.error('Erro ao atualizar extensionista dos aviários:', updateErr);
+    throw updateErr;
+  }
+
+  // 3. Registrar no histórico de cada aviário afetado
+  try {
+    for (const av of currentAviarios) {
+      await supabase
+        .from('setups_aviarios_historico')
+        .insert([{
+          id: `hist_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          aviario_id: av.id,
+          empresa_id: empresaId,
+          versao: 1,
+          tipo_acao: 'TRANSFERENCIA_TECNICO',
+          usuario_nome: usuarioNome,
+          resumo_alteracoes: `Extensionista alterado para o ID: ${novoTecnicoId}`,
+          created_at: new Date().toISOString()
+        }]);
+    }
+  } catch (auditErr) {
+    console.warn('Aviso ao registrar auditoria de transferência:', auditErr);
+  }
+
+  return { aviariosAfetados: currentAviarios.length };
 }
 
 export async function createProdutor(payload: {

@@ -58,7 +58,15 @@ export const SetupStatusModal: React.FC<SetupStatusModalProps> = ({
 
   // Filtro de busca na lista ativa
   const filteredList = useMemo(() => {
-    const list = activeTab === 'concluidos' ? stats.concluidosList : stats.pendentesList;
+    let list: typeof stats.concluidosList = [];
+    if (activeTab === 'concluidos') {
+      list = stats.concluidosList;
+    } else {
+      // Na aba de pendentes, incluir os que não têm nenhum setup e também produtores com aviários pendentes residuais
+      const parciais = stats.concluidosList.filter(c => c.aviariosPendentes > 0);
+      list = [...stats.pendentesList, ...parciais];
+    }
+    
     if (!searchTerm.trim()) return list;
 
     const q = searchTerm.toLowerCase().trim();
