@@ -161,9 +161,12 @@ export interface SetupAviario {
 export interface SetupFoto {
   id: string;
   url: string; // Base64 data URL ou URL Supabase Storage
+  storage_path?: string;
   nome?: string;
   tamanho?: number;
   created_at?: string;
+  status?: 'pending' | 'uploading' | 'saved' | 'error';
+  errorMessage?: string;
 }
 
 export interface AviarioSetupStatus {

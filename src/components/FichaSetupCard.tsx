@@ -3,13 +3,13 @@ import {
   Printer, Edit3, Save, RotateCcw, Check, Sparkles, 
   Wind, Gauge, Droplets, Bell, Ruler, Sun, Fan, Smartphone, History,
   Sliders, Camera, UploadCloud, Trash2, ZoomIn, 
-  AlertCircle, FileText, AlertTriangle
+  AlertCircle, FileText, AlertTriangle, Cloud, Loader2
 } from 'lucide-react';
 import { Aviario, SetupAviario, Tecnico, SetupHistorico, SetupFoto } from '../types/database';
 import { 
   saveSetupData, updateAviarioTecnico, fetchSetupHistorico, restoreSetupVersion,
   deleteSetupHistoricoItem, clearAllSetupHistorico, applyDefaultSetupValues,
-  getAviarioFotos, validateSetupFields
+  getAviarioFotos, validateSetupFields, normalizeFotos, syncLocalFotosToStorage
 } from '../services/dataService';
 
 import { CompanyLogo } from './CompanyLogo';
@@ -111,11 +111,21 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
   useEffect(() => {
     setFormData(aviario.setup || {});
     setSelectedTecnicoId(aviario.tecnico_id || '');
-    setFotos(getAviarioFotos(aviario.id, aviario.setup));
+    const currentFotos = getAviarioFotos(aviario.id, aviario.setup);
+    setFotos(currentFotos);
     setValidationError(null);
     setIsEditing(false);
     loadHistoricoData();
-  }, [aviario]);
+
+    // Sincronização automática em background de fotos legadas para o Supabase Storage
+    if (aviario.id && currentCompany?.id) {
+      syncLocalFotosToStorage(aviario.id, currentCompany.id, currentFotos).then((synced) => {
+        if (synced && synced.length > 0 && synced.some(f => f.url?.startsWith('http'))) {
+          setFotos(synced);
+        }
+      });
+    }
+  }, [aviario, currentCompany]);
 
   const handleFieldChange = (field: keyof SetupAviario, value: any) => {
     setFormData(prev => ({
@@ -139,10 +149,11 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
         if (!file.type.startsWith('image/')) continue;
         const compressedBase64 = await compressImageFile(file);
         newFotos.push({
-          id: `foto_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+          id: `foto_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
           url: compressedBase64,
           nome: file.name,
           tamanho: file.size,
+          status: 'pending',
           created_at: new Date().toISOString()
         });
       }
@@ -177,11 +188,14 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
     }
 
     setIsSaving(true);
+    // Marca visualmente as fotos que serão enviadas para o Storage
+    setFotos(prev => prev.map(f => (!f.url.startsWith('http') || f.status !== 'saved') ? { ...f, status: 'uploading' } : f));
+
     try {
       if (selectedTecnicoId !== aviario.tecnico_id) {
         await updateAviarioTecnico(aviario.id, selectedTecnicoId || null);
       }
-      await saveSetupData(
+      const savedSetup = await saveSetupData(
         aviario.id, 
         {
           ...formData,
@@ -194,13 +208,17 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
         currentCompany.slug === 'levo' ? currentUnit?.id : null
       );
       
+      const savedFotos = normalizeFotos(savedSetup.fotos);
+      setFotos(savedFotos);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
       setIsEditing(false);
       await loadHistoricoData();
       onSetupUpdated();
     } catch (err: any) {
-      setValidationError(err?.message || 'Falha ao salvar dados.');
+      console.error('Falha ao salvar setup e persistir fotos:', err);
+      setValidationError(err?.message || 'Falha ao salvar dados e evidências fotográficas.');
+      setFotos(prev => prev.map(f => f.status === 'uploading' ? { ...f, status: 'error', errorMessage: err?.message } : f));
     } finally {
       setIsSaving(false);
     }
@@ -865,9 +883,17 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
             <span className="text-[11px] font-mono text-slate-400">
               {fotos.length} {fotos.length === 1 ? 'foto vinculada' : 'fotos vinculadas'}
             </span>
-            {fotos.length === 0 && (
+            {fotos.length === 0 ? (
               <span className="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
                 Pendente de Foto
+              </span>
+            ) : fotos.every(f => f.url && f.url.startsWith('http') && f.status === 'saved') ? (
+              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1">
+                <Cloud className="w-3 h-3" /> Armazenadas no Storage
+              </span>
+            ) : (
+              <span className="text-[10px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20 flex items-center gap-1">
+                ● {fotos.filter(f => !f.url?.startsWith('http') || f.status !== 'saved').length} pendente(s) de envio
               </span>
             )}
           </div>
@@ -932,6 +958,27 @@ export const FichaSetupCard: React.FC<FichaSetupCardProps> = ({
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+
+                {/* Badge de Status no Storage */}
+                <div className="absolute top-2 left-2 z-10 pointer-events-none">
+                  {foto.url?.startsWith('http') && foto.status === 'saved' ? (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-500/30 backdrop-blur shadow">
+                      <Cloud className="w-2.5 h-2.5" /> Storage
+                    </span>
+                  ) : foto.status === 'uploading' ? (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950/85 text-amber-300 border border-amber-500/30 backdrop-blur shadow animate-pulse">
+                      <Loader2 className="w-2.5 h-2.5 animate-spin" /> Enviando...
+                    </span>
+                  ) : foto.status === 'error' ? (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-950/85 text-rose-300 border border-rose-500/30 backdrop-blur shadow">
+                      <AlertCircle className="w-2.5 h-2.5" /> Erro
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-sky-950/85 text-sky-300 border border-sky-500/30 backdrop-blur shadow">
+                      Novo anexo
+                    </span>
+                  )}
+                </div>
 
                 {/* Botões de Ação na Miniatura */}
                 <div className="relative z-10 p-2 flex items-center justify-between gap-1">

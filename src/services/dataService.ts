@@ -255,6 +255,162 @@ function formatAuditVal(val: any): string {
 
 const LOCAL_STORAGE_HIST_PREFIX = 'bello_audit_historico_';
 const LOCAL_STORAGE_FOTOS_PREFIX = 'bello_setup_fotos_';
+export const SETUP_FOTOS_BUCKET = 'setup-fotos';
+
+/**
+ * Converte dataUrl base64 em Blob com o mimeType correspondente
+ */
+export function dataUrlToBlob(dataUrl: string): { blob: Blob; mimeType: string } {
+  const parts = dataUrl.split(',');
+  const mimeMatch = parts[0].match(/:(.*?);/);
+  const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+  const byteString = atob(parts[1]);
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return { blob: new Blob([ab], { type: mimeType }), mimeType };
+}
+
+/**
+ * Realiza o upload definitivo de uma evidência fotográfica para o bucket 'setup-fotos' no Supabase Storage.
+ * Garante link público permanente, isolamento por empresa/aviário e metadados completos.
+ */
+export async function uploadSetupFoto(
+  fileOrBlobOrUrl: File | Blob | string,
+  empresaId: string,
+  aviarioId: string,
+  fileName?: string
+): Promise<SetupFoto> {
+  let blob: Blob;
+  let mimeType = 'image/jpeg';
+  let name = fileName || `foto_${Date.now()}.jpg`;
+
+  if (typeof fileOrBlobOrUrl === 'string') {
+    if (fileOrBlobOrUrl.startsWith('http://') || fileOrBlobOrUrl.startsWith('https://')) {
+      // Já é uma URL definitiva do Storage
+      return {
+        id: `foto_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        url: fileOrBlobOrUrl,
+        nome: name,
+        status: 'saved',
+        created_at: new Date().toISOString()
+      };
+    }
+    if (fileOrBlobOrUrl.startsWith('data:')) {
+      const converted = dataUrlToBlob(fileOrBlobOrUrl);
+      blob = converted.blob;
+      mimeType = converted.mimeType;
+    } else {
+      throw new Error('Formato inválido de imagem para upload.');
+    }
+  } else if (fileOrBlobOrUrl instanceof File) {
+    blob = fileOrBlobOrUrl;
+    mimeType = fileOrBlobOrUrl.type || 'image/jpeg';
+    name = fileOrBlobOrUrl.name;
+  } else {
+    blob = fileOrBlobOrUrl;
+    mimeType = fileOrBlobOrUrl.type || 'image/jpeg';
+  }
+
+  const ext = name.includes('.') ? name.split('.').pop() : (mimeType.includes('png') ? 'png' : 'jpg');
+  const cleanBaseName = name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const uniqueName = `${Date.now()}_${cleanBaseName}.${ext}`;
+  const cleanEmpresa = empresaId ? empresaId.replace(/[^a-zA-Z0-9_-]/g, '_') : 'geral';
+  const storagePath = `${cleanEmpresa}/${aviarioId}/${uniqueName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(SETUP_FOTOS_BUCKET)
+    .upload(storagePath, blob, {
+      contentType: mimeType,
+      upsert: true
+    });
+
+  if (uploadError) {
+    console.error('Erro ao enviar foto para o Supabase Storage:', uploadError);
+    throw new Error(`Falha no upload da foto "${name}": ${uploadError.message}`);
+  }
+
+  const { data: { publicUrl } } = supabase.storage
+    .from(SETUP_FOTOS_BUCKET)
+    .getPublicUrl(storagePath);
+
+  return {
+    id: `foto_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    url: publicUrl,
+    storage_path: storagePath,
+    nome: name,
+    tamanho: blob.size,
+    status: 'saved',
+    created_at: new Date().toISOString()
+  };
+}
+
+/**
+ * Remove uma foto do Supabase Storage
+ */
+export async function deleteSetupFoto(storagePath: string): Promise<boolean> {
+  if (!storagePath) return false;
+  try {
+    const { error } = await supabase.storage
+      .from(SETUP_FOTOS_BUCKET)
+      .remove([storagePath]);
+    if (error) {
+      console.warn('Erro ao remover foto do Storage:', error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn('Exceção ao remover foto do Storage:', err);
+    return false;
+  }
+}
+
+/**
+ * Recupera fotos locais guardadas em localStorage e migra para o Supabase Storage
+ */
+export async function syncLocalFotosToStorage(
+  aviarioId: string,
+  empresaId: string,
+  existingFotos?: SetupFoto[]
+): Promise<SetupFoto[]> {
+  try {
+    const localFotos = getAviarioFotos(aviarioId);
+    if (!localFotos || localFotos.length === 0) return existingFotos || [];
+
+    // Se já existem fotos salvas no Supabase com URL http, mantém
+    if (existingFotos && existingFotos.length > 0 && existingFotos.some(f => f.url && f.url.startsWith('http'))) {
+      return existingFotos;
+    }
+
+    const resolved: SetupFoto[] = [];
+    for (let i = 0; i < localFotos.length; i++) {
+      const f = localFotos[i];
+      if (f.url && f.url.startsWith('http')) {
+        resolved.push({ ...f, status: 'saved' });
+      } else if (f.url && f.url.startsWith('data:')) {
+        const uploaded = await uploadSetupFoto(f.url, empresaId, aviarioId, f.nome || `foto_recuperada_${i + 1}.jpg`);
+        resolved.push(uploaded);
+      }
+    }
+
+    if (resolved.length > 0) {
+      const { error } = await supabase
+        .from('setups_aviarios')
+        .update({ fotos: resolved })
+        .eq('aviario_id', aviarioId);
+
+      if (!error) {
+        saveAviarioFotosLocal(aviarioId, resolved);
+        return resolved;
+      }
+    }
+  } catch (err) {
+    console.warn('Falha ao sincronizar fotos locais para o Supabase Storage:', err);
+  }
+  return existingFotos || [];
+}
 
 /**
  * Normaliza a estrutura de fotos em um array de SetupFoto
@@ -264,19 +420,25 @@ export function normalizeFotos(fotosRaw: any): SetupFoto[] {
   if (Array.isArray(fotosRaw)) {
     return fotosRaw.map((f, idx) => {
       if (typeof f === 'string') {
+        const isHttp = f.startsWith('http');
         return {
           id: `foto_${idx}_${Date.now()}`,
           url: f,
           nome: `Foto ${idx + 1}`,
+          status: isHttp ? 'saved' : 'pending',
           created_at: new Date().toISOString()
         };
       }
       if (f && typeof f === 'object' && f.url) {
+        const isHttp = typeof f.url === 'string' && f.url.startsWith('http');
         return {
           id: f.id || `foto_${idx}_${Date.now()}`,
           url: f.url,
+          storage_path: f.storage_path,
           nome: f.nome || `Foto ${idx + 1}`,
           tamanho: f.tamanho,
+          status: f.status || (isHttp ? 'saved' : 'pending'),
+          errorMessage: f.errorMessage,
           created_at: f.created_at || new Date().toISOString()
         };
       }
@@ -579,7 +741,7 @@ export async function saveSetupData(
 
   // Validação Obrigatória 1: Pelo menos uma foto deve existir (Regra de Negócio)
   const rawFotos = payload.fotos !== undefined ? payload.fotos : getAviarioFotos(aviarioId, existing || undefined);
-  const fotos = normalizeFotos(rawFotos);
+  let fotos = normalizeFotos(rawFotos);
   if (!fotos || fotos.length === 0) {
     throw new Error('É obrigatório anexar pelo menos uma foto do setup.');
   }
@@ -589,6 +751,33 @@ export async function saveSetupData(
   if (!validation.isValid) {
     throw new Error(`Preencha todos os campos obrigatórios antes de salvar: ${validation.missingFields.join(', ')}.`);
   }
+
+  // PERSISTÊNCIA DEFINITIVA NO SUPABASE STORAGE:
+  // Faz o upload de todas as fotos que ainda não estejam com URL pública permanente no Storage
+  const targetEmpresaId = empresaId || (existing as any)?.empresa_id || 'geral';
+  const resolvedFotos: SetupFoto[] = [];
+
+  for (let i = 0; i < fotos.length; i++) {
+    const foto = fotos[i];
+    if (foto.url && foto.url.startsWith('http') && foto.status === 'saved') {
+      resolvedFotos.push(foto);
+    } else {
+      try {
+        const uploaded = await uploadSetupFoto(
+          foto.url,
+          targetEmpresaId,
+          aviarioId,
+          foto.nome || `foto_${i + 1}.jpg`
+        );
+        resolvedFotos.push(uploaded);
+      } catch (uploadErr: any) {
+        console.error('Falha ao enviar evidência fotográfica para o Storage:', uploadErr);
+        throw new Error(`Falha no upload da evidência fotográfica "${foto.nome || i + 1}": ${uploadErr?.message || 'Erro de conexão'}. O Setup NÃO foi salvo para garantir a integridade dos dados.`);
+      }
+    }
+  }
+
+  fotos = resolvedFotos;
 
   // Persistir fotos localmente para resiliência e disponibilidade instantânea
   saveAviarioFotosLocal(aviarioId, fotos);
@@ -715,14 +904,13 @@ export async function saveSetupData(
       .select('*')
       .single();
 
-    if (updateRes.error && (updateRes.error.message?.includes('column') || updateRes.error.message?.includes('empresa_id') || updateRes.error.message?.includes('fotos'))) {
+    if (updateRes.error && (updateRes.error.message?.includes('column') || updateRes.error.message?.includes('empresa_id'))) {
       const fallbackPayload = { ...cleanPayload };
       delete fallbackPayload.created_by_id;
       delete fallbackPayload.created_by_name;
       delete fallbackPayload.updated_by_id;
       delete fallbackPayload.updated_by_name;
       delete fallbackPayload.empresa_id;
-      delete fallbackPayload.fotos;
 
       updateRes = await supabase
         .from('setups_aviarios')
@@ -732,7 +920,10 @@ export async function saveSetupData(
         .single();
     }
 
-    if (updateRes.error) throw updateRes.error;
+    if (updateRes.error) {
+      console.error('Erro ao atualizar setups_aviarios no Supabase:', updateRes.error);
+      throw new Error(`Falha ao salvar setup no banco de dados: ${updateRes.error.message}`);
+    }
     savedData = { ...updateRes.data, fotos };
   } else {
     let insertRes = await supabase
@@ -741,14 +932,13 @@ export async function saveSetupData(
       .select('*')
       .single();
 
-    if (insertRes.error && (insertRes.error.message?.includes('column') || insertRes.error.message?.includes('empresa_id') || insertRes.error.message?.includes('fotos'))) {
+    if (insertRes.error && (insertRes.error.message?.includes('column') || insertRes.error.message?.includes('empresa_id'))) {
       const fallbackPayload = { ...cleanPayload };
       delete fallbackPayload.created_by_id;
       delete fallbackPayload.created_by_name;
       delete fallbackPayload.updated_by_id;
       delete fallbackPayload.updated_by_name;
       delete fallbackPayload.empresa_id;
-      delete fallbackPayload.fotos;
 
       insertRes = await supabase
         .from('setups_aviarios')
@@ -757,7 +947,10 @@ export async function saveSetupData(
         .single();
     }
 
-    if (insertRes.error) throw insertRes.error;
+    if (insertRes.error) {
+      console.error('Erro ao inserir setups_aviarios no Supabase:', insertRes.error);
+      throw new Error(`Falha ao cadastrar setup no banco de dados: ${insertRes.error.message}`);
+    }
     savedData = { ...insertRes.data, fotos };
   }
 
@@ -800,6 +993,7 @@ export async function saveSetupData(
         dados_snapshot: novoRegistroHistorico.dados_snapshot,
         alteracoes: novoRegistroHistorico.alteracoes,
         resumo_alteracoes: novoRegistroHistorico.resumo_alteracoes,
+        fotos: fotos,
         created_at: novoRegistroHistorico.created_at
       }]);
 

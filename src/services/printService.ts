@@ -810,8 +810,48 @@ export function executeIsolatedPrint(aviarios: Aviario[], company?: Empresa | Co
   doc.write(htmlContent);
   doc.close();
 
-  // Aguarda carregamento de imagens e renderização antes de imprimir
-  setTimeout(() => {
+  // Aguarda carregamento real de todas as imagens (incluindo Storage do Supabase) antes de disparar a impressão
+  const checkAndPrint = () => {
+    const images = Array.from(doc.images || []);
+    if (images.length === 0) {
+      setTimeout(() => doPrint(), 100);
+      return;
+    }
+
+    let loadedCount = 0;
+    const total = images.length;
+    let hasTriggered = false;
+
+    const triggerPrintOnce = () => {
+      if (hasTriggered) return;
+      hasTriggered = true;
+      setTimeout(() => doPrint(), 150);
+    };
+
+    // Timeout de segurança (máximo 4 segundos para conexões lentas)
+    const safetyTimer = setTimeout(() => {
+      triggerPrintOnce();
+    }, 4000);
+
+    const onImageDone = () => {
+      loadedCount++;
+      if (loadedCount >= total) {
+        clearTimeout(safetyTimer);
+        triggerPrintOnce();
+      }
+    };
+
+    images.forEach(img => {
+      if (img.complete && img.naturalWidth !== 0) {
+        onImageDone();
+      } else {
+        img.addEventListener('load', onImageDone, { once: true });
+        img.addEventListener('error', onImageDone, { once: true });
+      }
+    });
+  };
+
+  const doPrint = () => {
     try {
       iframe.contentWindow?.focus();
       iframe.contentWindow?.print();
@@ -824,7 +864,9 @@ export function executeIsolatedPrint(aviarios: Aviario[], company?: Empresa | Co
         if (document.body.contains(iframe)) {
           document.body.removeChild(iframe);
         }
-      }, 2000);
+      }, 2500);
     }
-  }, 350);
+  };
+
+  checkAndPrint();
 }
